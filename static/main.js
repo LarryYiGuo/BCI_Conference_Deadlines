@@ -53,9 +53,8 @@
       ics: 'ICS',
       today: '今天',
       empty: '没有匹配的会议',
-      footer: `数据人工核对于 2026-06-11,并由 GitHub Action 每周自动同步 ccfddl 数据源 · 标注「预估」为按往年规律推测,以官网 CFP 为准<br>
-        会议无 JCR 影响因子,引用指标采用 Google Scholar h5-index · 分级:CCF(中国计算机学会)/ CORE(国际)<br>
-        组织方式参考 <a href="https://hci-deadlines.github.io/" target="_blank" rel="noopener">hci-deadlines</a> 与 <a href="https://ccfddl.com/" target="_blank" rel="noopener">ccfddl</a>`,
+      footer: `数据人工核对于 2026-06-11,并由 GitHub Action 每周自动同步 <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl</a> 数据源 · 标注「预估」为按往年规律推测,以官网 CFP 为准<br>
+        会议无 JCR 影响因子,引用指标采用 Google Scholar h5-index · 分级:CCF(中国计算机学会)/ CORE(国际)`,
       subs: {
         ML: 'ML 机器学习', DM: 'DM 数据挖掘', NC: 'NC 神经计算', CV: 'CV 视觉多媒体',
         AC: 'AC 情感计算', SP: 'SP 信号处理', BME: 'BME 医工影像', BCI: 'BCI 神经工程',
@@ -87,9 +86,8 @@
       ics: 'ICS',
       today: 'today',
       empty: 'No matching conferences',
-      footer: `Dates manually verified on 2026-06-11 and auto-synced weekly from ccfddl via GitHub Actions · “Est.” = projected from past cycles, confirm with the official CFP<br>
-        Conferences have no JCR impact factor; we report the Google Scholar h5-index instead · Ranks: CCF (China) / CORE (international)<br>
-        Organization inspired by <a href="https://hci-deadlines.github.io/" target="_blank" rel="noopener">hci-deadlines</a> and <a href="https://ccfddl.com/" target="_blank" rel="noopener">ccfddl</a>`,
+      footer: `Dates manually verified on 2026-06-11 and auto-synced weekly from <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl</a> via GitHub Actions · “Est.” = projected from past cycles, confirm with the official CFP<br>
+        Conferences have no JCR impact factor; we report the Google Scholar h5-index instead · Rank: CORE (international)`,
       subs: {
         ML: 'ML Machine Learning', DM: 'DM Data Mining', NC: 'NC Neural Computation', CV: 'CV Vision & MM',
         AC: 'AC Affective Comp.', SP: 'SP Signal Processing', BME: 'BME BioMed Eng.', BCI: 'BCI Neural Eng.',
@@ -113,6 +111,7 @@
   let active = new Set();
   let query = '';
   let lang = 'zh';
+  let langExplicit = false;   // user chose via ?lang= / toggle / stored pref
   const t = () => I18N[lang];
 
   // ── helpers ──
@@ -183,15 +182,40 @@
     const src = params.get('sub') != null ? params.get('sub') : localStorage.getItem('bci-ddl-subs');
     if (src) src.split(',').map(s => s.trim().toUpperCase()).filter(s => THEME_OF[s]).forEach(s => active.add(s));
     const pl = params.get('lang') || localStorage.getItem('bci-ddl-lang');
-    if (pl === 'en' || pl === 'zh') lang = pl;
+    if (pl === 'en' || pl === 'zh') {
+      lang = pl;
+      langExplicit = true;
+    } else {
+      // instant guess from the browser locale; refined by IP lookup at boot
+      lang = (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    }
+  }
+
+  // first visit: pick the language by IP country (CN -> 中文, otherwise English)
+  function detectLangByIP() {
+    if (langExplicit) return;
+    fetch('https://api.country.is/', { signal: AbortSignal.timeout(4000) })
+      .then(r => r.json())
+      .then(d => {
+        const want = d.country === 'CN' ? 'zh' : 'en';
+        if (!langExplicit && want !== lang) {
+          lang = want;
+          renderChrome(); renderFilters(); render();
+        }
+      })
+      .catch(() => { /* offline / blocked: keep the locale guess */ });
   }
   function saveState() {
     localStorage.setItem('bci-ddl-subs', [...active].join(','));
-    localStorage.setItem('bci-ddl-lang', lang);
     const url = new URL(location);
     const v = [...active].join(',');
     if (v) url.searchParams.set('sub', v); else url.searchParams.delete('sub');
-    if (lang === 'en') url.searchParams.set('lang', 'en'); else url.searchParams.delete('lang');
+    // only persist language once the user picked one explicitly,
+    // so IP auto-detection keeps working for passive visitors
+    if (langExplicit) {
+      localStorage.setItem('bci-ddl-lang', lang);
+      if (lang === 'en') url.searchParams.set('lang', 'en'); else url.searchParams.delete('lang');
+    }
     history.replaceState(null, '', url);
   }
 
@@ -278,9 +302,10 @@
       cdHTML = `<span class="cd ${days >= 30 ? 'far' : ''}" data-dl="${dl.getTime()}">${fmtCountdown(dl.getTime() - now)}</span>`;
     }
 
+    // CCF is a China-specific ranking — only show its badge in Chinese mode
     const rank = c.rank === '非CCF' ? t().nonCCF : c.rank;
     const badges = [
-      `<span class="badge fill">${esc(rank)}</span>`,
+      lang === 'zh' ? `<span class="badge fill">${esc(rank)}</span>` : '',
       c.core ? `<span class="badge">CORE ${esc(c.core)}</span>` : '',
       c.h5 ? `<span class="badge">h5 ${esc(c.h5)}</span>` : '',
       c.estimated ? `<span class="badge est">${t().est}</span>` : '',
@@ -376,8 +401,10 @@
   els.search.addEventListener('input', () => { query = els.search.value.trim(); render(); });
   els.langBtn.addEventListener('click', () => {
     lang = lang === 'zh' ? 'en' : 'zh';
+    langExplicit = true;
     saveState(); renderChrome(); renderFilters(); render();
   });
+  detectLangByIP();
 
   fetch('data/conferences.yml', { cache: 'no-cache' })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
