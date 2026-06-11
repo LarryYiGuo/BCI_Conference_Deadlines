@@ -1,27 +1,28 @@
-# BCI Conference Deadlines · 数据文件
+# BCI Conference Deadlines · 数据文件 / data file
 # ─────────────────────────────────────────────────────────────
-# 字段说明:
-#   id                 唯一标识(小写+届次)
+# 字段 / fields:
+#   id                 唯一标识 unique id
 #   title / year       会议简称 / 届次年份
 #   full_name          会议全名
 #   link               官网 URL
 #   deadline           全文截稿 'YYYY-MM-DD HH:MM',未公布写 TBD
 #   abstract_deadline  摘要/注册截稿(可选)
-#   tz                 截稿时区的 UTC 偏移,AoE = '-12:00'
-#   tz_label           时区显示文字
+#   tz / tz_label      截稿时区 UTC 偏移(AoE = '-12:00')/ 显示文字
 #   date / place       会议日期 / 举办地
-#   sub                分类: ML | DM | NC | CV | AC | SP | BME | BCI
-#   rank               CCF 等级,非 CCF 目录写 '非CCF'
-#   estimated          true = 官方未公布,按往年规律推测
-#   friendly           true = 硕士毕业友好(来自 venue 清单标注)
-#   bci / bci_en       BCI 相关性一句话(中 / 英)
-#   note / note_en     备注(中 / 英)
+#   sub                方向: ML | DM | NC | CV | AC | SP | BME | BCI
+#   rank               CCF 等级(中国),非目录写 '非CCF'
+#   core               CORE 等级(国际),N = 不在 CORE 目录
+#   h5                 Google Scholar h5-index(会议无 JCR IF)
+#   ccfddl             ccfddl 数据源文件名,GitHub Action 每周自动同步;null = 人工维护
+#   track              轮次/赛道(如 Round 1 / Cycle 1 / Conference Track)
+#   estimated          true = 官方未公布,按往年规律推测;false 的条目不会被自动同步覆盖
+#   note / note_en     备注(中 / 英,客观信息)
 # ─────────────────────────────────────────────────────────────
-# 分类说明(按学科方向重新分类,替代原 Tier 影响力分级):
-#   ML  机器学习·AI 综合     DM  数据挖掘·信息检索
-#   NC  神经计算·神经网络     CV  计算机视觉·多媒体
-#   AC  情感计算·多模态交互   SP  信号处理
-#   BME 医工·生物医学影像     BCI 神经工程·BCI·神经科学
+# 主题 themes(颜色越深 = 分级越高):
+#   算法/蓝   ML 机器学习 · DM 数据挖掘检索 · NC 神经计算
+#   视觉/紫   CV 视觉多媒体 · AC 情感计算交互
+#   医疗/黄   BME 医工影像 · SP 信号处理
+#   神经/红   BCI 神经工程·神经科学
 # ─────────────────────────────────────────────────────────────
 
 # ════════ ML · 机器学习 / AI 综合 ════════
@@ -30,19 +31,20 @@
   title: ACML
   year: 2026
   full_name: Asian Conference on Machine Learning
-  link: https://www.acml-conf.org/2026/
+  link: 'https://www.acml-conf.org/2026/'
   deadline: '2026-06-26 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: Dec 1–4, 2026
+  date: December 1-4, 2026
   place: Melbourne, Australia
   sub: ML
   rank: CCF-C
+  core: N
+  h5: 25
+  ccfddl: acml
+  track: Conference Track
   estimated: false
-  friendly: true
-  bci: 审稿周期短,对国内硕士毕业很友好
-  bci_en: Short review cycle; very friendly for master's students
   note: Journal Track 截稿 6/20;每篇投稿须至少一位作者担任审稿人,否则 desk reject
   note_en: Journal Track deadline Jun 20; each submission must name at least one author as a reviewer or risk desk rejection
 
@@ -50,18 +52,20 @@
   title: AAAI
   year: 2027
   full_name: AAAI Conference on Artificial Intelligence
-  link: https://aaai.org/conference/aaai/aaai-27/
+  link: 'https://aaai.org/conference/aaai/aaai-27/'
   deadline: '2026-07-28 23:59'
   abstract_deadline: '2026-07-21 23:59'
   tz: '-12:00'
   tz_label: UTC-12
-  date: Feb 16–23, 2027
-  place: Montréal, Canada
+  date: February 16-23, 2027
+  place: Montréal, Québec, Canada
   sub: ML
   rank: CCF-A
+  core: A*
+  h5: 232
+  ccfddl: aaai
+  track:
   estimated: false
-  bci: 国内 BCI 圈活跃度高于 NeurIPS/ICLR——情感解码、跨被试 DA 稳定出口,吕宝粮/何晖光/潘纲组长期输出
-  bci_en: More active for Chinese BCI groups than NeurIPS/ICLR — steady outlet for emotion decoding & cross-subject DA (Lu, He, and Pan labs publish here regularly)
   note: 官方已公布(第 41 届)
   note_en: Officially announced (41st edition)
 
@@ -69,18 +73,20 @@
   title: ICLR
   year: 2027
   full_name: International Conference on Learning Representations
-  link: https://iclr.cc/
+  link: 'https://iclr.cc/'
   deadline: '2026-09-23 23:59'
-  abstract_deadline: '2026-09-18 23:59'
+  abstract_deadline: 2026-09-18 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Late Apr 2027
   place: West Coast North America (TBD)
   sub: ML
   rank: CCF-A
+  core: A*
+  h5: 362
+  ccfddl: iclr
+  track:
   estimated: true
-  bci: EEG foundation model 主战场——LaBraM Spotlight 后 follow-up 密集聚集地(NeuroLM/CBraMod)
-  bci_en: Main battlefield for EEG foundation models — dense follow-ups gathered here after the LaBraM spotlight (NeuroLM, CBraMod)
   note: 官方确认北美西海岸举办;截稿按 2026 届规律推测
   note_en: Officially confirmed for West Coast North America; deadline estimated from the ICLR 2026 pattern
 
@@ -88,18 +94,20 @@
   title: AISTATS
   year: 2027
   full_name: International Conference on Artificial Intelligence and Statistics
-  link: https://aistats.org/
+  link: 'https://aistats.org/'
   deadline: '2026-10-01 23:59'
-  abstract_deadline: '2026-09-24 23:59'
+  abstract_deadline: 2026-09-24 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Spring 2027
   place: TBD
   sub: ML
   rank: CCF-C
+  core: A
+  h5: 101
+  ccfddl: aistats
+  track:
   estimated: true
-  bci: 理论性 / 概率推断方向适合
-  bci_en: Suited to theoretical / probabilistic-inference work
   note: 按 2026 届规律推测
   note_en: Estimated from the 2026 cycle
 
@@ -107,36 +115,41 @@
   title: IJCAI
   year: 2027
   full_name: International Joint Conference on Artificial Intelligence
-  link: https://www.ijcai.org/
+  link: 'https://www.ijcai.org/'
   deadline: '2027-01-18 23:59'
-  abstract_deadline: '2027-01-11 23:59'
+  abstract_deadline: 2027-01-11 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Aug 2027
   place: TBD
   sub: ML
   rank: CCF-A
+  core: A*
+  h5: 136
+  ccfddl: ijcai
+  track:
   estimated: true
-  bci: BCI 主题碎片化但稳定——HBAI workshop 是 IJCAI 上 BCI 主题聚集地,对国内硕士相对友好
-  bci_en: BCI topics fragmented but steady — the HBAI workshop is the BCI hub at IJCAI; relatively friendly for master's students
   note: IJCAI-ECAI 2026 (Bremen) 截稿已过;按往年 1 月中旬规律推测
   note_en: IJCAI-ECAI 2026 (Bremen) deadline passed; estimated from the usual mid-January pattern
+
 - id: icml27
   title: ICML
   year: 2027
   full_name: International Conference on Machine Learning
-  link: https://icml.cc/
+  link: 'https://icml.cc/'
   deadline: '2027-01-27 23:59'
-  abstract_deadline: '2027-01-21 23:59'
+  abstract_deadline: 2027-01-21 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Jul 2027
   place: South America (TBD)
   sub: ML
   rank: CCF-A
+  core: A*
+  h5: 272
+  ccfddl: icml
+  track:
   estimated: true
-  bci: BCI 主题相对稀少但 2025 起转暖——何晖光组 EmoGrowth、刘泉影组同年双中
-  bci_en: BCI papers relatively rare but warming since 2025 — He lab's EmoGrowth and Liu lab both accepted the same year
   note: ICML 2026 (Seoul) 截稿已过;官方确认 2027 在南美,按往年 1 月下旬规律推测
   note_en: ICML 2026 (Seoul) deadline passed; 2027 confirmed for South America, estimated from the usual late-January pattern
 
@@ -144,18 +157,20 @@
   title: UAI
   year: 2027
   full_name: Conference on Uncertainty in Artificial Intelligence
-  link: https://www.auai.org/
+  link: 'https://www.auai.org/'
   deadline: '2027-02-24 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Aug 2027
   place: TBD
   sub: ML
   rank: CCF-B
+  core: A
+  h5: 50
+  ccfddl: uai
+  track:
   estimated: true
-  bci: Bayesian methods、概率图模型主题适合
-  bci_en: Suited to Bayesian methods & probabilistic graphical models
   note: UAI 2026 (Amsterdam) 截稿已过;按往年 2 月下旬规律推测
   note_en: UAI 2026 (Amsterdam) deadline passed; estimated from the usual late-February pattern
 
@@ -163,18 +178,20 @@
   title: NeurIPS
   year: 2027
   full_name: Conference on Neural Information Processing Systems
-  link: https://neurips.cc/
+  link: 'https://neurips.cc/'
   deadline: '2027-05-05 23:59'
-  abstract_deadline: '2027-05-03 23:59'
+  abstract_deadline: 2027-05-03 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Dec 2027
   place: Europe (TBD)
   sub: ML
   rank: CCF-A
+  core: A*
+  h5: 371
+  ccfddl: nips
+  track:
   estimated: true
-  bci: EEG/BCI foundation model 核心战场——Brant/PPi/BIOT/EEG2Video 都从这里走出
-  bci_en: Core battlefield for EEG/BCI foundation models — Brant, PPi, BIOT and EEG2Video all debuted here
   note: NeurIPS 2026 (Sydney, Dec 6–12) 截稿已过;官方确认 2027 在欧洲,按往年 5 月初规律推测
   note_en: NeurIPS 2026 (Sydney, Dec 6–12) deadline passed; 2027 confirmed for Europe, estimated from the usual early-May pattern
 
@@ -183,19 +200,21 @@
 - id: kdd27
   title: KDD
   year: 2027
-  full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining (Cycle 1)
-  link: https://kdd.org/
+  full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining
+  link: 'https://kdd.org/'
   deadline: '2026-07-31 23:59'
-  abstract_deadline: '2026-07-24 23:59'
+  abstract_deadline: 2026-07-24 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Aug 2027
   place: TBD
   sub: DM
   rank: CCF-A
+  core: A*
+  h5: 124
+  ccfddl: sigkdd
+  track:
   estimated: true
-  bci: 浙大杨洋组 BrainNet/MBrain/Brant-X 主场——脑信号当 multi-channel time series + 临床应用很适合
-  bci_en: Home turf of ZJU Yang Yang lab (BrainNet, MBrain, Brant-X) — brain signals as multi-channel time series + clinical applications fit well
   note: 每年两个 cycle(8 月 / 次年 2 月);按 KDD 2026 Cycle 1 规律推测
   note_en: Two cycles per year (Aug / following Feb); estimated from the KDD 2026 Cycle 1 pattern
 
@@ -203,18 +222,20 @@
   title: WWW
   year: 2027
   full_name: The ACM Web Conference
-  link: https://thewebconf.org/
+  link: 'https://thewebconf.org/'
   deadline: '2026-10-07 23:59'
-  abstract_deadline: '2026-09-30 23:59'
+  abstract_deadline: 2026-09-30 23:59
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: Dublin, Ireland
   sub: DM
   rank: CCF-A
+  core: A*
+  h5: 120
+  ccfddl: www
+  track:
   estimated: true
-  bci: BCI 主题罕见,healthcare data + multimodal 方向偶有 EEG/biosignal 工作
-  bci_en: BCI topics rare; occasional EEG/biosignal work via healthcare-data + multimodal tracks
   note: 举办地 Dublin 已官宣;截稿按 WWW 2026 规律推测
   note_en: Dublin officially announced; deadline estimated from the WWW 2026 pattern
 
@@ -222,18 +243,20 @@
   title: SDM
   year: 2027
   full_name: SIAM International Conference on Data Mining
-  link: https://www.siam.org/conferences-events/
+  link: 'https://www.siam.org/conferences-events/'
   deadline: '2026-10-10 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Apr/May 2027
   place: USA (TBD)
   sub: DM
   rank: CCF-B
+  core: A
+  h5: 36
+  ccfddl: sdm
+  track:
   estimated: true
-  bci: 中稿率比 KDD 高得多,脑信号时间序列主题合适
-  bci_en: Much higher acceptance rate than KDD; suited to brain-signal time-series work
   note: 按往年 10 月上中旬规律推测
   note_en: Estimated from the usual early/mid-October pattern
 
@@ -241,18 +264,20 @@
   title: PAKDD
   year: 2027
   full_name: Pacific-Asia Conference on Knowledge Discovery and Data Mining
-  link: https://pakdd.org/
+  link: 'https://pakdd.org/'
   deadline: '2026-11-15 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: May/Jun 2027
   place: TBD
   sub: DM
   rank: CCF-C
+  core: B
+  h5:
+  ccfddl: pakdd
+  track:
   estimated: true
-  bci: 亚太知识发现大会,亚洲圈认可度高
-  bci_en: Pacific-Asia KDD; well regarded across Asia
   note: 按 PAKDD 2026 规律推测(2026 届在香港举办)
   note_en: Estimated from the PAKDD 2026 pattern (2026 edition held in Hong Kong)
 
@@ -260,18 +285,20 @@
   title: SIGIR
   year: 2027
   full_name: International ACM SIGIR Conference on Research and Development in Information Retrieval
-  link: https://sigir.org/
+  link: 'https://sigir.org/'
   deadline: '2027-01-22 23:59'
-  abstract_deadline: '2027-01-15 23:59'
+  abstract_deadline: 2027-01-15 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Jul 2027
   place: Silicon Valley, USA
   sub: DM
   rank: CCF-A
+  core: A*
+  h5: 123
+  ccfddl: sigir
+  track:
   estimated: true
-  bci: BCI 主题罕见,brain-image retrieval/alignment 工作偶尔出现
-  bci_en: BCI topics rare; occasional brain-image retrieval / alignment work
   note: 50 周年届,举办地已官宣;截稿按 2026 届规律推测
   note_en: 50th-anniversary edition, venue announced; deadline estimated from the 2026 cycle
 
@@ -279,19 +306,20 @@
   title: ECML PKDD
   year: 2027
   full_name: European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases
-  link: https://ecmlpkdd.org/
+  link: 'https://ecmlpkdd.org/'
   deadline: '2027-03-12 23:59'
-  abstract_deadline: '2027-03-05 23:59'
+  abstract_deadline: 2027-03-05 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Sep 2027
   place: TBD
   sub: DM
   rank: CCF-B
+  core: A
+  h5: 41
+  ccfddl: pkdd
+  track:
   estimated: true
-  friendly: true
-  bci: 欧洲版 KDD,中稿率更高——EEG 时间序列/异常检测主题合适,硕士毕业友好选项
-  bci_en: The European KDD with a higher acceptance rate — EEG time-series / anomaly detection fits; a friendly option for master's theses
   note: 2026 届 (Naples) 截稿已过;另有 Journal Track 滚动投稿,预计 2026 秋再开
   note_en: 2026 edition (Naples) deadline passed; rolling Journal Track expected to reopen fall 2026
 
@@ -299,18 +327,20 @@
   title: CIKM
   year: 2027
   full_name: ACM International Conference on Information and Knowledge Management
-  link: https://www.cikmconference.org/
+  link: 'https://www.cikmconference.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: TBD
   sub: DM
   rank: CCF-B
+  core: A
+  h5: 96
+  ccfddl: cikm
+  track:
   estimated: true
-  bci: EEG-text alignment、brain-language 类工作可投,中稿率较友好
-  bci_en: EEG-text alignment & brain-language work fits; fairly friendly acceptance
   note: CIKM 2026 (Rome, Nov 7–11) 截稿已过;2027 届预计 2027 年 5 月截稿
   note_en: CIKM 2026 (Rome, Nov 7–11) deadline passed; 2027 deadline expected ~May 2027
 
@@ -318,18 +348,20 @@
   title: ICDM
   year: 2027
   full_name: IEEE International Conference on Data Mining
-  link: https://www.cs.uic.edu/~icdm/
+  link: 'https://www.cs.uic.edu/~icdm/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: TBD
   sub: DM
   rank: CCF-B
+  core: A*
+  h5: 49
+  ccfddl: icdm
+  track:
   estimated: true
-  bci: 脑信号 time series 主题合适
-  bci_en: Suited to brain-signal time-series work
   note: ICDM 2026 (Shenyang, Nov 12–15) 截稿 6/6 刚过;2027 届预计 2027 年 6 月初截稿
   note_en: ICDM 2026 (Shenyang, Nov 12–15) deadline just passed (Jun 6); 2027 deadline expected ~early June 2027
 
@@ -339,19 +371,20 @@
   title: IJCNN
   year: 2027
   full_name: International Joint Conference on Neural Networks
-  link: https://ijcnn.org/2027
+  link: 'https://ijcnn.org/2027'
   deadline: '2027-01-31 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Jun 14–18, 2027
   place: Cape Town, South Africa
   sub: NC
   rank: CCF-C
+  core: B
+  h5: 66
+  ccfddl: ijcnn
+  track:
   estimated: false
-  friendly: true
-  bci: EEG/BCI 历史最久的 venue 之一,每年有专门 BCI track——硕士毕业最友好之一
-  bci_en: One of the longest-running EEG/BCI venues with a dedicated BCI track every year — among the friendliest for master's theses
   note: 官网已公布,notification 2027-03-15;6 页 IEEE 双栏
   note_en: Officially announced, notification 2027-03-15; 6-page IEEE double column
 
@@ -359,19 +392,20 @@
   title: ICONIP
   year: 2027
   full_name: International Conference on Neural Information Processing
-  link: https://iconip2026.org/
+  link: 'https://iconip2026.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: TBD
   sub: NC
   rank: CCF-C
+  core: B
+  h5:
+  ccfddl: iconip
+  track:
   estimated: true
-  friendly: true
-  bci: 吕宝粮组每年 5–10 篇稳定输出地,BCI 圈认可度高于 CCF 等级;LNCS 出版
-  bci_en: Steady outlet of the Lu Bao-Liang lab (5–10 papers/yr); regarded above its CCF rank in the BCI community; LNCS proceedings
   note: ICONIP 2026 (Melbourne, Nov 23–27) 截稿 5/31 已过;2027 届预计 2027 年 5 月截稿
   note_en: ICONIP 2026 (Melbourne, Nov 23–27) deadline passed (May 31); 2027 deadline expected ~May 2027
 
@@ -381,18 +415,20 @@
   title: WACV
   year: 2027
   full_name: IEEE/CVF Winter Conference on Applications of Computer Vision
-  link: https://wacv.thecvf.com/
+  link: 'https://wacv.thecvf.com/'
   deadline: '2026-06-26 23:59'
   abstract_deadline: '2026-06-19 23:59'
   tz: '-12:00'
   tz_label: AoE
-  date: Jan 5–9, 2027
-  place: Orlando, Florida, USA
+  date: Jan 5 - 9, 2027
+  place: Disney Springs, Buena Vista, FL, USA
   sub: CV
   rank: CCF-C
+  core: A
+  h5: 131
+  ccfddl: wacv
+  track: Round 1
   estimated: false
-  bci: CVPR 系但中稿率明显友好,EEG visual decoding 类可投
-  bci_en: CVPR-affiliated with notably friendlier acceptance; EEG visual decoding work fits
   note: 两轮投稿——Round 1 注册 6/19 / 提交 6/26;Round 2 注册 8/21 / 提交 8/28
   note_en: Two rounds — R1 register Jun 19 / submit Jun 26; R2 register Aug 21 / submit Aug 28
 
@@ -400,18 +436,20 @@
   title: CVPR
   year: 2027
   full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
-  link: https://cvpr.thecvf.com/
+  link: 'https://cvpr.thecvf.com/'
   deadline: '2026-11-12 23:59'
-  abstract_deadline: '2026-11-06 23:59'
+  abstract_deadline: 2026-11-06 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Jun 19–26, 2027
   place: Seattle, WA, USA
   sub: CV
   rank: CCF-A
+  core: A*
+  h5: 450
+  ccfddl: cvpr
+  track:
   estimated: true
-  bci: EEG/fMRI visual decoding 重镇——Spampinato 2017 是该方向"原点",MinD-Vis 等都在这一脉
-  bci_en: Stronghold of EEG/fMRI visual decoding — Spampinato 2017 is the field's origin; MinD-Vis et al. follow this line
   note: 地点 Seattle 已由 CVF 确认;截稿按 2026 届规律推测
   note_en: Seattle confirmed by CVF; deadline estimated from the 2026 cycle
 
@@ -419,18 +457,20 @@
   title: ICCV
   year: 2027
   full_name: IEEE/CVF International Conference on Computer Vision
-  link: https://iccv.thecvf.com/
+  link: 'https://iccv.thecvf.com/'
   deadline: '2027-03-08 23:59'
-  abstract_deadline: '2027-03-01 23:59'
+  abstract_deadline: 2027-03-01 23:59
   tz: '-12:00'
   tz_label: AoE
   date: Oct 2–8, 2027
   place: Hong Kong, China
   sub: CV
   rank: CCF-A
+  core: A*
+  h5: 256
+  ccfddl: iccv
+  track:
   estimated: true
-  bci: 与 CVPR 同为 visual decoding 主战场(奇数年举办)
-  bci_en: Alongside CVPR, a main battlefield for visual decoding (held in odd years)
   note: 地点香港、10 月初会期已确认;截稿按 ICCV 2025 规律推测
   note_en: Hong Kong & early-October dates confirmed; deadline estimated from the ICCV 2025 pattern
 
@@ -438,19 +478,20 @@
   title: ICIP
   year: 2027
   full_name: IEEE International Conference on Image Processing
-  link: https://2027.ieeeicip.org/
+  link: 'https://2027.ieeeicip.org/'
   deadline: '2027-04-15 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Nov 29 – Dec 3, 2027
   place: Singapore
   sub: CV
   rank: CCF-C
+  core: B
+  h5: 55
+  ccfddl: icip
+  track:
   estimated: true
-  friendly: true
-  bci: EEG visual decoding 类合适,硕士毕业推荐
-  bci_en: EEG visual decoding work fits; recommended for master's theses
   note: ICIP 2026 (Tampere) 截稿已过;2027 已确认新加坡,按往届提前约 7 个月规律推测
   note_en: ICIP 2026 (Tampere) deadline passed; Singapore confirmed for 2027, estimated from the usual ~7-months-ahead pattern
 
@@ -458,18 +499,20 @@
   title: MM Asia
   year: 2026
   full_name: ACM Multimedia Asia
-  link: https://www.acmmmasia.org/
+  link: 'https://www.acmmmasia.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Dec 2026
   place: TBD (Asia)
   sub: CV
   rank: CCF-C
+  core: N
+  h5: 14
+  ccfddl: mmasia
+  track:
   estimated: true
-  bci: ACM MM 亚洲分会,中稿率友好
-  bci_en: Asian offshoot of ACM MM; friendly acceptance
   note: 2026 届官网未上线;据指导委员会文件投稿截止目标定在 2026 年 7 月中旬
   note_en: 2026 site not yet online; steering documents target a mid-July 2026 deadline
 
@@ -477,18 +520,20 @@
   title: ACM MM
   year: 2027
   full_name: ACM International Conference on Multimedia
-  link: https://2026.acmmm.org/
+  link: 'https://2026.acmmm.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: TBD
   sub: CV
   rank: CCF-A
+  core: A*
+  h5: 119
+  ccfddl: mm
+  track:
   estimated: true
-  bci: 国内 BCI 圈最稳定的 CCF-A 出口——吕宝粮/何晖光/刘泉影组常驻,多模态情感+脑信号视觉重建天然 venue
-  bci_en: The most stable CCF-A outlet for Chinese BCI groups — Lu, He and Liu labs are regulars; a natural venue for multimodal emotion + brain-to-image reconstruction
   note: ACM MM 2026 (Rio, Nov 10–14) 截稿 4/1 已过;2027 届预计 2027 年 4 月截稿
   note_en: ACM MM 2026 (Rio, Nov 10–14) deadline passed (Apr 1); 2027 deadline expected ~April 2027
 
@@ -496,18 +541,20 @@
   title: BMVC
   year: 2027
   full_name: British Machine Vision Conference
-  link: https://bmvc2026.bmva.org/
+  link: 'https://bmvc2026.bmva.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: UK
   sub: CV
   rank: CCF-C
+  core: A
+  h5: 57
+  ccfddl: bmvc
+  track:
   estimated: true
-  bci: 英国机器视觉会议,CVPR 系中间层
-  bci_en: British machine vision conference; mid-tier of the CVPR family
   note: BMVC 2026 (Lancaster, Nov 23–26) 截稿 5/29 刚过;2027 届预计 2027 年 5 月截稿
   note_en: BMVC 2026 (Lancaster, Nov 23–26) deadline just passed (May 29); 2027 deadline expected ~May 2027
 
@@ -515,19 +562,20 @@
   title: ICME
   year: 2027
   full_name: IEEE International Conference on Multimedia and Expo
-  link: https://2026.ieeeicme.org/
+  link: 'https://2026.ieeeicme.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Jul 2027
   place: TBD
   sub: CV
   rank: CCF-B
+  core: A
+  h5: 50
+  ccfddl: icme
+  track:
   estimated: true
-  friendly: true
-  bci: 多模态、affective computing 主题合适——何晖光组拿过 ICME 2019 Best Paper Runner-Up
-  bci_en: Multimodal & affective computing fit — the He Huiguang lab won ICME 2019 Best Paper Runner-Up
   note: ICME 2026 (Bangkok, Jul 5–9) 截稿已过;2027 届预计 2026 年 12 月截稿
   note_en: ICME 2026 (Bangkok, Jul 5–9) deadline passed; 2027 deadline expected ~December 2026
 
@@ -535,18 +583,20 @@
   title: ECCV
   year: 2028
   full_name: European Conference on Computer Vision
-  link: https://eccv.ecva.net/
+  link: 'https://eccv.ecva.net/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-08:00'
   tz_label: UTC-8
   date: '2028'
   place: TBD (Europe)
   sub: CV
   rank: CCF-A
+  core: A*
+  h5: 262
+  ccfddl: eccv
+  track:
   estimated: true
-  bci: visual decoding 主战场之一(偶数年举办)——UniBrain (ECCV 2024) 在这一脉
-  bci_en: One of the visual-decoding battlefields (held in even years) — UniBrain (ECCV 2024) is in this line
   note: ECCV 2026 (Malmö, Sep 8–12) 截稿 3/5 已过;2028 届预计 2028 年 3 月截稿
   note_en: ECCV 2026 (Malmö, Sep 8–12) deadline passed (Mar 5); 2028 deadline expected ~March 2028
 
@@ -556,18 +606,20 @@
   title: ACII
   year: 2027
   full_name: International Conference on Affective Computing and Intelligent Interaction
-  link: https://acii-conf.net/
+  link: 'https://acii-conf.net/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: TBD
   sub: AC
   rank: CCF-C
+  core:
+  h5: 23
+  ccfddl:
+  track:
   estimated: true
-  bci: 情感计算专门会议——EEG 情感识别最专业出口之一
-  bci_en: Dedicated affective-computing conference — one of the most specialized outlets for EEG emotion recognition
   note: ACII 2026 (Puebla) 主 track 截稿已过,Demo Fast Track 6/20 仍可投;2027 届预计 2027 年 3–4 月截稿
   note_en: ACII 2026 (Puebla) main track closed; Demo Fast Track open until Jun 20; 2027 deadline expected ~Mar–Apr 2027
 
@@ -575,18 +627,20 @@
   title: ICMI
   year: 2027
   full_name: ACM International Conference on Multimodal Interaction
-  link: https://icmi.acm.org/
+  link: 'https://icmi.acm.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: TBD
   sub: AC
   rank: CCF-B
+  core: B
+  h5:
+  ccfddl: icmi
+  track:
   estimated: true
-  bci: 多模态交互——BCI 作为多模态信号源主题合适
-  bci_en: Multimodal interaction — BCI as a multimodal signal source fits well
   note: ICMI 2026 (Napoli, Oct 5–9) 主 track 截稿已过;2027 届预计 2027 年 4 月截稿
   note_en: ICMI 2026 (Napoli, Oct 5–9) main track closed; 2027 deadline expected ~April 2027
 
@@ -596,19 +650,20 @@
   title: ICASSP
   year: 2027
   full_name: IEEE International Conference on Acoustics, Speech and Signal Processing
-  link: https://2027.ieeeicassp.org/
+  link: 'https://2027.ieeeicassp.org/'
   deadline: '2026-09-16 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: May 16–21, 2027
+  date: May 16-21, 2027
   place: Toronto, Canada
   sub: SP
   rank: CCF-B
+  core: B
+  h5: 137
+  ccfddl: icassp
+  track:
   estimated: false
-  friendly: true
-  bci: EEG 处理类工作最多的 venue 之一——吕宝粮组每年 4–8 篇;4 页短文,硕士毕业利器
-  bci_en: One of the highest-volume venues for EEG processing — the Lu lab publishes 4–8 per year; 4-page short papers, a master's-thesis workhorse
   note: 官方 CFP 已公布
   note_en: Official CFP published
 
@@ -616,18 +671,20 @@
   title: EUSIPCO
   year: 2027
   full_name: European Signal Processing Conference
-  link: https://eusipco2027.de/
+  link: 'https://eusipco2027.de/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Aug 30 – Sep 3, 2027
   place: Darmstadt, Germany
   sub: SP
   rank: CCF-C
+  core: N
+  h5: 35
+  ccfddl: eusipco
+  track:
   estimated: true
-  bci: 欧洲信号处理大会,EEG 信号处理工作合适
-  bci_en: European signal processing conference; EEG signal-processing work fits
   note: 2026 届 (Bruges) 截稿已过;2027 届截稿未公布,历年在 2 月上中旬
   note_en: 2026 edition (Bruges) deadline passed; 2027 deadline TBA, historically early/mid-February
 
@@ -637,39 +694,41 @@
   title: BIBM
   year: 2026
   full_name: IEEE International Conference on Bioinformatics and Biomedicine
-  link: https://www3.cs.stonybrook.edu/~bibm2026/home.html
-  deadline: '2026-07-05 23:59'
-  abstract_deadline: null
-  tz: '-12:00'
-  tz_label: AoE
-  date: Dec 2026
-  place: Dallas, TX, USA
+  link: 'https://ieeebibm.org/BIBM2026/'
+  deadline: '2026-07-05 17:00'
+  abstract_deadline:
+  tz: '-05:00'
+  tz_label: UTC-5
+  date: Dec 1-4, 2026
+  place: Dallas, USA
   sub: BME
   rank: CCF-B
-  estimated: true
-  friendly: true
-  bci: 临床应用导向,吕宝粮组每年都有投稿——硕士毕业友好
-  bci_en: Clinically oriented; the Lu lab submits every year — master's friendly
-  note: 截稿日期来自聚合站,以官网为准;notification 约 9/25
-  note_en: Deadline taken from aggregator sites, confirm on the official site; notification ~Sep 25
+  core: N
+  h5: 31
+  ccfddl: bibm
+  track:
+  estimated: false
+  note: 日期同步自 ccfddl;notification 约 9/25
+  note_en: Date synced from ccfddl; notification ~Sep 25
 
 - id: embc27
   title: EMBC
   year: 2027
   full_name: International Conference of the IEEE Engineering in Medicine and Biology Society
-  link: https://embc.embs.org/
+  link: 'https://embc.embs.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-05:00'
   tz_label: EST
   date: Jul 2027
   place: TBD
   sub: BME
   rank: CCF-C
+  core:
+  h5: 47
+  ccfddl:
+  track:
   estimated: true
-  friendly: true
-  bci: 医工领域最大会议,EEG/BCI 的"自家会议"——4 页短文,中稿率 ~50%,硕士毕业最稳 venue 之一
-  bci_en: The largest biomedical-engineering conference and the BCI community's home turf — 4-page papers, ~50% acceptance, one of the safest master's venues
   note: EMBC 2026 (Toronto, Jul) 各轮截稿已过;2027 届(第 49 届)预计 2026 年 11 月截稿
   note_en: EMBC 2026 (Toronto, Jul) rounds closed; 2027 (49th) deadline expected ~November 2026
 
@@ -677,18 +736,20 @@
   title: ISBI
   year: 2027
   full_name: IEEE International Symposium on Biomedical Imaging
-  link: https://biomedicalimaging.org/2027/
+  link: 'https://biomedicalimaging.org/2027/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: May 25–28, 2027
   place: Lausanne, Switzerland
   sub: BME
   rank: CCF-C
+  core:
+  h5: 52
+  ccfddl:
+  track:
   estimated: true
-  bci: 医学影像,fMRI 主题合适
-  bci_en: Biomedical imaging; fMRI work fits
   note: 会期/地点已定,截稿未公布;历年在 10 月底–11 月初
   note_en: Dates/venue set, deadline TBA; historically late Oct – early Nov
 
@@ -696,18 +757,20 @@
   title: MICCAI
   year: 2027
   full_name: International Conference on Medical Image Computing and Computer Assisted Intervention
-  link: https://conferences.miccai.org/
+  link: 'https://conferences.miccai.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-08:00'
   tz_label: PT
   date: '2027'
   place: TBD
   sub: BME
   rank: CCF-B
+  core: A
+  h5: 98
+  ccfddl: miccai
+  track:
   estimated: true
-  bci: 医学影像顶会,fMRI 主题特别合适——何晖光组 Graph Emotion Decoding (2022) 在这
-  bci_en: Top medical-imaging venue; fMRI especially fits — the He lab's Graph Emotion Decoding (2022) was published here
   note: MICCAI 2026 (Strasbourg, Sep 27 – Oct 1) 截稿 2/26 已过;2027 届预计 2027 年 2 月截稿
   note_en: MICCAI 2026 (Strasbourg, Sep 27 – Oct 1) deadline passed (Feb 26); 2027 deadline expected ~February 2027
 
@@ -715,39 +778,43 @@
   title: IEEE SMC
   year: 2027
   full_name: IEEE International Conference on Systems, Man, and Cybernetics
-  link: https://www.ieeesmc.org/
+  link: 'https://www.ieeesmc.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-05:00'
   tz_label: EST
   date: '2027'
   place: TBD
   sub: BME
   rank: CCF-C
+  core: B
+  h5: 36
+  ccfddl: smc
+  track:
   estimated: true
-  bci: IEEE 控制系统与人因工程会议,有 Brain-Machine Interface 专题,BCI 应用导向工作合适
-  bci_en: IEEE systems & human-factors conference with a Brain-Machine Interface track; application-oriented BCI work fits
   note: SMC 2026 (Bellevue, Oct 4–7) 截稿已过;2027 届预计 2027 年 4 月截稿
   note_en: SMC 2026 (Bellevue, Oct 4–7) deadline passed; 2027 deadline expected ~April 2027
 
-# ════════ BCI · 神经工程 / BCI / 神经科学 ════════
+# ════════ BCI · 神经工程 / 神经科学 ════════
 
 - id: sfn26
   title: SfN
   year: 2026
   full_name: Society for Neuroscience Annual Meeting (Neuroscience 2026)
-  link: https://www.sfn.org/meetings/neuroscience-2026/call-for-abstracts
+  link: 'https://www.sfn.org/meetings/neuroscience-2026/call-for-abstracts'
   deadline: '2026-06-11 14:00'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-04:00'
   tz_label: EDT
   date: Nov 14–18, 2026
   place: Washington, D.C., USA
   sub: BCI
   rank: 非CCF
+  core:
+  h5:
+  ccfddl:
+  track:
   estimated: false
-  bci: 北美神经科学学会年会(海报+abstract)——BCI 机理研究适合在这里露面
-  bci_en: North American neuroscience annual meeting (poster + abstract) — good exposure for mechanistic BCI research
   note: abstract 截稿已延期至 6/11;Late-breaking 窗口 9/8–9/15
   note_en: Abstract deadline extended to Jun 11; late-breaking window Sep 8–15
 
@@ -755,18 +822,20 @@
   title: IEEE NER
   year: 2027
   full_name: International IEEE EMBS Conference on Neural Engineering
-  link: https://ieee-ner.org/
+  link: 'https://ieee-ner.org/'
   deadline: TBD
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: '2027'
   place: Europe (TBD)
   sub: BCI
   rank: 非CCF
+  core:
+  h5:
+  ccfddl:
+  track:
   estimated: true
-  bci: 神经工程旗舰(两年一届,奇数年)——BCI"圈内顶会",评审都是 BCI 专家,临床导向
-  bci_en: Flagship of neural engineering (biennial, odd years) — the BCI insiders' top venue, clinically oriented, reviewed by BCI experts
   note: 第 13 届已宣布在欧洲举办,城市/日期待定;历年截稿在前一年 11–12 月
   note_en: 13th edition announced for Europe, city/dates TBA; deadlines historically Nov–Dec of the prior year
 
@@ -774,18 +843,20 @@
   title: OHBM
   year: 2027
   full_name: Organization for Human Brain Mapping Annual Meeting
-  link: https://www.humanbrainmapping.org/
+  link: 'https://www.humanbrainmapping.org/'
   deadline: '2026-12-15 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Jun 2027
   place: Toronto, Canada
   sub: BCI
   rank: 非CCF
+  core:
+  h5:
+  ccfddl:
+  track:
   estimated: true
-  bci: 人脑图谱大会——fMRI/MEG/EEG 神经影像国际旗舰,何晖光/刘泉影组多次受邀报告
-  bci_en: The human brain mapping meeting — international flagship for fMRI/MEG/EEG neuroimaging; He and Liu labs have given invited talks
   note: 2027 地点 Toronto 已确认;abstract 截稿按往年规律推测在 12 月中旬
   note_en: Toronto confirmed for 2027; abstract deadline estimated mid-December per past years
 
@@ -793,17 +864,19 @@
   title: BCI Meeting
   year: 2027
   full_name: International Brain-Computer Interface Meeting (BCI Society)
-  link: https://bcisociety.org/bci-meeting/
+  link: 'https://bcisociety.org/bci-meeting/'
   deadline: '2027-01-15 23:59'
-  abstract_deadline: null
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Jun 7–10, 2027
   place: Šibenik, Croatia
   sub: BCI
   rank: 非CCF
+  core:
+  h5:
+  ccfddl:
+  track:
   estimated: true
-  bci: 国际 BCI 学会两年一届主会——BCI 圈最专业的会议
-  bci_en: The BCI Society's biennial main meeting — the most specialized conference in the field
   note: 第 12 届;call for abstracts 2026-11-09 开放,notification 约 2027-03-03
   note_en: 12th edition; call for abstracts opens 2026-11-09, notification ~2027-03-03
