@@ -236,9 +236,23 @@
       const d = new Date(ts);
       return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
     };
+    // color the stretch between "today" and each upcoming dot with that dot's color
+    const pts = [];
+    if (abs && abs.getTime() > now) pts.push({ t: abs.getTime(), cls: 'seg-abs' });
+    if (dl.getTime() > now) pts.push({ t: dl.getTime(), cls: 'seg-sub' });
+    pts.sort((a, b) => a.t - b.t);
+    let cursor = now, segs = '';
+    for (const p of pts) {
+      if (p.t > cursor) {
+        const l = pos(cursor), w = pos(p.t) - pos(cursor);
+        segs += `<div class="seg ${p.cls}" style="left:${l}%;width:${w}%"></div>`;
+      }
+      cursor = p.t;
+    }
     return `<div class="tl">
       <div class="track">
         <div class="fill" style="width:${pos(now)}%"></div>
+        ${segs}
         ${abs ? `<span class="mk abs" style="left:${pos(abs.getTime())}%" title="${t().absK}"></span>` : ''}
         <span class="mk sub" style="left:${pos(dl.getTime())}%" title="${t().subK}"></span>
         <span class="now" style="left:${pos(now)}%" title="${t().today}"></span>
