@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCI Conference Deadlines · BCI 会议截稿日历</title>
+<meta name="description" content="面向 BCI/EEG/脑信号研究者的会议截稿倒计时——覆盖 ML/AI、数据挖掘、神经计算、视觉多媒体、情感计算、信号处理、医工与神经工程八个方向。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf8;
+  --bg2: #f4f3ef;
+  --text: #2C2C2A;
+  --text-dim: #5F5E5A;
+  --text-muted: #888780;
+  --orange: #D85A30;
+  --blue: #378ADD;
+  --green: #1D9E75;
+  --red: #E24B4A;
+  --purple: #534AB7;
+  --pink: #C2418A;
+  --teal: #0E8A8A;
+  --gold: #A8741A;
+  --border: #e8e6df;
+  --glass: rgba(255,255,255,.65);
+  --glass-border: rgba(0,0,0,.06);
+  --glass-hover: rgba(255,255,255,.8);
+  --sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --serif: 'Noto Serif SC', serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+a { color: inherit; }
+
+/* ── nav ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(250,250,248,.8);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  padding: .6rem 1.5rem;
+  display: flex; gap: .8rem; align-items: center;
+  font-size: 12px;
+  font-family: var(--mono);
+}
+.nav .brand { font-weight: 500; letter-spacing: .02em; text-decoration: none; }
+.nav .brand span { color: var(--orange); }
+.nav .spacer { flex: 1; }
+.nav a.ext {
+  color: var(--text-dim); text-decoration: none;
+  padding: .25rem .55rem; border-radius: 6px;
+  transition: all .2s;
+}
+.nav a.ext:hover { background: rgba(0,0,0,.04); color: var(--text); }
+
+/* ── hero ── */
+.hero { text-align: center; padding: 3rem 1.5rem 1.8rem; position: relative; overflow: hidden; }
+.hero::before {
+  content: ''; position: absolute; width: 280px; height: 280px; border-radius: 50%;
+  top: -60px; right: 15%; background: rgba(216,90,48,.05); filter: blur(30px);
+}
+.hero::after {
+  content: ''; position: absolute; width: 220px; height: 220px; border-radius: 50%;
+  bottom: -40px; left: 20%; background: rgba(29,158,117,.05); filter: blur(30px);
+}
+.hero .eyebrow {
+  display: inline-block; font-family: var(--mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted);
+  background: var(--glass); backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  padding: .3rem .8rem; border-radius: 20px; margin-bottom: .8rem;
+}
+.hero h1 {
+  font-weight: 500; font-size: clamp(1.6rem, 4vw, 2.4rem);
+  margin-bottom: .5rem; position: relative; z-index: 1;
+}
+.hero .sub {
+  color: var(--text-dim); font-size: 14px; max-width: 640px;
+  margin: 0 auto .9rem; position: relative; z-index: 1;
+}
+.hero .stats {
+  display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+  position: relative; z-index: 1;
+}
+.hero .stats .chip {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px); border-radius: 16px; padding: .2rem .7rem;
+  display: flex; align-items: center; gap: .4rem;
+}
+.hero .stats .chip i {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 4px rgba(29,158,117,.5); display:inline-block;
+}
+
+/* ── controls ── */
+.controls {
+  max-width: 1060px; margin: 0 auto; padding: 0 1.5rem 1.2rem;
+  display: flex; flex-direction: column; gap: .7rem;
+}
+.filters { display: flex; gap: .45rem; flex-wrap: wrap; justify-content: center; }
+.fbtn {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .03em;
+  border: 1px solid var(--glass-border); background: var(--glass);
+  backdrop-filter: blur(8px); color: var(--text-dim);
+  padding: .32rem .75rem; border-radius: 18px; cursor: pointer;
+  transition: all .18s; display: flex; align-items: center; gap: .4rem;
+}
+.fbtn i { width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: var(--c, var(--text-muted)); }
+.fbtn:hover { background: var(--glass-hover); color: var(--text); }
+.fbtn.on { border-color: var(--c, var(--text)); color: var(--text); background: var(--glass-hover); }
+.searchwrap { display: flex; justify-content: center; }
+.search {
+  font-family: var(--mono); font-size: 12px;
+  width: min(420px, 100%);
+  background: var(--glass); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px); border-radius: 10px;
+  padding: .5rem .9rem; color: var(--text); outline: none;
+  transition: border .2s;
+}
+.search:focus { border-color: rgba(0,0,0,.15); }
+.search::placeholder { color: var(--text-muted); }
+
+/* ── list ── */
+.container { max-width: 1060px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+.group-label {
+  font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text-muted);
+  display: flex; align-items: center; gap: .65rem;
+  margin: 1.6rem 0 .7rem;
+}
+.group-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+@media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: .95rem 1.1rem;
+  transition: all .2s;
+  border-left: 2.5px solid var(--sc, var(--border));
+}
+.card:hover { background: var(--glass-hover); border-color: rgba(0,0,0,.09); border-left-color: var(--sc, var(--border)); }
+.card.past { opacity: .55; }
+
+.card .head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+.card .name {
+  font-weight: 600; font-size: 16px; text-decoration: none;
+}
+.card .name:hover { color: var(--orange); }
+.card .name .yr { color: var(--text-muted); font-weight: 400; }
+.badge {
+  font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: .04em; padding: .1rem .42rem; border-radius: 5px;
+  background: rgba(0,0,0,.04); color: var(--text-muted); white-space: nowrap;
+}
+.badge.rank-a { color: var(--orange); background: rgba(216,90,48,.08); }
+.badge.rank-b { color: var(--blue); background: rgba(55,138,221,.08); }
+.badge.rank-c { color: var(--green); background: rgba(29,158,117,.08); }
+.badge.sub { color: var(--sc); background: color-mix(in srgb, var(--sc) 8%, transparent); }
+.badge.est { color: var(--purple); background: rgba(83,74,183,.08); }
+.badge.friendly { color: var(--gold); background: rgba(168,116,26,.09); }
+
+.card .full {
+  font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin: .1rem 0 .4rem;
+}
+.card .when {
+  display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .15rem;
+}
+.card .cd {
+  font-family: var(--mono); font-size: 15px; font-weight: 500; color: var(--green);
+}
+.card .cd.soon { color: var(--orange); }
+.card .cd.urgent { color: var(--red); }
+.card .cd.tbd, .card .cd.over { color: var(--text-muted); font-weight: 400; }
+.card .dl { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+.card .abs { font-family: var(--mono); font-size: 11px; color: var(--text-muted); margin-bottom: .15rem; }
+.card .meta { font-size: 12px; color: var(--text-dim); }
+.card .bci {
+  font-size: 12px; color: var(--text-dim); line-height: 1.55;
+  margin-top: .4rem; padding-top: .4rem;
+  border-top: 1px dashed rgba(0,0,0,.05);
+}
+.card .bci b { font-weight: 500; color: var(--text); }
+.card .note { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-top: .25rem; }
+
+.empty {
+  text-align: center; color: var(--text-muted); font-family: var(--mono);
+  font-size: 12px; padding: 3rem 0;
+}
+
+/* ── footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem; text-align: center;
+  font-size: 12px; color: var(--text-muted); line-height: 1.8;
+}
+.footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="./">🧠 BCI<span>·</span>Deadlines</a>
+  <span class="spacer"></span>
+  <a class="ext" href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Brain-Computer Interface · Conference Deadlines</div>
+  <h1>BCI 会议截稿日历</h1>
+  <div class="sub">面向 BCI / EEG / 脑信号研究者的会议截稿倒计时。覆盖机器学习、数据挖掘、神经计算、视觉多媒体、情感计算、信号处理、医工影像与神经工程八个方向。</div>
+  <div class="stats" id="stats"></div>
+</div>
+
+<div class="controls">
+  <div class="filters" id="filters"></div>
+  <div class="searchwrap">
+    <input class="search" id="search" type="search" placeholder="搜索会议名称 / 地点 / 关键词 …">
+  </div>
+</div>
+
+<div class="container" id="list"></div>
+
+<div class="footer">
+  数据人工核对于 2026-06-11 · 标注「预估」的截稿日为按往年规律推测,以官网 Call for Papers 为准<br>
+  分类参考 <a href="https://hci-deadlines.github.io/" target="_blank" rel="noopener">hci-deadlines</a> 与 <a href="https://ccfddl.com/" target="_blank" rel="noopener">ccfddl</a> 的组织方式 ·
+  数据文件: <a href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/blob/main/data/conferences.yml" target="_blank" rel="noopener">data/conferences.yml</a> · 欢迎 PR 修正
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script src="static/main.js"></script>
+</body>
+</html>
