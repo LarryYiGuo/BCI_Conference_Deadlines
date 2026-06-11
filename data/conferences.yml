@@ -14,8 +14,8 @@
 #   rank               CCF 等级,非 CCF 目录写 '非CCF'
 #   estimated          true = 官方未公布,按往年规律推测
 #   friendly           true = 硕士毕业友好(来自 venue 清单标注)
-#   bci                BCI 相关性一句话
-#   note               备注
+#   bci / bci_en       BCI 相关性一句话(中 / 英)
+#   note / note_en     备注(中 / 英)
 # ─────────────────────────────────────────────────────────────
 # 分类说明(按学科方向重新分类,替代原 Tier 影响力分级):
 #   ML  机器学习·AI 综合     DM  数据挖掘·信息检索
@@ -42,7 +42,9 @@
   estimated: false
   friendly: true
   bci: 审稿周期短,对国内硕士毕业很友好
+  bci_en: Short review cycle; very friendly for master's students
   note: Journal Track 截稿 6/20;每篇投稿须至少一位作者担任审稿人,否则 desk reject
+  note_en: Journal Track deadline Jun 20; each submission must name at least one author as a reviewer or risk desk rejection
 
 - id: aaai27
   title: AAAI
@@ -59,7 +61,9 @@
   rank: CCF-A
   estimated: false
   bci: 国内 BCI 圈活跃度高于 NeurIPS/ICLR——情感解码、跨被试 DA 稳定出口,吕宝粮/何晖光/潘纲组长期输出
+  bci_en: More active for Chinese BCI groups than NeurIPS/ICLR — steady outlet for emotion decoding & cross-subject DA (Lu, He, and Pan labs publish here regularly)
   note: 官方已公布(第 41 届)
+  note_en: Officially announced (41st edition)
 
 - id: iclr27
   title: ICLR
@@ -76,7 +80,9 @@
   rank: CCF-A
   estimated: true
   bci: EEG foundation model 主战场——LaBraM Spotlight 后 follow-up 密集聚集地(NeuroLM/CBraMod)
+  bci_en: Main battlefield for EEG foundation models — dense follow-ups gathered here after the LaBraM spotlight (NeuroLM, CBraMod)
   note: 官方确认北美西海岸举办;截稿按 2026 届规律推测
+  note_en: Officially confirmed for West Coast North America; deadline estimated from the ICLR 2026 pattern
 
 - id: aistats27
   title: AISTATS
@@ -93,7 +99,9 @@
   rank: CCF-C
   estimated: true
   bci: 理论性 / 概率推断方向适合
+  bci_en: Suited to theoretical / probabilistic-inference work
   note: 按 2026 届规律推测
+  note_en: Estimated from the 2026 cycle
 
 - id: ijcai27
   title: IJCAI
@@ -110,8 +118,9 @@
   rank: CCF-A
   estimated: true
   bci: BCI 主题碎片化但稳定——HBAI workshop 是 IJCAI 上 BCI 主题聚集地,对国内硕士相对友好
+  bci_en: BCI topics fragmented but steady — the HBAI workshop is the BCI hub at IJCAI; relatively friendly for master's students
   note: IJCAI-ECAI 2026 (Bremen) 截稿已过;按往年 1 月中旬规律推测
-
+  note_en: IJCAI-ECAI 2026 (Bremen) deadline passed; estimated from the usual mid-January pattern
 - id: icml27
   title: ICML
   year: 2027
@@ -127,7 +136,9 @@
   rank: CCF-A
   estimated: true
   bci: BCI 主题相对稀少但 2025 起转暖——何晖光组 EmoGrowth、刘泉影组同年双中
+  bci_en: BCI papers relatively rare but warming since 2025 — He lab's EmoGrowth and Liu lab both accepted the same year
   note: ICML 2026 (Seoul) 截稿已过;官方确认 2027 在南美,按往年 1 月下旬规律推测
+  note_en: ICML 2026 (Seoul) deadline passed; 2027 confirmed for South America, estimated from the usual late-January pattern
 
 - id: uai27
   title: UAI
@@ -144,7 +155,9 @@
   rank: CCF-B
   estimated: true
   bci: Bayesian methods、概率图模型主题适合
+  bci_en: Suited to Bayesian methods & probabilistic graphical models
   note: UAI 2026 (Amsterdam) 截稿已过;按往年 2 月下旬规律推测
+  note_en: UAI 2026 (Amsterdam) deadline passed; estimated from the usual late-February pattern
 
 - id: neurips27
   title: NeurIPS
@@ -161,7 +174,9 @@
   rank: CCF-A
   estimated: true
   bci: EEG/BCI foundation model 核心战场——Brant/PPi/BIOT/EEG2Video 都从这里走出
+  bci_en: Core battlefield for EEG/BCI foundation models — Brant, PPi, BIOT and EEG2Video all debuted here
   note: NeurIPS 2026 (Sydney, Dec 6–12) 截稿已过;官方确认 2027 在欧洲,按往年 5 月初规律推测
+  note_en: NeurIPS 2026 (Sydney, Dec 6–12) deadline passed; 2027 confirmed for Europe, estimated from the usual early-May pattern
 
 # ════════ DM · 数据挖掘 / 信息检索 ════════
 
@@ -180,7 +195,9 @@
   rank: CCF-A
   estimated: true
   bci: 浙大杨洋组 BrainNet/MBrain/Brant-X 主场——脑信号当 multi-channel time series + 临床应用很适合
+  bci_en: Home turf of ZJU Yang Yang lab (BrainNet, MBrain, Brant-X) — brain signals as multi-channel time series + clinical applications fit well
   note: 每年两个 cycle(8 月 / 次年 2 月);按 KDD 2026 Cycle 1 规律推测
+  note_en: Two cycles per year (Aug / following Feb); estimated from the KDD 2026 Cycle 1 pattern
 
 - id: www27
   title: WWW
@@ -191,13 +208,15 @@
   abstract_deadline: '2026-09-30 23:59'
   tz: '-12:00'
   tz_label: AoE
-  date: 2027
+  date: '2027'
   place: Dublin, Ireland
   sub: DM
   rank: CCF-A
   estimated: true
   bci: BCI 主题罕见,healthcare data + multimodal 方向偶有 EEG/biosignal 工作
+  bci_en: BCI topics rare; occasional EEG/biosignal work via healthcare-data + multimodal tracks
   note: 举办地 Dublin 已官宣;截稿按 WWW 2026 规律推测
+  note_en: Dublin officially announced; deadline estimated from the WWW 2026 pattern
 
 - id: sdm27
   title: SDM
@@ -214,7 +233,9 @@
   rank: CCF-B
   estimated: true
   bci: 中稿率比 KDD 高得多,脑信号时间序列主题合适
+  bci_en: Much higher acceptance rate than KDD; suited to brain-signal time-series work
   note: 按往年 10 月上中旬规律推测
+  note_en: Estimated from the usual early/mid-October pattern
 
 - id: pakdd27
   title: PAKDD
@@ -231,7 +252,9 @@
   rank: CCF-C
   estimated: true
   bci: 亚太知识发现大会,亚洲圈认可度高
+  bci_en: Pacific-Asia KDD; well regarded across Asia
   note: 按 PAKDD 2026 规律推测(2026 届在香港举办)
+  note_en: Estimated from the PAKDD 2026 pattern (2026 edition held in Hong Kong)
 
 - id: sigir27
   title: SIGIR
@@ -248,7 +271,9 @@
   rank: CCF-A
   estimated: true
   bci: BCI 主题罕见,brain-image retrieval/alignment 工作偶尔出现
+  bci_en: BCI topics rare; occasional brain-image retrieval / alignment work
   note: 50 周年届,举办地已官宣;截稿按 2026 届规律推测
+  note_en: 50th-anniversary edition, venue announced; deadline estimated from the 2026 cycle
 
 - id: ecmlpkdd27
   title: ECML PKDD
@@ -266,7 +291,9 @@
   estimated: true
   friendly: true
   bci: 欧洲版 KDD,中稿率更高——EEG 时间序列/异常检测主题合适,硕士毕业友好选项
+  bci_en: The European KDD with a higher acceptance rate — EEG time-series / anomaly detection fits; a friendly option for master's theses
   note: 2026 届 (Naples) 截稿已过;另有 Journal Track 滚动投稿,预计 2026 秋再开
+  note_en: 2026 edition (Naples) deadline passed; rolling Journal Track expected to reopen fall 2026
 
 - id: cikm27
   title: CIKM
@@ -283,7 +310,9 @@
   rank: CCF-B
   estimated: true
   bci: EEG-text alignment、brain-language 类工作可投,中稿率较友好
+  bci_en: EEG-text alignment & brain-language work fits; fairly friendly acceptance
   note: CIKM 2026 (Rome, Nov 7–11) 截稿已过;2027 届预计 2027 年 5 月截稿
+  note_en: CIKM 2026 (Rome, Nov 7–11) deadline passed; 2027 deadline expected ~May 2027
 
 - id: icdm27
   title: ICDM
@@ -300,7 +329,9 @@
   rank: CCF-B
   estimated: true
   bci: 脑信号 time series 主题合适
+  bci_en: Suited to brain-signal time-series work
   note: ICDM 2026 (Shenyang, Nov 12–15) 截稿 6/6 刚过;2027 届预计 2027 年 6 月初截稿
+  note_en: ICDM 2026 (Shenyang, Nov 12–15) deadline just passed (Jun 6); 2027 deadline expected ~early June 2027
 
 # ════════ NC · 神经计算 / 神经网络 ════════
 
@@ -320,7 +351,9 @@
   estimated: false
   friendly: true
   bci: EEG/BCI 历史最久的 venue 之一,每年有专门 BCI track——硕士毕业最友好之一
+  bci_en: One of the longest-running EEG/BCI venues with a dedicated BCI track every year — among the friendliest for master's theses
   note: 官网已公布,notification 2027-03-15;6 页 IEEE 双栏
+  note_en: Officially announced, notification 2027-03-15; 6-page IEEE double column
 
 - id: iconip27
   title: ICONIP
@@ -338,7 +371,9 @@
   estimated: true
   friendly: true
   bci: 吕宝粮组每年 5–10 篇稳定输出地,BCI 圈认可度高于 CCF 等级;LNCS 出版
+  bci_en: Steady outlet of the Lu Bao-Liang lab (5–10 papers/yr); regarded above its CCF rank in the BCI community; LNCS proceedings
   note: ICONIP 2026 (Melbourne, Nov 23–27) 截稿 5/31 已过;2027 届预计 2027 年 5 月截稿
+  note_en: ICONIP 2026 (Melbourne, Nov 23–27) deadline passed (May 31); 2027 deadline expected ~May 2027
 
 # ════════ CV · 计算机视觉 / 多媒体 ════════
 
@@ -357,7 +392,9 @@
   rank: CCF-C
   estimated: false
   bci: CVPR 系但中稿率明显友好,EEG visual decoding 类可投
+  bci_en: CVPR-affiliated with notably friendlier acceptance; EEG visual decoding work fits
   note: 两轮投稿——Round 1 注册 6/19 / 提交 6/26;Round 2 注册 8/21 / 提交 8/28
+  note_en: Two rounds — R1 register Jun 19 / submit Jun 26; R2 register Aug 21 / submit Aug 28
 
 - id: cvpr27
   title: CVPR
@@ -374,7 +411,9 @@
   rank: CCF-A
   estimated: true
   bci: EEG/fMRI visual decoding 重镇——Spampinato 2017 是该方向"原点",MinD-Vis 等都在这一脉
+  bci_en: Stronghold of EEG/fMRI visual decoding — Spampinato 2017 is the field's origin; MinD-Vis et al. follow this line
   note: 地点 Seattle 已由 CVF 确认;截稿按 2026 届规律推测
+  note_en: Seattle confirmed by CVF; deadline estimated from the 2026 cycle
 
 - id: iccv27
   title: ICCV
@@ -391,7 +430,9 @@
   rank: CCF-A
   estimated: true
   bci: 与 CVPR 同为 visual decoding 主战场(奇数年举办)
+  bci_en: Alongside CVPR, a main battlefield for visual decoding (held in odd years)
   note: 地点香港、10 月初会期已确认;截稿按 ICCV 2025 规律推测
+  note_en: Hong Kong & early-October dates confirmed; deadline estimated from the ICCV 2025 pattern
 
 - id: icip27
   title: ICIP
@@ -409,7 +450,9 @@
   estimated: true
   friendly: true
   bci: EEG visual decoding 类合适,硕士毕业推荐
+  bci_en: EEG visual decoding work fits; recommended for master's theses
   note: ICIP 2026 (Tampere) 截稿已过;2027 已确认新加坡,按往届提前约 7 个月规律推测
+  note_en: ICIP 2026 (Tampere) deadline passed; Singapore confirmed for 2027, estimated from the usual ~7-months-ahead pattern
 
 - id: mmasia26
   title: MM Asia
@@ -426,7 +469,9 @@
   rank: CCF-C
   estimated: true
   bci: ACM MM 亚洲分会,中稿率友好
+  bci_en: Asian offshoot of ACM MM; friendly acceptance
   note: 2026 届官网未上线;据指导委员会文件投稿截止目标定在 2026 年 7 月中旬
+  note_en: 2026 site not yet online; steering documents target a mid-July 2026 deadline
 
 - id: acmmm27
   title: ACM MM
@@ -443,7 +488,9 @@
   rank: CCF-A
   estimated: true
   bci: 国内 BCI 圈最稳定的 CCF-A 出口——吕宝粮/何晖光/刘泉影组常驻,多模态情感+脑信号视觉重建天然 venue
+  bci_en: The most stable CCF-A outlet for Chinese BCI groups — Lu, He and Liu labs are regulars; a natural venue for multimodal emotion + brain-to-image reconstruction
   note: ACM MM 2026 (Rio, Nov 10–14) 截稿 4/1 已过;2027 届预计 2027 年 4 月截稿
+  note_en: ACM MM 2026 (Rio, Nov 10–14) deadline passed (Apr 1); 2027 deadline expected ~April 2027
 
 - id: bmvc27
   title: BMVC
@@ -460,7 +507,9 @@
   rank: CCF-C
   estimated: true
   bci: 英国机器视觉会议,CVPR 系中间层
+  bci_en: British machine vision conference; mid-tier of the CVPR family
   note: BMVC 2026 (Lancaster, Nov 23–26) 截稿 5/29 刚过;2027 届预计 2027 年 5 月截稿
+  note_en: BMVC 2026 (Lancaster, Nov 23–26) deadline just passed (May 29); 2027 deadline expected ~May 2027
 
 - id: icme27
   title: ICME
@@ -478,7 +527,9 @@
   estimated: true
   friendly: true
   bci: 多模态、affective computing 主题合适——何晖光组拿过 ICME 2019 Best Paper Runner-Up
+  bci_en: Multimodal & affective computing fit — the He Huiguang lab won ICME 2019 Best Paper Runner-Up
   note: ICME 2026 (Bangkok, Jul 5–9) 截稿已过;2027 届预计 2026 年 12 月截稿
+  note_en: ICME 2026 (Bangkok, Jul 5–9) deadline passed; 2027 deadline expected ~December 2026
 
 - id: eccv28
   title: ECCV
@@ -495,7 +546,9 @@
   rank: CCF-A
   estimated: true
   bci: visual decoding 主战场之一(偶数年举办)——UniBrain (ECCV 2024) 在这一脉
+  bci_en: One of the visual-decoding battlefields (held in even years) — UniBrain (ECCV 2024) is in this line
   note: ECCV 2026 (Malmö, Sep 8–12) 截稿 3/5 已过;2028 届预计 2028 年 3 月截稿
+  note_en: ECCV 2026 (Malmö, Sep 8–12) deadline passed (Mar 5); 2028 deadline expected ~March 2028
 
 # ════════ AC · 情感计算 / 多模态交互 ════════
 
@@ -514,7 +567,9 @@
   rank: CCF-C
   estimated: true
   bci: 情感计算专门会议——EEG 情感识别最专业出口之一
+  bci_en: Dedicated affective-computing conference — one of the most specialized outlets for EEG emotion recognition
   note: ACII 2026 (Puebla) 主 track 截稿已过,Demo Fast Track 6/20 仍可投;2027 届预计 2027 年 3–4 月截稿
+  note_en: ACII 2026 (Puebla) main track closed; Demo Fast Track open until Jun 20; 2027 deadline expected ~Mar–Apr 2027
 
 - id: icmi27
   title: ICMI
@@ -531,7 +586,9 @@
   rank: CCF-B
   estimated: true
   bci: 多模态交互——BCI 作为多模态信号源主题合适
+  bci_en: Multimodal interaction — BCI as a multimodal signal source fits well
   note: ICMI 2026 (Napoli, Oct 5–9) 主 track 截稿已过;2027 届预计 2027 年 4 月截稿
+  note_en: ICMI 2026 (Napoli, Oct 5–9) main track closed; 2027 deadline expected ~April 2027
 
 # ════════ SP · 信号处理 ════════
 
@@ -551,7 +608,9 @@
   estimated: false
   friendly: true
   bci: EEG 处理类工作最多的 venue 之一——吕宝粮组每年 4–8 篇;4 页短文,硕士毕业利器
+  bci_en: One of the highest-volume venues for EEG processing — the Lu lab publishes 4–8 per year; 4-page short papers, a master's-thesis workhorse
   note: 官方 CFP 已公布
+  note_en: Official CFP published
 
 - id: eusipco27
   title: EUSIPCO
@@ -568,7 +627,9 @@
   rank: CCF-C
   estimated: true
   bci: 欧洲信号处理大会,EEG 信号处理工作合适
+  bci_en: European signal processing conference; EEG signal-processing work fits
   note: 2026 届 (Bruges) 截稿已过;2027 届截稿未公布,历年在 2 月上中旬
+  note_en: 2026 edition (Bruges) deadline passed; 2027 deadline TBA, historically early/mid-February
 
 # ════════ BME · 医工 / 生物医学影像 ════════
 
@@ -588,7 +649,9 @@
   estimated: true
   friendly: true
   bci: 临床应用导向,吕宝粮组每年都有投稿——硕士毕业友好
+  bci_en: Clinically oriented; the Lu lab submits every year — master's friendly
   note: 截稿日期来自聚合站,以官网为准;notification 约 9/25
+  note_en: Deadline taken from aggregator sites, confirm on the official site; notification ~Sep 25
 
 - id: embc27
   title: EMBC
@@ -606,7 +669,9 @@
   estimated: true
   friendly: true
   bci: 医工领域最大会议,EEG/BCI 的"自家会议"——4 页短文,中稿率 ~50%,硕士毕业最稳 venue 之一
+  bci_en: The largest biomedical-engineering conference and the BCI community's home turf — 4-page papers, ~50% acceptance, one of the safest master's venues
   note: EMBC 2026 (Toronto, Jul) 各轮截稿已过;2027 届(第 49 届)预计 2026 年 11 月截稿
+  note_en: EMBC 2026 (Toronto, Jul) rounds closed; 2027 (49th) deadline expected ~November 2026
 
 - id: isbi27
   title: ISBI
@@ -623,7 +688,9 @@
   rank: CCF-C
   estimated: true
   bci: 医学影像,fMRI 主题合适
+  bci_en: Biomedical imaging; fMRI work fits
   note: 会期/地点已定,截稿未公布;历年在 10 月底–11 月初
+  note_en: Dates/venue set, deadline TBA; historically late Oct – early Nov
 
 - id: miccai27
   title: MICCAI
@@ -640,7 +707,9 @@
   rank: CCF-B
   estimated: true
   bci: 医学影像顶会,fMRI 主题特别合适——何晖光组 Graph Emotion Decoding (2022) 在这
+  bci_en: Top medical-imaging venue; fMRI especially fits — the He lab's Graph Emotion Decoding (2022) was published here
   note: MICCAI 2026 (Strasbourg, Sep 27 – Oct 1) 截稿 2/26 已过;2027 届预计 2027 年 2 月截稿
+  note_en: MICCAI 2026 (Strasbourg, Sep 27 – Oct 1) deadline passed (Feb 26); 2027 deadline expected ~February 2027
 
 - id: smc27
   title: IEEE SMC
@@ -657,7 +726,9 @@
   rank: CCF-C
   estimated: true
   bci: IEEE 控制系统与人因工程会议,有 Brain-Machine Interface 专题,BCI 应用导向工作合适
+  bci_en: IEEE systems & human-factors conference with a Brain-Machine Interface track; application-oriented BCI work fits
   note: SMC 2026 (Bellevue, Oct 4–7) 截稿已过;2027 届预计 2027 年 4 月截稿
+  note_en: SMC 2026 (Bellevue, Oct 4–7) deadline passed; 2027 deadline expected ~April 2027
 
 # ════════ BCI · 神经工程 / BCI / 神经科学 ════════
 
@@ -676,7 +747,9 @@
   rank: 非CCF
   estimated: false
   bci: 北美神经科学学会年会(海报+abstract)——BCI 机理研究适合在这里露面
+  bci_en: North American neuroscience annual meeting (poster + abstract) — good exposure for mechanistic BCI research
   note: abstract 截稿已延期至 6/11;Late-breaking 窗口 9/8–9/15
+  note_en: Abstract deadline extended to Jun 11; late-breaking window Sep 8–15
 
 - id: ner27
   title: IEEE NER
@@ -693,7 +766,9 @@
   rank: 非CCF
   estimated: true
   bci: 神经工程旗舰(两年一届,奇数年)——BCI"圈内顶会",评审都是 BCI 专家,临床导向
+  bci_en: Flagship of neural engineering (biennial, odd years) — the BCI insiders' top venue, clinically oriented, reviewed by BCI experts
   note: 第 13 届已宣布在欧洲举办,城市/日期待定;历年截稿在前一年 11–12 月
+  note_en: 13th edition announced for Europe, city/dates TBA; deadlines historically Nov–Dec of the prior year
 
 - id: ohbm27
   title: OHBM
@@ -710,7 +785,9 @@
   rank: 非CCF
   estimated: true
   bci: 人脑图谱大会——fMRI/MEG/EEG 神经影像国际旗舰,何晖光/刘泉影组多次受邀报告
+  bci_en: The human brain mapping meeting — international flagship for fMRI/MEG/EEG neuroimaging; He and Liu labs have given invited talks
   note: 2027 地点 Toronto 已确认;abstract 截稿按往年规律推测在 12 月中旬
+  note_en: Toronto confirmed for 2027; abstract deadline estimated mid-December per past years
 
 - id: bcimeeting27
   title: BCI Meeting
@@ -727,4 +804,6 @@
   rank: 非CCF
   estimated: true
   bci: 国际 BCI 学会两年一届主会——BCI 圈最专业的会议
+  bci_en: The BCI Society's biennial main meeting — the most specialized conference in the field
   note: 第 12 届;call for abstracts 2026-11-09 开放,notification 约 2027-03-03
+  note_en: 12th edition; call for abstracts opens 2026-11-09, notification ~2027-03-03
