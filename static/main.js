@@ -12,6 +12,14 @@
     if (/CCF-B/.test(c.rank)) return base;
     return `color-mix(in srgb, ${base} 62%, #fff 38%)`;
   }
+  // journals: shade by CAS quartile (中科院分区) — 1区 darkest, then 2区, else light
+  function journalShade(j) {
+    const base = THEME_COLOR[THEME_OF[j.sub]] || '#3a3a38';
+    const cas = String(j.cas || '');
+    if (/1\s*区/.test(cas)) return `color-mix(in srgb, ${base} 82%, #000 18%)`;
+    if (/2\s*区/.test(cas)) return base;
+    return `color-mix(in srgb, ${base} 62%, #fff 38%)`;
+  }
 
   // ── per-sub icons (white fill, 24x24) ──
   const ICONS = {
@@ -55,8 +63,21 @@
       ics: '＋ICS',
       today: '今天',
       empty: '没有匹配的会议',
+      tabConf: '会议',
+      tabJournal: '期刊',
+      jHeroTitle: '脑机接口<br>可投<em>期刊</em>',
+      jUpcoming: '滚动投稿期刊',
+      jStatJournals: '收录期刊',
+      jStatOA: '开放获取',
+      jStatTop: '一区 / Top',
+      jSearchPh: '搜索期刊 / 出版商 …',
+      ifK: '影响因子',
+      rolling: '滚动投稿 · 全年可投',
+      jEmpty: '没有匹配的期刊',
       footer: `数据人工核对于 2026-06-12,并由 GitHub Action 每周自动同步 <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl</a> 数据源 · 标注「预估」为按往年规律推测,以官网 CFP 为准<br>
         会议无 JCR 影响因子,引用指标采用 Google Scholar h5-index · 分级:CCF(中国计算机学会)/ CORE(国际)`,
+      jFooter: `期刊为滚动投稿、全年可投,无截稿日 · 影响因子(IF)为最新 JCR 数据,中科院分区为 2025 升级版,以 letpub / 官网为准<br>
+        分级:CCF 推荐期刊目录(中国)/ 中科院分区 / JCR 分区 · 颜色越深代表分区越高`,
       subs: {
         ML: 'ML 机器学习', DM: 'DM 数据挖掘', NC: 'NC 神经计算', CV: 'CV 视觉多媒体',
         AC: 'AC 情感计算', SP: 'SP 信号处理', BME: 'BME 医工影像', BCI: 'BCI 神经工程',
@@ -90,8 +111,21 @@
       ics: '＋ICS',
       today: 'today',
       empty: 'No matching conferences',
+      tabConf: 'Conferences',
+      tabJournal: 'Journals',
+      jHeroTitle: 'Brain-Computer Interface<br><em>Journals</em>',
+      jUpcoming: 'Rolling-submission journals',
+      jStatJournals: 'journals',
+      jStatOA: 'open access',
+      jStatTop: 'Q1 / Top-tier',
+      jSearchPh: 'Search journal / publisher …',
+      ifK: 'impact factor',
+      rolling: 'Rolling submission · open year-round',
+      jEmpty: 'No matching journals',
       footer: `Dates manually verified on 2026-06-12 and auto-synced weekly from <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl</a> via GitHub Actions · “Est.” = projected from past cycles, confirm with the official CFP<br>
         Conferences have no JCR impact factor; we report the Google Scholar h5-index instead · Rank: CORE (international)`,
+      jFooter: `Journals use rolling submission (open year-round, no deadline) · Impact factor and JCR quartile are the latest Clarivate JCR — confirm on the journal site<br>
+        Metrics: JCR quartile · impact factor · darker color = higher tier`,
       subs: {
         ML: 'ML Machine Learning', DM: 'DM Data Mining', NC: 'NC Neural Comp.', CV: 'CV Vision & MM',
         AC: 'AC Affective', SP: 'SP Signal Proc.', BME: 'BME BioMed', BCI: 'BCI Neural Eng.',
@@ -109,9 +143,13 @@
     heroSub: document.getElementById('heroSub'),
     footer: document.getElementById('footerText'),
     langBtn: document.getElementById('langBtn'),
+    mtabConf: document.getElementById('mtabConf'),
+    mtabJournal: document.getElementById('mtabJournal'),
   };
 
   let confs = [];
+  let journals = null;       // lazy-loaded
+  let mode = 'conf';         // 'conf' | 'journal'
   let active = new Set();
   let query = '';
   let lang = 'zh';
@@ -207,12 +245,16 @@
   // ── chrome ──
   function renderChrome() {
     document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
-    els.heroTitle.innerHTML = t().heroTitle;
-    els.heroSub.textContent = t().heroSub;
-    els.heroSub.style.display = t().heroSub ? '' : 'none';
-    els.search.placeholder = t().searchPh;
-    els.footer.innerHTML = t().footer;
+    els.heroTitle.innerHTML = mode === 'journal' ? t().jHeroTitle : t().heroTitle;
+    els.heroSub.textContent = mode === 'journal' ? '' : t().heroSub;
+    els.heroSub.style.display = els.heroSub.textContent ? '' : 'none';
+    els.search.placeholder = mode === 'journal' ? t().jSearchPh : t().searchPh;
+    els.footer.innerHTML = mode === 'journal' ? t().jFooter : t().footer;
     els.langBtn.textContent = t().langBtn;
+    els.mtabConf.textContent = t().tabConf;
+    els.mtabJournal.textContent = t().tabJournal;
+    els.mtabConf.classList.toggle('on', mode === 'conf');
+    els.mtabJournal.classList.toggle('on', mode === 'journal');
   }
   function renderFilters() {
     els.filters.innerHTML = `<span class="lbl">${t().themeLbl}</span>`;
@@ -330,6 +372,40 @@
     </div>`;
   }
 
+  // ── journal card (rolling submission — no countdown / timeline / calendar) ──
+  function journalCardHTML(j) {
+    const shade = journalShade(j);
+    // CCF (期刊目录) and CAS (中科院分区) are China-specific — Chinese mode only.
+    // English mode shows only the international JCR quartile.
+    const ccfTxt = (!j.ccf || j.ccf === 'none' || j.ccf === '非CCF') ? '' : (/^CCF/.test(j.ccf) ? j.ccf : `CCF-${j.ccf}`);
+    const metrics = [
+      lang === 'zh' && ccfTxt ? esc(ccfTxt) : '',
+      (lang === 'zh' && j.cas) ? esc(`中科院${j.cas}`) : '',
+      j.jcr ? esc(j.jcr) : '',
+    ].filter(Boolean).join('<span class="sep">·</span>');
+    const note = field(j, 'note');
+    const ifVal = (j.impact_factor != null && j.impact_factor !== '') ? Number(j.impact_factor).toFixed(1) : '—';
+
+    return `<div class="evt">
+      <div class="evt-left">
+        <div class="evt-theme"><span class="dot" style="background:${shade}"></span>${esc((t().subs[j.sub] || j.sub).split(' ')[0])}</div>
+        <div class="jrnl-if"><div class="v" style="--tc:${shade}">${esc(ifVal)}</div><div class="k">${t().ifK} · IF</div></div>
+        <div class="jrnl-rolling">${t().rolling}</div>
+      </div>
+      <div class="evt-right">
+        <div class="evt-name">
+          ${icon(j.sub, shade)}
+          <a class="nm" href="${esc(j.link)}" target="_blank" rel="noopener">${esc(j.title)}</a>
+          ${j.oa ? `<span class="jrnl-oa">OA</span>` : ''}
+        </div>
+        <div class="evt-full">${esc(j.full_name)}</div>
+        <div class="evt-metrics">${metrics}</div>
+        <div class="jrnl-pub">${esc(j.publisher || '')}</div>
+        ${note ? `<div class="evt-note">${esc(note)}</div>` : ''}
+      </div>
+    </div>`;
+  }
+
   // ── render ──
   function visible() {
     const q = query.toLowerCase();
@@ -340,7 +416,32 @@
         .join(' ').toLowerCase().includes(q);
     });
   }
+  function visibleJournals() {
+    const q = query.toLowerCase();
+    return (journals || []).filter(j => {
+      if (active.size && !active.has(j.sub)) return false;
+      if (!q) return true;
+      return [j.title, j.full_name, j.publisher, j.note, j.note_en, j.sub, j.cas, j.jcr]
+        .join(' ').toLowerCase().includes(q);
+    });
+  }
+  function renderJournals() {
+    const rows = visibleJournals().slice().sort((a, b) => (b.impact_factor || 0) - (a.impact_factor || 0));
+    let html = '';
+    if (rows.length) html += `<div class="group-head">${t().jUpcoming} <span class="cnt">${rows.length}</span></div>${rows.map(journalCardHTML).join('')}`;
+    else html = `<div class="empty">${journals ? t().jEmpty : '…'}</div>`;
+    els.list.innerHTML = html;
+
+    const total = (journals || []).length;
+    const oa = (journals || []).filter(j => j.oa).length;
+    const top = (journals || []).filter(j => /1\s*区/.test(String(j.cas)) || /Top/i.test(String(j.cas))).length;
+    els.stats.innerHTML = `
+      <div class="stat"><div class="n">${total}</div><div class="l">${t().jStatJournals}</div></div>
+      <div class="stat"><div class="n">${top}</div><div class="l">${t().jStatTop}</div></div>
+      <div class="stat"><div class="n">${oa}</div><div class="l">${t().jStatOA}</div></div>`;
+  }
   function render() {
+    if (mode === 'journal') return renderJournals();
     const now = Date.now();
     const rows = visible();
     const upcoming = [], tbd = [], past = [];
@@ -397,6 +498,24 @@
     langExplicit = true;
     saveState(); renderChrome(); renderFilters(); render();
   });
+
+  // mode tabs (conferences / journals)
+  function setMode(m) {
+    if (m === mode) return;
+    mode = m;
+    window.scrollTo(0, 0);
+    renderChrome();
+    if (mode === 'journal' && !journals) {
+      els.list.innerHTML = `<div class="empty">…</div>`;
+      fetch('data/journals.yml', { cache: 'no-cache' })
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(txt => { journals = jsyaml.load(txt) || []; render(); })
+        .catch(err => { els.list.innerHTML = `<div class="empty">Failed to load journals: ${esc(err.message)}</div>`; });
+    } else render();
+  }
+  els.mtabConf.addEventListener('click', () => setMode('conf'));
+  els.mtabJournal.addEventListener('click', () => setMode('journal'));
+
   detectLangByIP();
 
   fetch('data/conferences.yml', { cache: 'no-cache' })

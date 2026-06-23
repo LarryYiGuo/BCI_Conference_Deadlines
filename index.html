@@ -30,6 +30,11 @@ a{color:inherit}
 .nav-row1{display:flex;gap:1.2rem;align-items:center}
 .brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:500}
 .brand em{font-style:normal;color:var(--orange)}
+.modetabs{display:inline-flex;border:1px solid var(--hair);margin-left:.4rem}
+.mtab{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);background:none;border:none;padding:.3rem .7rem;cursor:pointer;transition:all .15s;white-space:nowrap}
+.mtab+.mtab{border-left:1px solid var(--hair)}
+.mtab:hover{color:var(--ink)}
+.mtab.on{background:var(--ink);color:var(--bg)}
 .nav .spacer{flex:1}
 .search{font-family:var(--mono);font-size:.7rem;width:min(220px,32vw);background:var(--bg);border:1px solid var(--hair);padding:.32rem .6rem;color:var(--ink);outline:none;transition:border .15s}
 .search:focus{border-color:var(--ink-muted)}
@@ -125,6 +130,15 @@ a{color:inherit}
 .evt-meta .sep{color:var(--hair);margin:0 .7rem}
 .evt-note{font-size:.78rem;color:var(--ink-muted);margin-top:.5rem;line-height:1.6;max-width:62ch}
 
+/* journal rows */
+.jrnl-if{margin-top:1rem}
+.jrnl-if .v{font-family:var(--serif);font-weight:900;font-size:1.9rem;line-height:1;letter-spacing:-.02em;color:var(--tc,var(--ink))}
+.jrnl-if .k{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-top:.4rem}
+.jrnl-rolling{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;color:var(--green);display:flex;align-items:center;gap:.4rem;margin-top:.9rem}
+.jrnl-rolling::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green)}
+.jrnl-pub{font-family:var(--mono);font-size:.62rem;letter-spacing:.03em;color:var(--ink-muted);margin-top:.9rem}
+.jrnl-oa{font-family:var(--mono);font-size:.56rem;letter-spacing:.05em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);padding:.04rem .35rem;border-radius:2px;margin-left:.4rem}
+
 .empty{font-family:var(--mono);font-size:.74rem;color:var(--ink-muted);padding:3rem 0;text-align:center}
 
 /* footer */
@@ -145,6 +159,10 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
 <nav class="nav"><div class="nav-in">
   <div class="nav-row1">
     <a class="brand" href="./">🧠 BCI<em>·</em>Deadlines</a>
+    <div class="modetabs" id="modetabs">
+      <button class="mtab on" data-mode="conf" id="mtabConf"></button>
+      <button class="mtab" data-mode="journal" id="mtabJournal"></button>
+    </div>
     <span class="spacer"></span>
     <input class="search" id="search" type="search" placeholder="">
     <button class="tool" id="langBtn">EN</button>
@@ -169,6 +187,6 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-<script src="static/main.js?v=20260612-4"></script>
+<script src="static/main.js?v=20260612-6"></script>
 </body>
 </html>

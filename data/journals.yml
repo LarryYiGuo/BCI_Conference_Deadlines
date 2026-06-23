@@ -1,0 +1,761 @@
+# BCI Journals · 期刊数据文件 / data file
+# ─────────────────────────────────────────────────────────────
+# 滚动投稿期刊(全年可投,无截稿日)。字段 / fields:
+#   title / full_name  期刊简称 / 全名
+#   publisher          出版商
+#   link               官网 URL
+#   sub                方向: ML|DM|NC|CV|AC|SP|BME|BCI(沿用会议主题色)
+#   ccf                CCF 推荐期刊目录等级(中国),none = 不在目录
+#   cas                中科院分区(2025 升级版),如 1区 Top / 2区 / 3区 / 4区
+#   jcr                JCR 分区 Q1–Q4
+#   impact_factor      最新 JCR 影响因子(2024 JCR)
+#   oa                 true = 完全开放获取(收 APC)
+#   note / note_en     客观定位 + BCI/EEG 相关性(中 / 英)
+# ─────────────────────────────────────────────────────────────
+# 数据由多智能体并行核查 + 低置信度二次核实,以 letpub / 官网为准。
+# 影响因子与分区逐年变动,投稿前请复核。
+# ─────────────────────────────────────────────────────────────
+
+# ════════ ML · 机器学习 / AI 综合 ════════
+
+- id: naturemachineintel
+  title: Nature Machine Intelligence
+  full_name: Nature Machine Intelligence
+  publisher: Nature
+  link: 'https://www.nature.com/natmachintell/'
+  sub: ML
+  ccf: none
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 18.8
+  oa: false
+  note: Nature 子刊,机器学习/AI 交叉旗舰,偏方法创新与跨学科影响;神经解码、可解释脑机接口、神经科学+AI 交叉的高显示度成果常见于此。未列入 CCF 目录。IF 各源有 18.8 与 23.9 两说。
+  note_en: Nature ML/AI flagship emphasizing methodological novelty and cross-disciplinary impact; common home for high-visibility neural decoding, interpretable BCI and neuroscience-AI work. Not in CCF list.
+
+- id: informationfusion
+  title: Information Fusion
+  full_name: Information Fusion
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/information-fusion'
+  sub: ML
+  ccf: B
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 15.5
+  oa: false
+  note: 多源信息融合顶刊,超高影响因子;多模态融合(EEG+其他生理/影像信号)BCI 研究的高端去处。
+  note_en: Top multi-source information-fusion journal with very high IF; premium venue for multimodal-fusion BCI work (EEG combined with other physiological/imaging signals).
+
+- id: patternrecognition
+  title: Pattern Recognition
+  full_name: Pattern Recognition
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/pattern-recognition'
+  sub: ML
+  ccf: B
+  cas: 1区
+  jcr: Q1
+  impact_factor: 7.6
+  oa: false
+  note: 模式识别与机器学习老牌旗舰刊,EEG/BCI 中常见特征提取与分类方法类工作的去处。
+  note_en: Flagship pattern-recognition and ML journal; a common venue for EEG/BCI feature-extraction and classification methodology work.
+
+- id: knowledgebasedsyst
+  title: Knowledge-Based Systems
+  full_name: Knowledge-Based Systems
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/knowledge-based-systems'
+  sub: ML
+  ccf: C
+  cas: 1区
+  jcr: Q1
+  impact_factor: 7.6
+  oa: false
+  note: 知识系统/智能方法应用刊,机器学习应用类论文常见去处,可承载 EEG/BCI 应用方法工作。
+  note_en: Knowledge-systems and applied-intelligence journal; frequent venue for applied ML, able to host EEG/BCI applied-methods work.
+
+- id: expertsystemswitha
+  title: Expert Systems with Applications
+  full_name: Expert Systems with Applications
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/expert-systems-with-applications'
+  sub: ML
+  ccf: C
+  cas: 1区
+  jcr: Q1
+  impact_factor: 7.5
+  oa: false
+  note: 应用型智能系统大刊,发文量大,适合 EEG/BCI 系统与应用导向的实证工作。
+  note_en: Large applied intelligent-systems journal with high output; fits application-oriented EEG/BCI system and empirical work.
+
+- id: informationscience
+  title: Information Sciences
+  full_name: Information Sciences
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/information-sciences'
+  sub: ML
+  ccf: B
+  cas: 1区
+  jcr: Q1
+  impact_factor: 6.8
+  oa: false
+  note: 宽口径信息科学/智能信息处理刊,收录机器学习与数据建模方法,可承载 EEG 信号建模类研究。
+  note_en: Broad information-science / intelligent information processing journal covering ML and data-modeling methods; can host EEG signal-modeling research.
+
+- id: appliedsoftcomputi
+  title: Applied Soft Computing
+  full_name: Applied Soft Computing
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/applied-soft-computing'
+  sub: ML
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 6.6
+  oa: false
+  note: 软计算(模糊/进化/神经)应用刊,未列入 CCF 目录;可承载 EEG 信号智能优化与分类应用。
+  note_en: Soft-computing (fuzzy/evolutionary/neural) applications journal, not in the CCF catalog; can host EEG intelligent-optimization and classification applications.
+
+- id: jmlr
+  title: JMLR
+  full_name: Journal of Machine Learning Research
+  publisher: JMLR (MIT/Microtome)
+  link: 'https://www.jmlr.org/'
+  sub: ML
+  ccf: A
+  cas: 4区
+  jcr: Q2
+  impact_factor: 5.2
+  oa: true
+  note: 机器学习理论与算法权威开放获取刊,声誉远高于其偏低的 IF/中科院分区;BCI 中的核心 ML 方法学(核方法、概率模型、表征学习)在此发表。中科院分区由 3 区降至 4 区。
+  note_en: Authoritative open-access ML theory/algorithms journal; reputation far exceeds its low IF/CAS tier. Core ML methodology for BCI is published here. CAS tier dropped 3→4.
+
+- id: artificialintellig
+  title: Artificial Intelligence (AIJ)
+  full_name: Artificial Intelligence
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/artificial-intelligence'
+  sub: ML
+  ccf: A
+  cas: 2区
+  jcr: Q1
+  impact_factor: 4.6
+  oa: false
+  note: AI 领域历史最悠久的旗舰综合刊(1970创刊),覆盖学习、推理、知识表示、多智能体等;与 BCI 的关联偏 AI 方法学层面而非信号处理。
+  note_en: Oldest flagship general-AI journal (est. 1970) spanning learning, reasoning, knowledge representation and multi-agent systems; relevance to BCI is at the AI-methodology level rather than signal processing.
+
+- id: patternrecognitionx
+  title: Pattern Recognition Letters
+  full_name: Pattern Recognition Letters
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/pattern-recognition-letters'
+  sub: ML
+  ccf: C
+  cas: 3区
+  jcr: Q2
+  impact_factor: 3.3
+  oa: false
+  note: Pattern Recognition 的快报型姊妹刊,周期短、篇幅短,适合 EEG/BCI 方法的短篇成果。
+  note_en: Letters-style sister journal of Pattern Recognition; short and fast, suited to concise EEG/BCI methodological results.
+
+# ════════ DM · 数据挖掘 / 知识工程 ════════
+
+- id: ieeetkde
+  title: IEEE TKDE
+  full_name: IEEE Transactions on Knowledge and Data Engineering
+  publisher: IEEE
+  link: 'https://www.computer.org/csdl/journal/tk'
+  sub: DM
+  ccf: A
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 10.4
+  oa: false
+  note: 数据挖掘与知识工程顶刊;BCI 关联在于时间序列挖掘、表征学习与大规模脑数据的数据驱动建模,偏数据/知识层面而非生理信号本身。
+  note_en: Top data-mining and knowledge-engineering journal; BCI relevance lies in time-series mining, representation learning and data-driven modeling of large-scale brain data.
+
+# ════════ NC · 神经网络 / 神经计算 ════════
+
+- id: ieeetnnls
+  title: IEEE TNNLS
+  full_name: IEEE Transactions on Neural Networks and Learning Systems
+  publisher: IEEE
+  link: 'https://cis.ieee.org/publications/t-neural-networks-and-learning-systems'
+  sub: NC
+  ccf: B
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 8.9
+  oa: false
+  note: 神经网络与学习系统旗舰刊;BCI/EEG 研究者投递深度学习解码、神经计算模型的高频目标,与脑信号建模主题契合度高。
+  note_en: Flagship journal for neural networks and learning systems; a frequent BCI/EEG target for deep-learning decoding and neural-computation models, closely matched to brain-signal modeling.
+
+- id: neurocomputing
+  title: Neurocomputing
+  full_name: Neurocomputing
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/neurocomputing'
+  sub: NC
+  ccf: C
+  cas: 2区
+  jcr: Q1
+  impact_factor: 6.5
+  oa: false
+  note: 神经计算/神经网络方法刊,发文量大,EEG 解码与深度学习模型类工作常见去处。
+  note_en: Neural-computing / neural-network methods journal with large output; common venue for EEG decoding and deep-learning model work.
+
+- id: neuralnetworks
+  title: Neural Networks
+  full_name: Neural Networks
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/neural-networks'
+  sub: NC
+  ccf: B
+  cas: 2区
+  jcr: Q1
+  impact_factor: 6.3
+  oa: false
+  note: INNS/ENNS/JNNS 官方刊,神经网络理论与计算神经科学交叉,与 BCI 解码模型、类脑计算相关。
+  note_en: Official journal of INNS/ENNS/JNNS spanning neural-network theory and computational neuroscience; relevant to BCI decoding models and brain-inspired computing.
+
+# ════════ CV · 视觉 / 模式识别 ════════
+
+- id: ieeetpami
+  title: IEEE TPAMI
+  full_name: IEEE Transactions on Pattern Analysis and Machine Intelligence
+  publisher: IEEE
+  link: 'https://www.computer.org/csdl/journal/tp'
+  sub: CV
+  ccf: A
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 18.6
+  oa: false
+  note: 计算机视觉与模式识别第一刊,AI领域综合标杆;EEG/BCI 的深度表征学习、跨被试迁移、多模态融合等方法类工作的顶级出口。
+  note_en: Flagship venue for computer vision and pattern recognition; top outlet for methodological BCI/EEG work on representation learning, cross-subject transfer and multimodal fusion.
+
+- id: ieeetip
+  title: IEEE TIP
+  full_name: IEEE Transactions on Image Processing
+  publisher: IEEE
+  link: 'https://signalprocessingsociety.org/publications-resources/ieee-transactions-image-processing'
+  sub: CV
+  ccf: A
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 13.7
+  oa: false
+  note: 图像/信号处理顶刊;对 BCI 的关联在于时频表征、滤波与图像化的 EEG 表征(如 EEG-to-image、空间滤波)等信号处理方法。
+  note_en: Top image/signal-processing journal; relevant to BCI via time-frequency representation, filtering and image-based EEG representations (e.g., EEG-to-image, spatial filtering).
+
+- id: ieeetmm
+  title: IEEE TMM
+  full_name: IEEE Transactions on Multimedia
+  publisher: IEEE
+  link: 'https://signalprocessingsociety.org/publications-resources/ieee-transactions-multimedia'
+  sub: CV
+  ccf: B
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 9.7
+  oa: false
+  note: 多媒体处理与分析顶刊;与 BCI 关联体现在多模态(EEG+视频/音频)情感计算、affective BCI 与跨模态表征等方向。
+  note_en: Top journal for multimedia processing and analysis; relevant to BCI in multimodal (EEG+video/audio) affective computing, affective BCI and cross-modal representation.
+
+- id: ijcv
+  title: IJCV
+  full_name: International Journal of Computer Vision
+  publisher: Springer
+  link: 'https://link.springer.com/journal/11263'
+  sub: CV
+  ccf: A
+  cas: 2区
+  jcr: Q1
+  impact_factor: 9.3
+  oa: false
+  note: 计算机视觉两大顶刊之一(与 TPAMI 并列),偏理论与方法;对 BCI 的关联在于视觉解码、空间-时间表征等可迁移到 EEG 的视觉/序列建模方法。2024 JCR IF 较往年明显回落。
+  note_en: One of the two top computer-vision journals (alongside TPAMI), theory/method oriented; relevant to BCI via visual decoding and spatiotemporal representation methods transferable to EEG.
+
+# ════════ AC · 情感计算 / 认知 ════════
+
+- id: ieeetaffc
+  title: IEEE TAFFC
+  full_name: IEEE Transactions on Affective Computing
+  publisher: IEEE
+  link: 'https://www.computer.org/csdl/journal/ta'
+  sub: AC
+  ccf: B
+  cas: 2区
+  jcr: Q1
+  impact_factor: 9.8
+  oa: false
+  note: 情感计算领域旗舰刊,EEG/多模态情绪识别、生理信号情感建模的首选发表平台。
+  note_en: Flagship affective computing journal; primary venue for EEG/multimodal emotion recognition and physiological affect modeling.
+
+- id: ieeetcds
+  title: IEEE TCDS
+  full_name: IEEE Transactions on Cognitive and Developmental Systems
+  publisher: IEEE
+  link: 'https://cis.ieee.org/publications/t-cognitive-and-developmental-systems'
+  sub: AC
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 4.7
+  oa: false
+  note: 聚焦自然与人工系统的认知与发展机制,常见认知BCI、脑启发学习与情绪/认知状态建模论文。
+  note_en: Covers cognition and development in natural/artificial systems; hosts cognitive-BCI, brain-inspired learning and cognitive/affective-state modeling work.
+
+- id: ieeethms
+  title: IEEE THMS
+  full_name: IEEE Transactions on Human-Machine Systems
+  publisher: IEEE
+  link: 'https://www.ieeesmc.org/publications/transactions-on-human-machine-systems/'
+  sub: AC
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 4.4
+  oa: false
+  note: 人机系统刊,涵盖认知工效学、人机交互与生理状态监测,适合BCI人机协同与情绪/认知负荷识别研究。
+  note_en: Human-machine systems journal spanning cognitive ergonomics, HMI and physiological monitoring; fits BCI human-machine teaming and affect/cognitive-load recognition.
+
+- id: cognitivecomputati
+  title: Cognitive Computation
+  full_name: Cognitive Computation
+  publisher: Springer
+  link: 'https://link.springer.com/journal/12559'
+  sub: AC
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 4.3
+  oa: false
+  note: 跨计算机科学与神经科学的认知计算刊,接收EEG情感识别、认知建模与脑启发算法类研究。
+  note_en: Cognitive computation at the CS/neuroscience interface; accepts EEG emotion recognition, cognitive modeling and brain-inspired algorithm studies.
+
+# ════════ SP · 信号处理 ════════
+
+- id: ieeetransinstrumen
+  title: IEEE Trans. Instrumentation and Measurement (TIM)
+  full_name: IEEE Transactions on Instrumentation and Measurement
+  publisher: IEEE
+  link: 'https://ieee-ims.org/publication/ieee-tim'
+  sub: SP
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 5.9
+  oa: false
+  note: 仪器与测量,测量方法、传感与信号处理;EEG采集系统、测量算法与生理信号测量类BCI研究对口
+  note_en: Instrumentation and measurement, measurement methods, sensing and signal processing; fits EEG acquisition systems, measurement algorithms and physiological-measurement BCI studies
+
+- id: biomedicalsignalpr
+  title: Biomedical Signal Processing and Control
+  full_name: Biomedical Signal Processing and Control
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/biomedical-signal-processing-and-control'
+  sub: SP
+  ccf: none
+  cas: 2区
+  jcr: Q2
+  impact_factor: 4.9
+  oa: false
+  note: 生物医学信号处理与控制,EEG/ECG/EMG算法与应用主力刊;EEG分类、解码、伪迹去除类BCI论文高频发表地
+  note_en: Biomedical signal processing/control, mainstay for EEG/ECG/EMG algorithms; high-frequency venue for EEG classification, decoding and artifact-removal BCI papers
+
+- id: ieeesensorsjournal
+  title: IEEE Sensors Journal
+  full_name: IEEE Sensors Journal
+  publisher: IEEE
+  link: 'https://ieee-sensors.org/ieee-sensors-journal/'
+  sub: SP
+  ccf: none
+  cas: 3区
+  jcr: Q1
+  impact_factor: 4.5
+  oa: false
+  note: 传感器器件、系统与信号;2025年中科院由2区降为3区;可穿戴EEG/生理传感与采集硬件类BCI工作相关
+  note_en: Sensor devices, systems and signals; downgraded from CAS 2区 to 3区 in 2025; relevant to wearable EEG/physiological sensing and acquisition-hardware BCI work
+
+- id: ieeesignalprocessi
+  title: IEEE Signal Processing Letters (SPL)
+  full_name: IEEE Signal Processing Letters
+  publisher: IEEE
+  link: 'https://signalprocessingsociety.org/publications-resources/ieee-signal-processing-letters'
+  sub: SP
+  ccf: C
+  cas: 3区
+  jcr: Q2
+  impact_factor: 3.9
+  oa: false
+  note: 信号处理短文快报(5页),算法与理论;2025年中科院由2区降为3区;EEG信号处理新方法可作快报发表,CCF C类期刊
+  note_en: Short-paper letters in signal processing (algorithms/theory); downgraded from CAS 2区 to 3区 in 2025; venue for concise EEG signal-processing methods, CCF-C journal
+
+- id: sensors
+  title: Sensors
+  full_name: Sensors
+  publisher: MDPI
+  link: 'https://www.mdpi.com/journal/sensors'
+  sub: SP
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 3.5
+  oa: true
+  note: MDPI 旗下传感器/仪器仪表综合刊,完全 OA,审稿快(中位约 2-3 周),EEG 采集硬件、可穿戴电极、信号处理类工作适配度高,BCI 系统/设备论文常见去处。
+  note_en: MDPI sensors/instrumentation journal, fully OA, fast review (~2-3 weeks median); good fit for EEG acquisition hardware, wearable electrodes and signal-processing BCI papers.
+
+# ════════ BME · 医工 / 生物医学 ════════
+
+- id: naturebiomedicalen
+  title: Nature Biomedical Engineering
+  full_name: Nature Biomedical Engineering
+  publisher: Nature
+  link: 'https://www.nature.com/natbiomedeng/'
+  sub: BME
+  ccf: none
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 26.6
+  oa: false
+  note: Nature 子刊,生物医学工程顶刊,植入式/侵入式 BCI 与神经接口重大突破常在此发表;门槛极高。
+  note_en: Nature-family top journal in biomedical engineering; major implantable/invasive BCI and neural-interface breakthroughs appear here; very high bar.
+
+- id: ieeetmi
+  title: IEEE TMI
+  full_name: IEEE Transactions on Medical Imaging
+  publisher: IEEE
+  link: 'https://www.embs.org/tmi/'
+  sub: BME
+  ccf: B
+  cas: 1区 Top
+  jcr: Q1
+  impact_factor: 9.8
+  oa: false
+  note: 医学影像方向最高水平代表刊(MRI/CT/fMRI 等成像方法),与 BCI 关联较弱但属神经影像重镇;CCF B 类。
+  note_en: Top-tier medical imaging journal (MRI/CT/fMRI methods); weaker direct BCI tie but central to neuroimaging; CCF B.
+
+- id: ieeejbhi
+  title: IEEE JBHI
+  full_name: IEEE Journal of Biomedical and Health Informatics
+  publisher: IEEE
+  link: 'https://www.embs.org/jbhi/'
+  sub: BME
+  ccf: C
+  cas: 2区
+  jcr: Q1
+  impact_factor: 7.7
+  oa: false
+  note: 生物医学与健康信息学,接收 EEG/生理信号机器学习与可穿戴健康监测,BCI 算法类工作常投;CCF C 类。
+  note_en: Biomedical and health informatics; accepts EEG/physiological-signal machine learning and wearable health monitoring, a common home for BCI algorithm work; CCF C.
+
+- id: computersinbiology
+  title: Computers in Biology and Medicine
+  full_name: Computers in Biology and Medicine
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/computers-in-biology-and-medicine'
+  sub: BME
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 6.3
+  oa: false
+  note: 计算机在生物医学中的应用,医学图像/信号处理与机器学习;深度学习EEG解码与生理信号分析类BCI工作常见
+  note_en: Computer applications in biomedicine, medical image/signal processing and ML; common for deep-learning EEG decoding and physiological-signal BCI work
+
+- id: ieeetnsre
+  title: IEEE TNSRE
+  full_name: IEEE Transactions on Neural Systems and Rehabilitation Engineering
+  publisher: IEEE
+  link: 'https://www.embs.org/tnsre/'
+  sub: BME
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 5.2
+  oa: true
+  note: BCI 与神经康复最对口期刊之一,运动想象/SSVEP/卒中康复 BCI 研究高频发表地;现为完全开放获取。
+  note_en: One of the most BCI-relevant venues, heavy on motor imagery, SSVEP and stroke rehabilitation BCI; now fully open access.
+
+- id: computermethodsand
+  title: Computer Methods and Programs in Biomedicine
+  full_name: Computer Methods and Programs in Biomedicine
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/computer-methods-and-programs-in-biomedicine'
+  sub: BME
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 4.8
+  oa: false
+  note: 面向生物医学的计算方法与软件,医学信号/图像算法与临床决策系统;EEG处理流水线与方法学类BCI研究对口
+  note_en: Computational methods/software for biomedicine, medical signal/image algorithms and clinical decision systems; fits EEG-processing pipelines and methodological BCI studies
+
+- id: ieeetbme
+  title: IEEE TBME
+  full_name: IEEE Transactions on Biomedical Engineering
+  publisher: IEEE
+  link: 'https://www.embs.org/tbme/'
+  sub: BME
+  ccf: none
+  cas: 2区
+  jcr: Q2
+  impact_factor: 4.6
+  oa: false
+  note: 生物医学工程综合性老牌权威刊,涵盖神经工程/EEG 信号处理与 BCI 系统;非 CCF 目录(CCF 偏计算学科)。
+  note_en: Long-standing authoritative biomedical engineering journal covering neural engineering, EEG signal processing and BCI systems; not in the computing-focused CCF catalog.
+
+- id: bioengineering
+  title: Bioengineering
+  full_name: Bioengineering
+  publisher: MDPI
+  link: 'https://www.mdpi.com/journal/bioengineering'
+  sub: BME
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 4.4
+  oa: true
+  note: MDPI 生物医学工程 OA 刊,工程技术大类 3 区,审稿约 1-2 个月,适合 EEG/BCI 康复、神经工程方法学论文;部分较新来源给出实时 IF 约 3.7,2024 JCR 官方为 4.4。
+  note_en: MDPI biomedical-engineering OA journal, CAS engineering tier 3, ~1-2 month review; suits EEG/BCI rehabilitation and neural-engineering methods papers (2024 JCR IF 4.4; newer real-time estimates ~3.7).
+
+- id: scientificreports
+  title: Scientific Reports
+  full_name: Scientific Reports
+  publisher: Nature
+  link: 'https://www.nature.com/srep/'
+  sub: BME
+  ccf: none
+  cas: 3区
+  jcr: Q1
+  impact_factor: 3.9
+  oa: true
+  note: Nature 旗下综合性 OA 大刊,JCR 综合科学 Q1,但 2025 中科院由 2 区降至 3 区,接收门槛重技术严谨性,EEG/BCI 工程与实验研究常见去处,发文量极大。
+  note_en: Nature multidisciplinary OA megajournal, JCR Q1 multidisciplinary, but downgraded to CAS tier 3 in 2025; soundness-based acceptance, common venue for EEG/BCI engineering and experimental work.
+
+- id: journalofneuraleng
+  title: Journal of Neural Engineering
+  full_name: Journal of Neural Engineering
+  publisher: IOP
+  link: 'https://iopscience.iop.org/journal/1741-2552'
+  sub: BME
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 3.7
+  oa: false
+  note: 神经工程领域旗舰刊,BCI 经典阵地,EEGNet 等里程碑算法发表于此;偏神经接口/解码方法。
+  note_en: Flagship neural engineering journal and a classic BCI venue (EEGNet was published here); focus on neural interfaces and decoding methods.
+
+- id: heliyon
+  title: Heliyon
+  full_name: Heliyon
+  publisher: Elsevier
+  link: 'https://www.cell.com/heliyon/home'
+  sub: BME
+  ccf: none
+  cas: 4区
+  jcr: Q1
+  impact_factor: 3.6
+  oa: true
+  note: Cell Press/Elsevier 综合性 OA 刊,综合大类 4 区(小类综合 3 区),JCR Q1;注意 2024 年曾被 WoS 标记 On Hold、争议较多,投稿前需评估风险,可收 EEG/BCI 跨学科研究。
+  note_en: Cell Press/Elsevier multidisciplinary OA journal, CAS broad-cat tier 4 (subcat. 3), JCR Q1; note WoS 'On Hold' flag in 2024 and quality concerns, assess risk before submitting; accepts interdisciplinary EEG/BCI work.
+
+- id: ieeeaccess
+  title: IEEE Access
+  full_name: IEEE Access
+  publisher: IEEE
+  link: 'https://ieeeaccess.ieee.org/'
+  sub: BME
+  ccf: none
+  cas: 4区
+  jcr: Q1
+  impact_factor: 3.4
+  oa: true
+  note: IEEE 综合性 OA 大刊,2024 JCR 仍 Q1,但 2025 中科院计算机大类降至 4 区,审稿快(数周),EEG/BCI 解码算法、深度学习与系统工程论文适配度高,发文量大。
+  note_en: IEEE multidisciplinary OA megajournal, still JCR Q1 (2024) but downgraded to CAS computer-science tier 4 in 2025; fast review (weeks), good for EEG/BCI decoding, deep-learning and systems papers.
+
+- id: jofneurosciencemet
+  title: J. of Neuroscience Methods
+  full_name: Journal of Neuroscience Methods
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/journal-of-neuroscience-methods'
+  sub: BME
+  ccf: none
+  cas: 4区
+  jcr: Q3
+  impact_factor: 2.7
+  oa: false
+  note: 神经科学方法学期刊,EEG 采集/预处理/电极与分析方法类工作适配;影响因子与分区偏低。
+  note_en: Neuroscience methodology journal; fits EEG acquisition/preprocessing/electrode and analysis-method work; lower impact factor and quartile.
+
+- id: plosone
+  title: PLOS ONE
+  full_name: PLOS ONE
+  publisher: PLOS
+  link: 'https://journals.plos.org/plosone/'
+  sub: BME
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 2.6
+  oa: true
+  note: PLOS 综合性 OA 大刊,综合大类 3 区,2024 JCR 由 Q1 降至 Q2,只审科学严谨性不看新颖性,EEG/BCI 实证与可重复性研究皆可投,发文量大、审稿周期偏长。
+  note_en: PLOS megajournal, fully OA, CAS multidisciplinary tier 3 (dropped to Q2 in 2024 JCR); judges soundness not novelty, accepts EEG/BCI empirical and reproducibility work; high volume, longer review.
+
+- id: braincomputerinter
+  title: Brain-Computer Interfaces
+  full_name: Brain-Computer Interfaces
+  publisher: 'Taylor & Francis'
+  link: 'https://www.tandfonline.com/journals/tbci20'
+  sub: BME
+  ccf: none
+  cas: 4区
+  jcr: Q3
+  impact_factor: 2.1
+  oa: false
+  note: 唯一以 Brain-Computer Interfaces 命名的专刊,主题最对口但影响因子/分区偏低、体量小。
+  note_en: The only journal named specifically for Brain-Computer Interfaces; most topically on-point but small with a modest impact factor and quartile.
+
+- id: biomedicalphysicse
+  title: 'Biomedical Physics & Engineering Express'
+  full_name: 'Biomedical Physics & Engineering Express'
+  publisher: IOP
+  link: 'https://iopscience.iop.org/journal/2057-1976'
+  sub: BME
+  ccf: none
+  cas: 4区
+  jcr: Q3
+  impact_factor: 1.7
+  oa: true
+  note: IOP 旗下生物医学物理与工程 OA 刊(ISSN 2057-1976),是 IOP 神经工程旗舰刊 Journal of Neural Engineering(JNE)的姊妹刊;中科院工程/医学 4 区、JCR Q3,IF 约 1.6-1.8,门槛较低,适合 EEG/BCI 方法与器械类工程论文的稳妥落点。
+  note_en: 'IOP biomedical physics & engineering OA journal (ISSN 2057-1976), sister title to IOP''s neural-engineering flagship Journal of Neural Engineering (JNE); CAS engineering/medicine tier 4, JCR Q3, IF ~1.6-1.8, lower bar, a safe home for EEG/BCI methods and device-engineering papers.'
+
+# ════════ BCI · 神经科学 / 神经工程 ════════
+
+- id: neuroimage
+  title: NeuroImage
+  full_name: NeuroImage
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/neuroimage'
+  sub: BCI
+  ccf: none
+  cas: 2区 Top
+  jcr: Q1
+  impact_factor: 5.7
+  oa: false
+  note: 神经影像学旗舰刊,fMRI/EEG/MEG等多模态脑成像方法与认知神经科学;EEG源定位、脑网络分析类BCI研究常见去处
+  note_en: Flagship neuroimaging journal covering fMRI/EEG/MEG methods and cognitive neuroscience; common venue for EEG source-localization and brain-network BCI work
+
+- id: humanbrainmapping
+  title: Human Brain Mapping
+  full_name: Human Brain Mapping
+  publisher: Wiley
+  link: 'https://onlinelibrary.wiley.com/journal/10970193'
+  sub: BCI
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 4
+  oa: false
+  note: OHBM学会刊,功能与结构脑成像、脑连接组学;偏认知与临床神经影像,EEG/fMRI联合分析相关
+  note_en: OHBM society journal on functional/structural brain imaging and connectomics; relevant to EEG/fMRI joint analysis and cognitive-clinical neuroimaging
+
+- id: clinicalneurophysi
+  title: Clinical Neurophysiology
+  full_name: Clinical Neurophysiology
+  publisher: Elsevier
+  link: 'https://www.sciencedirect.com/journal/clinical-neurophysiology'
+  sub: BCI
+  ccf: none
+  cas: 2区
+  jcr: Q1
+  impact_factor: 3.6
+  oa: false
+  note: IFCN官方刊,临床神经电生理(EEG/EMG/诱发电位/TMS);EEG-BCI的临床转化与电生理机制研究对口
+  note_en: Official IFCN journal on clinical neurophysiology (EEG/EMG/evoked potentials/TMS); fitting for clinical-translational and electrophysiological EEG-BCI studies
+
+- id: frontiersinneurosc
+  title: Frontiers in Neuroscience
+  full_name: Frontiers in Neuroscience
+  publisher: Frontiers
+  link: 'https://www.frontiersin.org/journals/neuroscience'
+  sub: BCI
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 3.2
+  oa: true
+  note: Frontiers 神经科学旗舰刊,医学大类 3 区,完全 OA,设有 Neural Technology / Brain-Computer Interfaces 专栏,EEG/BCI 方法与系统论文适配度高,审稿透明、周期中等。
+  note_en: Frontiers flagship neuroscience journal, CAS medicine tier 3, fully OA, hosts a Neural Technology/BCI section; strong fit for EEG/BCI methods and systems papers, transparent peer review.
+
+- id: cognitiveneurodyna
+  title: Cognitive Neurodynamics
+  full_name: Cognitive Neurodynamics
+  publisher: Springer
+  link: 'https://link.springer.com/journal/11571'
+  sub: BCI
+  ccf: none
+  cas: 2区
+  jcr: Q2
+  impact_factor: 3.1
+  oa: false
+  note: 偏神经科学/神经动力学,关注EEG节律、神经计算与脑动力学,认知BCI神经机制研究的对口刊。
+  note_en: Neuroscience/neurodynamics leaning; focuses on EEG rhythms, neural computation and brain dynamics, fitting cognitive-BCI mechanism studies.
+
+- id: braintopography
+  title: Brain Topography
+  full_name: Brain Topography
+  publisher: Springer
+  link: 'https://link.springer.com/journal/10548'
+  sub: BCI
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 2.9
+  oa: false
+  note: 专注脑电/脑磁地形图与功能神经成像方法;EEG源成像、连接性与认知映射,对EEG-BCI方法学友好
+  note_en: Focused on EEG/MEG topography and functional neuroimaging methods; EEG source imaging, connectivity and cognitive mapping, friendly to EEG-BCI methodology
+
+- id: brainsciences
+  title: Brain Sciences
+  full_name: Brain Sciences
+  publisher: MDPI
+  link: 'https://www.mdpi.com/journal/brainsci'
+  sub: BCI
+  ccf: none
+  cas: 3区
+  jcr: Q3
+  impact_factor: 2.8
+  oa: true
+  note: MDPI 脑科学/神经科学 OA 刊,医学大类 3 区、神经科学小类 3 区,审稿约 1 个月,国人友好,EEG/BCI 认知与临床神经科学研究常见发表平台。
+  note_en: MDPI brain/neuroscience OA journal, CAS medicine tier 3 (neuroscience subcat. 3), ~1 month review; common venue for EEG/BCI cognitive and clinical-neuroscience work.
+
+- id: frontiersinhumanne
+  title: Frontiers in Human Neuroscience
+  full_name: Frontiers in Human Neuroscience
+  publisher: Frontiers
+  link: 'https://www.frontiersin.org/journals/human-neuroscience'
+  sub: BCI
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 2.7
+  oa: true
+  note: Frontiers 人类神经科学 OA 刊,医学大类 3 区,长期是 EEG/BCI 范式(运动想象、P300、SSVEP)与神经反馈研究的核心去处,审稿周期中等。
+  note_en: Frontiers human-neuroscience OA journal, CAS medicine tier 3; a core outlet for EEG/BCI paradigms (motor imagery, P300, SSVEP) and neurofeedback studies.
+
+- id: frontiersinneuroin
+  title: Frontiers in Neuroinformatics
+  full_name: Frontiers in Neuroinformatics
+  publisher: Frontiers
+  link: 'https://www.frontiersin.org/journals/neuroinformatics'
+  sub: BCI
+  ccf: none
+  cas: 3区
+  jcr: Q2
+  impact_factor: 2.5
+  oa: true
+  note: Frontiers 神经信息学 OA 刊,医学/计算交叉,适合 EEG 数据处理工具链、解码算法、开源软件与数据标准类 BCI 论文,体量较小、专业性强。
+  note_en: Frontiers neuroinformatics OA journal at the medicine/computing interface; fits EEG pipelines, decoding algorithms, open-source tools and data-standard BCI papers; smaller, niche scope.
