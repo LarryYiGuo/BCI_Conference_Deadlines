@@ -1,6 +1,6 @@
 # 🧠 BCI Conference & Journal Deadlines
 
-**Live site:** [https://larryyiguo.github.io/BCI_Conference_Deadlines/](https://larryyiguo.github.io/BCI_Conference_Journal_Deadlines/)
+**Live site:** https://larryyiguo.github.io/BCI_Conference_Journal_Deadlines/
 
 A publishing tracker for **BCI / EEG / brain-signal** researchers — **40 conferences**
 (with deadlines) and **52 rolling-submission journals**, across machine learning, data
@@ -61,7 +61,7 @@ MIT
 
 # 🧠 BCI 会议 & 期刊投稿日历
 
-**在线访问:** https://larryyiguo.github.io/BCI_Conference_Deadlines/
+**在线访问:** https://larryyiguo.github.io/BCI_Conference_Journal_Deadlines/
 
 面向 **BCI / EEG / 脑信号** 研究者的投稿追踪 —— **40 个会议**(带截稿日)+ **52 本滚动投稿期刊**,
 覆盖机器学习、数据挖掘、视觉多媒体、情感计算、信号处理、医工影像与神经工程。顶部导航可在两个视图间切换。
