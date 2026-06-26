@@ -188,11 +188,14 @@
     mtabConf: document.getElementById('mtabConf'),
     mtabJournal: document.getElementById('mtabJournal'),
     mtabDataset: document.getElementById('mtabDataset'),
+    papersBtn: document.getElementById('papersBtn'),
   };
 
   let confs = [];
   let journals = null;       // lazy-loaded
   let datasets = null;       // lazy-loaded
+  let papers = null;         // lazy-loaded (per-venue recent paper index)
+  let showPapers = false;    // toggle: show papers under conference cards
   let mode = 'conf';         // 'conf' | 'journal' | 'dataset'
   let active = new Set();
   let query = '';
@@ -296,6 +299,9 @@
     els.search.placeholder = mode === 'journal' ? t().jSearchPh : mode === 'dataset' ? t().dSearchPh : t().searchPh;
     els.footer.innerHTML = mode === 'journal' ? t().jFooter : mode === 'dataset' ? t().dFooter : t().footer;
     els.langBtn.textContent = t().langBtn;
+    els.papersBtn.textContent = lang === 'en' ? '📄 Papers' : '📄 论文';
+    els.papersBtn.style.display = mode === 'conf' ? '' : 'none';
+    els.papersBtn.classList.toggle('on', showPapers);
     els.mtabConf.textContent = t().tabConf;
     els.mtabJournal.textContent = t().tabJournal;
     els.mtabDataset.textContent = t().tabDataset;
@@ -353,6 +359,28 @@
         <span class="mk sub" style="left:${pos(dl.getTime())}%"></span>
         <span class="now" style="left:${pos(now)}%"></span>
       </div><div class="lbls"><span>${fmtD(start)}</span><span>${fmtD(dl.getTime())}</span></div></div>`;
+  }
+
+  // ── per-venue recent papers (shown under a conference card when toggled on) ──
+  function papersHTML(c) {
+    if (!showPapers || !papers) return '';
+    const list = papers[c.id];
+    if (!list || !list.length) return '';
+    const head = lang === 'en' ? 'Recent BCI/EEG papers' : '近年 BCI/EEG 论文';
+    const rows = list.map(p => {
+      const tagCls = /spot/i.test(p.tag) ? 'spot' : (p.tag === 'CN' ? 'cn' : '');
+      const tag = p.tag ? `<span class="ptag ${tagCls}">${esc(p.tag)}</span>` : '';
+      const schol = 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title);
+      return `<div class="paper-row">
+        <div class="paper-line">
+          <a class="pt" href="${schol}" target="_blank" rel="noopener">${esc(p.title)}</a>
+          <span class="py">${esc(p.year)}</span>${tag}
+          ${p.group ? `<span class="pg">· ${esc(p.group)}</span>` : ''}
+        </div>
+        ${p.desc ? `<div class="pd">${esc(p.desc)}</div>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="papers"><div class="papers-head">${head} · ${list.length}</div>${rows}</div>`;
   }
 
   // ── card ──
@@ -424,6 +452,7 @@
         ${dlRows.length ? `<div class="dls">${dlRows.join('')}</div>` : ''}
         <div class="evt-meta"><span class="k">${t().dateLbl}</span>${esc(c.date)}<span class="sep">·</span><span class="k">${t().placeLbl}</span>${placeHTML}${formatHTML}</div>
         ${note ? `<div class="evt-note">${esc(note)}</div>` : ''}
+        ${papersHTML(c)}
       </div>
     </div>`;
   }
@@ -645,6 +674,19 @@
   els.mtabConf.addEventListener('click', () => setMode('conf'));
   els.mtabJournal.addEventListener('click', () => setMode('journal'));
   els.mtabDataset.addEventListener('click', () => setMode('dataset'));
+
+  els.papersBtn.addEventListener('click', () => {
+    showPapers = !showPapers;
+    localStorage.setItem('bci-ddl-papers', showPapers ? '1' : '0');
+    els.papersBtn.classList.toggle('on', showPapers);
+    if (showPapers && !papers) {
+      fetch('data/papers.yml', { cache: 'no-cache' })
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(txt => { papers = jsyaml.load(txt) || {}; render(); })
+        .catch(() => { papers = {}; render(); });
+    } else render();
+  });
+  if (localStorage.getItem('bci-ddl-papers') === '1') els.papersBtn.click();
 
   detectLangByIP();
 

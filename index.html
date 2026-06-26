@@ -41,6 +41,22 @@ a{color:inherit}
 .search::placeholder{color:var(--ink-muted)}
 .tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--ink-dim);text-decoration:none;background:none;border:1px solid var(--hair);padding:.3rem .65rem;cursor:pointer;transition:all .15s}
 .tool:hover{border-color:var(--ink-muted);color:var(--ink)}
+.tool.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* per-venue recent papers */
+.papers{margin-top:.8rem;padding-top:.7rem;border-top:1px dashed var(--line-soft)}
+.papers-head{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.5rem}
+.paper-row{padding:.45rem 0;border-top:1px solid var(--hair)}
+.paper-row:first-of-type{border-top:none}
+.paper-line{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+.paper-row .pt{font-size:.84rem;font-weight:500;text-decoration:none;line-height:1.4;color:var(--ink)}
+.paper-row .pt:hover{color:var(--blue);border-bottom:1px solid var(--blue)}
+.paper-row .py{font-family:var(--mono);font-size:.62rem;color:var(--ink-muted)}
+.paper-row .ptag{font-family:var(--mono);font-size:.56rem;letter-spacing:.04em;text-transform:uppercase;padding:.02rem .3rem;border-radius:2px;border:1px solid var(--hair);color:var(--ink-muted)}
+.paper-row .ptag.spot{color:var(--red);border-color:var(--red)}
+.paper-row .ptag.cn{color:var(--blue);border-color:rgba(79,115,150,.5)}
+.paper-row .pg{font-size:.72rem;color:var(--ink-muted)}
+.paper-row .pd{font-size:.74rem;color:var(--ink-dim);line-height:1.55;margin-top:.2rem}
 .nav-row2{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
 .nav-row2 .lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-right:.3rem}
 .fbtn{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.02em;color:var(--ink-dim);background:none;border:1px solid var(--hair);padding:.26rem .6rem .26rem .4rem;cursor:pointer;transition:all .15s}
@@ -180,6 +196,7 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
     </div>
     <span class="spacer"></span>
     <input class="search" id="search" type="search" placeholder="">
+    <button class="tool" id="papersBtn" title="显示/隐藏各会议近年论文">📄 论文</button>
     <button class="tool" id="langBtn">EN</button>
     <a class="tool" href="https://github.com/LarryYiGuo/BCI_Conference_Journal_Deadlines" target="_blank" rel="noopener">GitHub</a>
   </div>
@@ -202,6 +219,6 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-<script src="static/main.js?v=20260612-10"></script>
+<script src="static/main.js?v=20260612-11"></script>
 </body>
 </html>

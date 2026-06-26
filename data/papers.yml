@@ -1,0 +1,499 @@
+# BCI Papers · 各会议近年 BCI/EEG 论文索引 / per-venue recent-paper index
+# ─────────────────────────────────────────────────────────────
+# 整理自「ML/AI 顶会论文清单」+ 多智能体并行检索(CV/多媒体/信号/医疗/数据挖掘各会)。
+# 近五年(2021+)有价值的主会论文。按会议 id 归组;每篇:title/group/year/tag/desc。
+# 网站顶部「论文」开关控制展示;每篇标题链到 Google Scholar 搜索。
+# ─────────────────────────────────────────────────────────────
+
+neurips27:
+  - title: 'CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding'
+    group: '上海AI Lab + 中山大学'
+    year: 2025
+    tag: 'Spotlight'
+    desc: '指出现有foundation model继承自NLP/CV的"scale-agnostic dense modeling"忽略了神经活动的cross-scale结构。多尺度空间-时间联合建模。'
+  - title: 'NeurIPT: Foundation Model for Neural Interfaces'
+    group: '海外 EEG-based Neural Interfaces foundation model'
+    year: 2025
+    tag: 'INTL'
+    desc: 'Amplitude-Aware Masked Pretraining (AAMP) + Mixture-of-Experts处理多电极配置。专注neural interface多任务泛化。'
+  - title: 'EEG2Video: Towards Decoding Dynamic Visual Perception from EEG Signals'
+    group: '上海交大 BCMI Lab + 微软亚洲研究院'
+    year: 2024
+    tag: 'CN'
+    desc: '从静态图像decoding扩展到动态视觉感知。1400段动态视频+20名受试者EEG-video配对数据集。'
+  - title: 'EEGPT: Pretrained Transformer for Universal and Reliable Representation of EEG Signals'
+    group: '83+ citations'
+    year: 2024
+    tag: 'CN'
+    desc: '10M参数EEG预训练Transformer。spatio-temporal representation alignment预训练目标。'
+  - title: 'Visual Decoding and Reconstruction via EEG Embeddings with Guided Diffusion (ATM)'
+    group: '南方科技大学 NCC Lab (刘泉影组)'
+    year: 2024
+    tag: 'CN'
+    desc: 'Adaptive Thinking Mapper (ATM) — 即插即用EEG encoder投影到CLIP shared subspace + two-stage diffusion重建。MEG跨模态泛化。'
+  - title: 'Con4m: Context-aware Consistency Learning Framework for Segmented Time Series Classification'
+    group: '浙大 ZJU-BrainNet (杨洋组)'
+    year: 2024
+    tag: 'CN'
+    desc: '面向SEEG等brain signal分段时间序列的一致性学习。和 DMNet 同时入选 NeurIPS 2024。'
+  - title: 'DMNet'
+    group: '浙大 ZJU-BrainNet (杨洋组)'
+    year: 2024
+    tag: 'CN'
+    desc: '浙大杨洋组 NeurIPS 2024 双中之一，BrainNet系列扩展。'
+  - title: 'seegnificant: Neural Decoding from Stereotactic EEG Across Subjects'
+    group: '海外 sEEG跨被试decoding'
+    year: 2024
+    tag: 'INTL'
+    desc: '侵入式EEG跨被试整合。Electrode-wise self-attention + 3D location embedding + 21名受试者联合训练。'
+  - title: 'BIOT: Biosignal Transformer for Cross-data Learning in the Wild'
+    group: '123+ citations'
+    year: 2023
+    tag: 'INTL'
+    desc: 'EEG/biosignal跨数据集预训练开创性工作。tokenize不同channel/采样率的biosignal成统一"sentences"。后续LaBraM/CBraMod/EEGPT均承袭此路线。'
+  - title: 'Brant: Foundation Model for Intracranial Neural Signal'
+    group: '浙大 ZJU-BrainNet (杨洋组)'
+    year: 2023
+    tag: 'CN'
+    desc: '国内最早sEEG foundation model之一。500M+参数，1.01TB intracranial数据预训练。'
+  - title: 'PPi: Pretraining Brain Signal Model for Patient-independent Seizure Detection'
+    group: '浙大 ZJU-BrainNet (杨洋组)'
+    year: 2023
+    tag: 'CN'
+    desc: '和Brant同期同录 NeurIPS 2023——SEEG双自监督任务，跨患者seizure detection。'
+  - title: 'DeWave: Discrete EEG Waves Encoding for Brain Dynamics to Text Translation'
+    group: 'UTS Sydney (GrapheneX-UTS HAI Centre)'
+    year: 2023
+    tag: 'Spotlight'
+    desc: 'EEG-to-Text直接翻译代表作。Vector-quantized discrete codex，无需eye-tracking marker即可在ZuCo做open-vocabulary翻译。'
+  - title: 'MAEEG: Masked Auto-encoder for EEG Representation Learning'
+    group: '海外 EEG self-supervised representation learning workshop paper'
+    year: 2022
+    tag: 'Workshop'
+    desc: '最早把 ViT-style masked reconstruction 直接搬到 EEG 上的工作。后续 LaBraM/CBraMod/EEGPT 都受这一思路启发。'
+
+iclr27:
+  - title: 'CBraMod: A Criss-Cross Brain Foundation Model for EEG Decoding'
+    group: '浙江大学脑机智能国家重点实验室 (潘纲组)'
+    year: 2025
+    tag: 'CN'
+    desc: 'criss-cross transformer——空间和时间通过两个并行attention机制分别建模。30s长片段预训练，10个下游任务12个数据集SOTA。'
+  - title: 'NeuroLM: A Universal Multi-task Foundation Model for Bridging the Gap between Language and EEG Signals'
+    group: '上海交大 BCMI Lab (吕宝粮组) + 微软亚洲研究院'
+    year: 2025
+    tag: 'CN'
+    desc: 'LaBraM延续——把EEG视为foreign language给LLM"看"，多任务+推理统一框架。'
+  - title: 'BrainUICL: An Unsupervised Individual Continual Learning Framework for EEG Applications'
+    group: '浙江大学脑机智能国家重点实验室 (潘纲组)'
+    year: 2025
+    tag: 'CN'
+    desc: '解决"个体持续适应"问题——预训练模型部署新被试时无监督持续校准。'
+  - title: 'Animate Your Thoughts (Mind-Animator): Reconstruction of Dynamic Natural Vision from Human Brain Activity'
+    group: '中科院自动化所 (何晖光组)'
+    year: 2025
+    tag: 'CN'
+    desc: '动态自然视觉重建——基于脑活动重建视频片段。'
+  - title: 'Learning Task Belief Similarity with Latent Dynamics for Meta-Reinforcement Learning'
+    group: '南方科技大学 NCC Lab (刘泉影组)'
+    year: 2025
+    tag: 'CN'
+    desc: '不是直接EEG paper但是组内RL方向延伸——meta-RL中task belief相似性学习。'
+  - title: 'LaBraM: Large Brain Model for Learning Generic Representations with Tremendous EEG Data in BCI'
+    group: '上海交大 BCMI Lab (吕宝粮组)'
+    year: 2024
+    tag: 'Spotlight'
+    desc: '国内 EEG 基础模型标杆。VQ-neural-spectrum-prediction tokenizer + masked EEG modeling + 2500h数据预训练，三档参数(5.8M/46M/369M)清晰scaling law。'
+  - title: 'CLIP-MUSED: CLIP-Guided Multi-Subject Visual Neural Information Semantic Decoding'
+    group: '中科院自动化所 (何晖光组)'
+    year: 2024
+    tag: 'CN'
+    desc: 'CLIP-引导的跨被试视觉神经语义解码。在fMRI多被试decoding上突破。'
+
+icml27:
+  - title: 'EmoGrowth: Incremental Multi-label Emotion Decoding with Augmented Emotional Relation Graph'
+    group: '中科院自动化所 (何晖光组)'
+    year: 2025
+    tag: 'CN'
+    desc: '增量多标签情感解码——情感关系图增强的脑信号情感decoding。'
+  - title: 'Synthesizing Images on Perceptual Boundaries of ANNs for Uncovering and Manipulating Human Perceptual Variability'
+    group: '南方科技大学 NCC Lab (刘泉影组)'
+    year: 2025
+    tag: 'CN'
+    desc: '利用 ANN perceptual boundaries 合成图像探测 human perceptual variability，神经科学+AI 融合方向代表。'
+
+aaai27:
+  - title: 'Multi-to-Single: Reducing Multimodal Dependency in Emotion Recognition Through Contrastive Learning'
+    group: '上海交大 BCMI Lab (吕宝粮组)'
+    year: 2025
+    tag: 'CN'
+    desc: '通过 contrastive learning 把训练时多模态依赖降为推理时单模态——降低部署成本。'
+  - title: 'Personalized Sleep Staging Leveraging Source-Free Unsupervised Domain Adaptation'
+    group: '浙江大学脑机智能国家重点实验室 (潘纲组)'
+    year: 2025
+    tag: 'CN'
+    desc: 'EEG睡眠分期个性化适应。Source-free UDA——目标域适应时无需访问源域数据。'
+  - title: 'Generalizable Sleep Staging via Multi-level Domain Alignment'
+    group: '浙江大学脑机智能国家重点实验室 (潘纲组)'
+    year: 2024
+    tag: 'CN'
+    desc: '多层级domain alignment用于跨数据集睡眠分期泛化。CCF-A录用，CBraMod前作。'
+  - title: 'BrainVis: Exploring the Bridge between Brain and Visual Signals via Image Reconstruction'
+    group: '香港科技大学（广州）+ 南洋理工 (Hao Wang组)'
+    year: 2024
+    tag: 'CN'
+    desc: 'EEG → image reconstruction。Time/frequency-domain feature + CLIP coarse+fine-grained semantic插值对齐 + cascaded diffusion。仅10%训练数据即超SOTA。'
+  - title: 'Plug-and-play Domain Adaptation for Cross-subject EEG-based Emotion Recognition'
+    group: '上海交大 BCMI Lab (吕宝粮组)'
+    year: 2021
+    tag: 'CN'
+    desc: '即插即用domain adaptation，2021年AAAI——跨被试EEG情感识别的标志性工作之一。'
+
+ijcai27:
+  - title: 'CoCoG: Controllable Visual Stimuli Generation Based on Human Concept Representations'
+    group: '南方科技大学 NCC Lab (刘泉影组)'
+    year: 2024
+    tag: 'CN'
+    desc: '基于human concept表征的可控视觉刺激生成——为脑活动decoding研究服务的视觉刺激控制工具。'
+  - title: 'Mirror Contrastive Loss + Sliding Window Transformer for MI'
+    group: 'IJCAI 2024 Jeju, HBAI Workshop'
+    year: 2024
+    tag: 'Workshop'
+    desc: 'Subject-independent MI分类，BCI Competition IV 2a/2b验证。HBAI workshop是IJCAI上BCI主题主要聚集地。'
+
+kdd27:
+  - title: 'Brant-X: A Unified Physiological Signal Alignment Framework'
+    group: '杨洋组/浙江大学 (Daoze Zhang, Zhizhang Yuan, Junru Chen, Kerui Chen, Yang Yang)'
+    year: 2024
+    tag: 'CN'
+    desc: '基于EEG基础模型Brant-2(4TB数据/1B参数)做EEG与其他生理信号(EXG)的统一对齐框架,用海量EEG表示赋能稀缺的同步多模态生理信号表示学习。'
+  - title: 'MBrain: A Multi-channel Self-Supervised Learning Framework for Brain Signals'
+    group: '杨洋组/浙江大学 (Donghong Cai, Junru Chen, Yang Yang 等)'
+    year: 2023
+    tag: 'CN'
+    desc: '多通道自监督学习框架,用多通道CPC学习脑区间空间相关性、延时位移预测任务捕捉时间相关性,在EEG/sEEG大规模真实癫痫数据上做发作检测并可跨病人迁移。'
+  - title: 'BrainNet: Epileptic Wave Detection from SEEG with Hierarchical Graph Diffusion Learning'
+    group: '浙大 ZJU-BrainNet (杨洋组)'
+    year: 2022
+    tag: 'CN'
+    desc: '浙大杨洋组 BrainNet 系列开山作。从临床seizure detection场景起步，建模epileptic wave的diffusion patterns。后续 PPi、Brant、Brant-X 都是这一路线的延伸。'
+
+icdm27:
+  - title: 'SplitSEE: A Splittable Self-supervised Framework for Single-Channel EEG Representation Learning'
+    group: 'Rikuto Kotoge, Zheng Chen 等/大阪大学 (Sakurai/Matsubara Lab)'
+    year: 2024
+    tag: 'INTL'
+    desc: '针对单通道EEG的可拆分自监督框架,用两个领域专属模块分别学时域/频域表示并以聚类损失对齐,缓解时频权衡,可扩展到癫痫发作预测等任务。'
+
+sdm27:
+  - title: 'A Two-View EEG Representation for Brain Cognition by Composite Temporal-Spatial Contrastive Learning'
+    group: 'Zheng Chen, Lingwei Zhu, Haohui Jia, Takashi Matsubara/大阪大学'
+    year: 2023
+    tag: 'INTL'
+    desc: '用复合时空对比学习构建EEG双视图表示,面向脑认知任务(睡眠分期、致命性癫痫发作预测),为下游监督学习提供高质量特征。'
+
+ijcnn27:
+  - title: 'Adaptive Hierarchical Graph Convolutional Network for EEG Emotion Recognition'
+    group: '郑文明组, 东南大学 (Xue, Zheng, Zong, Chang, Jiang)'
+    year: 2022
+    tag: 'CN'
+    desc: '自适应分层图卷积网络,用可学习池化自动划分脑区并建模通道/脑区间功能连接,代表性图神经网络EEG情绪工作(IEEE Xplore已验证)。'
+
+iconip27:
+  - title: 'Multi-View Fusion Transformer for Emotion Recognition Under Sleep Deprivation'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI (Tian, Li, Lu, Zheng)'
+    year: 2024
+    tag: 'CN'
+    desc: '针对睡眠剥夺这一现实退化场景,用多视图融合Transformer做EEG情绪识别,关注非理想生理状态下的鲁棒解码。'
+  - title: 'Two-Stream Spectral-Temporal Denoising Network for End-to-End Robust EEG-Based Emotion Recognition'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI (Liu, Jiang, Zheng, Lu)'
+    year: 2023
+    tag: 'CN'
+    desc: '端到端从原始EEG做情绪识别,用双流谱-时去噪网络抑制EOG/EMG干扰,提升对噪声的鲁棒性;代码开源(TS-STDN)。'
+  - title: 'DAformer: Transformer with Domain Adversarial Adaptation for EEG-Based Emotion Recognition with Live-Oil Paintings'
+    group: '郑伟龙组, 上海交通大学 BCMI (Jin, Liu, Zheng)'
+    year: 2023
+    tag: 'CN'
+    desc: '用Transformer结合域对抗适应做跨被试EEG情绪识别,采用真实油画刺激范式,缓解个体差异分布偏移。'
+  - title: 'Few-shot Class-incremental Learning for EEG-based Emotion Recognition'
+    group: '郑伟龙组, 上海交通大学 BCMI (Ma, Zheng)'
+    year: 2022
+    tag: 'CN'
+    desc: '把小样本类增量学习引入EEG情绪识别,使模型能在少量样本下持续学习新情绪类别而不遗忘旧类。'
+  - title: 'Measuring Decision Confidence Levels from EEG Using a Spectral-Spatial-Temporal Adaptive Graph Convolutional Neural Network'
+    group: 'Rui Li, Yiting Wang 等 (BCMI 相关)'
+    year: 2022
+    tag: 'CN'
+    desc: '用谱-空-时自适应图卷积网络从EEG解码决策置信度,把BCI从情绪扩展到认知状态评估。'
+  - title: 'Naturalistic Emotion Recognition Using EEG and Eye Movements'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI (Zhang, Zheng, Lu)'
+    year: 2021
+    tag: 'CN'
+    desc: '在自然观影范式下融合EEG与眼动多模态信号做情绪识别,推动aBCI走向真实场景。'
+  - title: 'A Cross-subject and Cross-modal Model for Multimodal Emotion Recognition'
+    group: '吕宝粮组, 上海交通大学 BCMI (Zhang, Yan, Li, Zhao, Liu, Li, Lu)'
+    year: 2021
+    tag: 'CN'
+    desc: '同时处理跨被试与跨模态的多模态情绪识别模型,提升EEG+其他模态在新被试上的迁移泛化。'
+
+cvpr27:
+  - title: 'Neuro-3D: Towards 3D Visual Decoding from EEG Signals'
+    group: 'Zhanqiang Guo 等 / 清华大学(gzq17 团队)'
+    year: 2025
+    tag: 'CN'
+    desc: '首个从 EEG 解码 3D 视觉感知的工作,发布 EEG-3D 数据集,用扩散式彩色点云解码器同时恢复 3D 物体的形状与颜色,把脑-视觉解码从 2D 图像推进到 3D。'
+  - title: 'MindBridge: A Cross-Subject Brain Decoding Framework'
+    group: 'Shizun Wang, Songhua Liu, Zhenxiong Tan, Xinchao Wang / 新加坡国立大学'
+    year: 2024
+    tag: 'CN'
+    desc: 'CVPR 2024 Highlight。打破''一人一模型''范式,用单一模型实现跨被试脑解码:生物启发的聚合函数+循环 fMRI 重建,新被试仅需少量数据即可超过专用模型。'
+  - title: 'Psychometry: An Omnifit Model for Image Reconstruction from Human Brain Activity'
+    group: 'Ruijie Quan, Wenguan Wang, Zhibo Tian, Fan Ma, Yi Yang / 浙江大学'
+    year: 2024
+    tag: 'CN'
+    desc: '用 Omni 混合专家(MoE)同时捕捉跨被试共性与个体差异,配合 Ecphory 检索增强推理,从不同被试 fMRI 重建高保真图像,刷新 SOTA。'
+  - title: 'Brain Decodes Deep Nets'
+    group: 'Huzheng Yang, James Gee, Jianbo Shi / 宾夕法尼亚大学'
+    year: 2024
+    tag: 'INTL'
+    desc: '反向利用脑编码:用预测 fMRI 的任务把大型视觉模型''画''到大脑皮层上(FactorTopy),揭示不同训练方法导致的层级组织差异,是脑科学与可解释性的有趣交叉。'
+  - title: 'Seeing Beyond the Brain: Conditional Diffusion Model with Sparse Masked Modeling for Vision Decoding (MinD-Vis)'
+    group: 'Zijiao Chen, Jiaxin Qing, Juan Helen Zhou 等 / 新加坡国立大学(NUS)、香港中文大学'
+    year: 2023
+    tag: 'CN'
+    desc: '脑-视觉解码的奠基性工作之一:用掩码脑建模(MBM)预训练 fMRI 编码器,再用双重条件扩散模型从大脑活动重建出语义一致的高质量图像,引爆了 fMRI-to-image 这条赛道。'
+  - title: 'High-Resolution Image Reconstruction with Latent Diffusion Models from Human Brain Activity'
+    group: 'Yu Takagi, Shinji Nishimoto / 大阪大学、NICT(日本)'
+    year: 2023
+    tag: 'Highlight'
+    desc: '首次直接用 Stable Diffusion 从 NSD 数据集的 fMRI 重建自然图像,方法极简(线性映射到潜空间+文本/图像双路条件),成为该领域被引最多的基线之一。'
+
+iccv27:
+  - title: 'Exploring The Visual Feature Space for Multimodal Neural Decoding'
+    group: 'Weihao Xia, Cengiz Öztireli / 剑桥大学'
+    year: 2025
+    tag: 'INTL'
+    desc: '系统探索多模态大模型的视觉特征空间用于神经解码,把脑信号对齐到更丰富的视觉特征,提升 fMRI 多模态(图像/描述/细粒度理解)解码效果。'
+  - title: 'Beyond Brain Decoding: Visual-Semantic Reconstructions to Mental Creation Extension (NeuroCreat)'
+    group: 'Jing 等(NeuroCreat 框架)/ 中国高校(具体单位待核实)'
+    year: 2025
+    tag: 'CN'
+    desc: '把脑解码从''重建所见''推向''脑中创造'':提出 NeuroCreat 框架做视觉-语义重建并扩展到心理创造任务,探索创造性多模态脑解码的新方向。'
+
+eccv28:
+  - title: 'UMBRAE: Unified Multimodal Brain Decoding'
+    group: 'Weihao Xia, Raoul de Charette, Cengiz Öztireli, Jing-Hao Xue / 伦敦大学学院(UCL)、Inria、剑桥大学'
+    year: 2024
+    tag: 'INTL'
+    desc: '统一多模态脑解码框架,用跨被试对齐把 fMRI 映射到多模态大模型空间,支持脑信号驱动的图像描述、定位、问答等多任务,揭示脑模态的''暗面''。'
+  - title: 'NeuroPictor: Refining fMRI-to-Image Reconstruction via Multi-individual Pretraining and Multi-level Modulation'
+    group: 'Jingyang Huo 等 / 复旦大学'
+    year: 2024
+    tag: 'CN'
+    desc: '用 6 万+ fMRI-图像对做多被试预训练,直接用 fMRI 信号高/低层级调制扩散模型生成过程,对图像结构提供精细控制,被试内解码能力突出。'
+
+acmmm27:
+  - title: 'BrainFLORA: Uncovering Brain Concept Representation via Multimodal Neural Embeddings'
+    group: '刘泉影组/南科大 NCC Lab (Dongyang Li, Quanying Liu)'
+    year: 2025
+    tag: 'CN'
+    desc: '统一框架整合EEG/MEG/fMRI跨模态神经影像构建共享神经表征,借助MLLM+模态适配器解决脑信号时空错配,做脑概念表征与视觉解码。'
+  - title: 'Multimodal Emotion Recognition with Missing Modality via a Unified Multi-task Pre-training Framework'
+    group: 'INTL/国内组 (ACM MM 2025)'
+    year: 2025
+    tag: 'INTL'
+    desc: '统一多任务预训练框架应对缺失模态的多模态情感识别,涉及EEG等生理信号。'
+  - title: 'REmoNet: Reducing Emotional Label Noise via Multi-regularized Self-supervision'
+    group: '吕宝粮组/上海交大 BCMI'
+    year: 2024
+    tag: 'CN'
+    desc: '用多重正则自监督缓解EEG情感识别中的标签噪声,提升弱标注下的鲁棒性。'
+  - title: 'Multimodal Physiological Signals Representation Learning via Multiscale Contrasting for Depression Recognition'
+    group: '国内组 (arXiv 2406.16968)'
+    year: 2024
+    tag: 'CN'
+    desc: 'Siamese多尺度对比框架联合fNIRS与EEG,做时空对比+语义一致性对比,用于抑郁识别的多模态生理信号表征学习。'
+  - title: 'MindDiffuser: Controlled Image Reconstruction from Human Brain Activity with Semantic and Structural Diffusion'
+    group: '何晖光组/中科院自动化所 (Yizhuo Lu, Changde Du, Huiguang He)'
+    year: 2023
+    tag: 'CN'
+    desc: '两阶段Stable Diffusion方案,从fMRI解码CLIP语义+VQ-VAE结构特征并反向传播对齐,实现可控的脑信号到图像重建,是脑视觉重建代表作。'
+  - title: 'Graph to Grid: Learning Deep Representations for Multimodal Emotion Recognition'
+    group: '吕宝粮组/上海交大 BCMI (含郑伟龙)'
+    year: 2023
+    tag: 'CN'
+    desc: '提出即插即用的G2G模块,将1D图结构EEG数据经数值关系编码转为2D网格,便于CNN处理,用于EEG+眼动多模态情感识别。'
+  - title: 'Multimodal Adaptive Emotion Transformer with Flexible Modality Inputs on A Novel Dataset with Continuous Labels'
+    group: '吕宝粮组/上海交大 BCMI (Wei-Bang Jiang, Wei-Long Zheng, Bao-Liang Lu)'
+    year: 2023
+    tag: 'CN'
+    desc: '面向连续情感标签新数据集,提出支持灵活模态输入的自适应情感Transformer,融合EEG等多模态生理信号。'
+
+icme27:
+  - title: 'Neural-MCRL: Neural Multimodal Contrastive Representation Learning for EEG-based Visual Decoding'
+    group: 'Nizhuan Wang等/香港理工大学 PolyU (Li, Kang, Gong)'
+    year: 2025
+    tag: 'INTL'
+    desc: '通过语义桥接与跨注意力实现EEG-视觉-文本多模态对齐,兼顾模态内完整性与跨模态一致性,显著提升EEG视觉解码精度与泛化。'
+
+icip27:
+  - title: 'EEG Based Visual Classification With Multi-Feature Joint Learning'
+    group: 'Ma et al. (ICIP 2021)'
+    year: 2021
+    tag: 'INTL'
+    desc: '多特征联合学习从EEG做视觉刺激分类,是ICIP上少数的脑信号视觉解码工作。'
+
+wacv27:
+  - title: 'Learning Robust Deep Visual Representations from EEG Brain Recordings'
+    group: 'Prajwal Singh等/IIT Gandhinagar (Shanmuganathan Raman)'
+    year: 2024
+    tag: 'INTL'
+    desc: '两阶段方法学习鲁棒EEG视觉表征用于图像生成与零样本分类,在EEGCVPR40/Thoughtviz上Inception Score大幅提升,WACV 2024脑信号到图像代表作。'
+
+acii27:
+  - title: 'Emotion Recognition Based on EEG Signals and Deep Neural Networks Architectures'
+    group: 'Michalis Zervakis 组, Technical University of Crete (希腊)'
+    year: 2024
+    tag: 'INTL'
+    desc: '系统比较多种深度网络架构在 EEG 情感识别上的表现,偏方法对比/基准。'
+  - title: 'Recognizing X from EEG: Is X Really Emotion?'
+    group: 'Patrick Gebhard 组, DFKI (德国)'
+    year: 2024
+    tag: 'INTL'
+    desc: '批判性反思:质疑 EEG 情感识别中所谓识别的到底是不是情绪,讨论标签与混淆变量问题,视角有价值。'
+  - title: 'Context-Aware EEG-Based Perceived Stress Recognition based on Emotion Transition Paradigm'
+    group: '蒋冬梅组 / 西北工业大学 (Jiyao Liu 等)'
+    year: 2023
+    tag: 'CN'
+    desc: '提出情绪转移范式,做情境感知的 EEG 主观压力识别,关注情绪动态过渡而非静态状态。'
+  - title: 'Deep Recurrent Semi-Supervised EEG Representation Learning for Emotion Recognition'
+    group: 'Ali Etemad 组, Queen''s University (加拿大)'
+    year: 2021
+    tag: 'INTL'
+    desc: '深度循环半监督 EEG 表征学习,利用大量无标注 EEG 提升情感识别,半监督方向被广泛引用。'
+
+icmi27:
+  - title: 'Foundation Feature-Guided Hierarchical Fusion of EEG-Physiological for Emotion Estimation'
+    group: 'Yukie Nagai 组, 东京大学'
+    year: 2025
+    tag: 'INTL'
+    desc: '用基础模型特征引导 EEG 与外周生理信号的分层融合做情绪估计,多模态生理情感方向。'
+  - title: 'Across Trials vs Subjects vs Contexts: A Multi-Reservoir Computing Approach for EEG Variations in Emotion Recognition'
+    group: 'Kantaro Fujiwara 组, 东京大学'
+    year: 2024
+    tag: 'INTL'
+    desc: '用多储备池计算(reservoir computing)系统分析 EEG 情感识别中跨试次/跨被试/跨情境的变异性。'
+  - title: 'EEG-based Cognitive Load Classification using Feature Masked Autoencoding and Emotion Transfer Learning'
+    group: 'Ali Etemad 组, Queen''s University (加拿大)'
+    year: 2023
+    tag: 'INTL'
+    desc: '用特征掩码自编码 + 情感迁移学习做 EEG 认知负荷分类,跨任务迁移思路新颖。'
+
+icassp27:
+  - title: 'STAR: A Spatial-Temporal Autoencoder for EEG Restoration in Emotion Recognition'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2025
+    tag: 'CN'
+    desc: '用时空自编码器修复受损/缺失 EEG 通道,提升情感识别鲁棒性,是该组 EEG 修复-识别一体化路线的代表作。'
+  - title: 'Gram: A Large-Scale General EEG Model for Raw Data Classification and Restoration Tasks'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2025
+    tag: 'CN'
+    desc: '面向原始 EEG 的大规模通用基础模型,统一支持分类与信号修复多任务,EEG 大模型方向重要工作。'
+  - title: 'Multi-Source Multi-Target Domain Similarity Network for Cross-Cultural EEG Emotion Recognition'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2025
+    tag: 'CN'
+    desc: '多源多目标域相似性网络,解决跨文化(跨国受试)EEG 情感识别的域偏移问题。'
+  - title: 'Multi-Scale Attention-Based Dense Spatial-Temporal Model for Emotion Induction in Response to Olfactory Stimuli'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2025
+    tag: 'CN'
+    desc: '多尺度注意力时空模型,研究嗅觉刺激诱发情绪的 EEG 解码,拓展非视听情绪诱发范式。'
+  - title: 'CEMOAE: A Dynamic Autoencoder with Masked Channel Modeling for Robust EEG-Based Emotion Recognition'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2024
+    tag: 'CN'
+    desc: '带掩码通道建模的动态自编码器,通过模拟通道缺失提升 EEG 情感识别在电极脱落场景下的鲁棒性。'
+  - title: 'Functional Emotion Transformer for EEG-Assisted Cross-Modal Emotion Recognition'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2024
+    tag: 'CN'
+    desc: '功能性情感 Transformer,用 EEG 辅助跨模态情感识别,建模脑区功能连接做特征融合。'
+  - title: 'Temporal-Spatial Prediction: Pre-Training on Diverse Datasets for EEG Classification'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2024
+    tag: 'CN'
+    desc: '时空预测自监督预训练,在多样数据集上预训练后迁移到 EEG 分类,EEG 表征学习方向。'
+  - title: 'Elastic Graph Transformer Networks for EEG-based Emotion Recognition'
+    group: '吕宝粮/郑伟龙组, 上海交通大学 BCMI'
+    year: 2023
+    tag: 'CN'
+    desc: '弹性图 Transformer,自适应学习脑电通道间图结构以建模空间关系,经典图+Transformer 工作。'
+
+eusipco27:
+  - title: 'Continuous Speech Prediction by Segmentation of Auditory EEG'
+    group: 'Natsue Yoshimura 组, 东京工业大学'
+    year: 2025
+    tag: 'INTL'
+    desc: '通过分割听觉 EEG 做连续语音预测,听觉注意/语音解码方向,EUSIPCO 强项之一。'
+  - title: 'Deep Learning Prediction of BOLD-fMRI Signals from Simultaneous EEG During Motor Imagery'
+    group: 'Pietro Stabile 等 (意大利)'
+    year: 2025
+    tag: 'INTL'
+    desc: '用深度学习从同步采集的 EEG 预测运动想象时的 BOLD-fMRI 信号,EEG-fMRI 跨模态映射方向。'
+  - title: 'A Geometry-Based Data Augmentation for EEG Motor Imagery Classification Via Deep Riemannian Networks'
+    group: 'Denis Fantinato 等 (巴西)'
+    year: 2025
+    tag: 'INTL'
+    desc: '基于黎曼几何的数据增强 + 深度黎曼网络做运动想象 EEG 分类,黎曼几何方法的信号处理路线。'
+  - title: 'Multiscale Fractal Analysis on EEG Signals for Music-Induced Emotion Recognition'
+    group: 'Petros Maragos 组, NTUA 雅典国立技术大学 (希腊)'
+    year: 2021
+    tag: 'INTL'
+    desc: '用多尺度分形分析做音乐诱发情绪的 EEG 识别,信号处理特色(非纯深度学习)的代表作。'
+
+miccai27:
+  - title: 'BrainWaveNet: Wavelet-Based Transformer for Autism Spectrum Disorder Diagnosis'
+    group: 'Ah-Yeong Jeong / Heung-Il Suk 组, 高丽大学'
+    year: 2024
+    tag: 'Oral'
+    desc: '把 rs-fMRI 引入频域, 用小波变换+Transformer 跨注意力学习实部/虚部频率特征做自闭症诊断, MICCAI 2024 Oral。'
+  - title: 'DTCA: Dual-Branch Transformer with Cross-Attention for EEG and Eye Movement Data Fusion'
+    group: '张晓珊/张姝组, 西北工业大学'
+    year: 2024
+    tag: 'CN'
+    desc: '双分支 Transformer + 交叉注意力融合 EEG 与眼动数据做脑状态分类, 在 SEED/SEED-IV/SEED-V 上达 SOTA(99%+)。'
+  - title: 'GBT: Geometric-oriented Brain Transformer for Autism Diagnosis'
+    group: 'CUHK AIM Group, 香港中文大学'
+    year: 2024
+    tag: 'CN'
+    desc: '把大脑建模为 ROI 网络, 用几何导向的 Brain Transformer 解析 fMRI 连接组做自闭症诊断。'
+  - title: 'FE-STGNN: Spatio-Temporal Graph Neural Network with Functional and Effective Connectivity Fusion for MCI Diagnosis'
+    group: 'MICCAI 2023 录用 (脑网络组)'
+    year: 2023
+    tag: 'INTL'
+    desc: '用 cross-attention 融合静息态 fMRI 的功能连接(FC)与有效连接(EC), 构建时空图神经网络做轻度认知障碍(MCI)诊断。'
+  - title: 'Graph Emotion Decoding from Visually Evoked Neural Responses'
+    group: '黄忠宇/杜长德/何晖光组, 中科院自动化所'
+    year: 2022
+    tag: 'CN'
+    desc: '用情绪-脑区二部图结构建模 fMRI 神经响应与情绪的关系, 实现视觉诱发情绪的图解码, 优于传统 GCN/脑网络模型, 是何晖光组 fMRI 神经解码代表作。'
+
+embc27:
+  - title: 'Transformer Convolutional Neural Networks for Automated Artifact Detection in Scalp EEG'
+    group: 'Wei Yan Peh / Justin Dauwels 组, NTU Singapore'
+    year: 2022
+    tag: 'INTL'
+    desc: '用 Transformer-CNN 自动检测头皮 EEG 伪迹, 服务临床 EEG 质量控制, EMBC 2022。'
+  - title: 'Seizure Prediction Using Convolutional Neural Networks and Sequence Transformer Networks'
+    group: 'Chen R. & Parhi K.K., University of Minnesota'
+    year: 2021
+    tag: 'INTL'
+    desc: '结合 CNN 与序列 Transformer 网络做癫痫发作预测, EMBC 2021 的 EEG 临床解码代表工作。'
+
+isbi27:
+  - title: 'Cross-sampling Rate Transfer Learning for Enhanced Raw EEG Deep Learning Classifier in Major Depressive Disorder Diagnosis'
+    group: 'ISBI 2024 录用 (EEG 抑郁症诊断)'
+    year: 2024
+    tag: 'INTL'
+    desc: '跨采样率迁移学习提升原始 EEG 深度分类器在重度抑郁症诊断上的性能, ISBI 上 EEG 临床解码代表工作。'
