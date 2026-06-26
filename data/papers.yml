@@ -1,9 +1,11 @@
-# BCI Papers · 各会议近年 BCI/EEG 论文索引 / per-venue recent-paper index
+# BCI Papers · 各会议/期刊近年 BCI/EEG 论文索引 / per-venue recent-paper index
 # ─────────────────────────────────────────────────────────────
-# 整理自「ML/AI 顶会论文清单」+ 多智能体并行检索(CV/多媒体/信号/医疗/数据挖掘各会)。
-# 近五年(2021+)有价值的主会论文。按会议 id 归组;每篇:title/group/year/tag/desc。
-# 网站顶部「论文」开关控制展示;每篇标题链到 Google Scholar 搜索。
+# 整理自「ML/AI 顶会论文清单」+ 多智能体并行检索(会议各族系 + 期刊各族系)。
+# 近五年(2021+)有价值的论文。按 会议id / 期刊id 归组;每篇:title/group/year/tag/desc。
+# 网站顶部「论文」开关在会议与期刊视图均可展示;每篇标题链到 Google Scholar 搜索。
 # ─────────────────────────────────────────────────────────────
+
+# ════════ 会议 conferences ════════
 
 neurips27:
   - title: 'CSBrain: A Cross-scale Spatiotemporal Brain Foundation Model for EEG Decoding'
@@ -497,3 +499,254 @@ isbi27:
     year: 2024
     tag: 'INTL'
     desc: '跨采样率迁移学习提升原始 EEG 深度分类器在重度抑郁症诊断上的性能, ISBI 上 EEG 临床解码代表工作。'
+
+# ════════ 期刊 journals ════════
+
+ieeetpami:
+  - title: 'Decoding Visual Neural Representations by Multimodal Learning of Brain-Visual-Linguistic Features'
+    group: '何晖光组(中科院自动化所);杜长德、付凯成、李金鹏'
+    year: 2023
+    tag: 'CN'
+    desc: 'BraVL:用脑-视觉-语言三模态多模态VAE对齐,实现可泛化到新类别的fMRI/EEG视觉神经表征解码,该领域代表作高引'
+  - title: 'Decoding Brain Representations by Multimodal Learning of Neural Activity and Visual Features'
+    group: 'Palazzo、Spampinato 等(意大利 University of Catania)'
+    year: 2021
+    tag: 'INTL'
+    desc: '用EEG神经活动与CNN视觉特征做联合多模态学习,学习脑信号判别表征用于视觉分类,EEG视觉解码奠基性工作(vol.43)'
+
+ieeetnnls:
+  - title: 'Recognizing Natural Images From EEG With Language-Guided Contrastive Learning'
+    group: '宋勇豪、王毅军、何晖光、高小榕(清华/中科院自动化所)'
+    year: 2025
+    tag: 'CN'
+    desc: '自监督对比学习把EEG表征与图像及LLM生成的语言描述对齐,THINGS-EEG2上200类零样本图像识别显著高于随机'
+  - title: 'Tensor-CSPNet: A Novel Geometric Deep Learning Framework for Motor Imagery Classification'
+    group: 'Ce Ju、Cuntai Guan(南洋理工 NTU)'
+    year: 2023
+    tag: 'INTL'
+    desc: '在SPD流形上做几何深度学习的运动想象EEG分类框架,把CSP空间协方差与黎曼几何结合,MI-BCI高引代表作'
+  - title: 'LGGNet: Learning From Local-Global-Graph Representations for Brain-Computer Interface'
+    group: 'Yi Ding、Cuntai Guan(南洋理工 NTU)'
+    year: 2023
+    tag: 'INTL'
+    desc: '受神经科学启发的局部-全局图神经网络,学习EEG脑区图表征用于多种BCI任务(情绪/注意力/MI),开源高关注'
+  - title: 'Spatio-Spectral Feature Representation for Motor Imagery Classification Using Convolutional Neural Networks'
+    group: 'Jin-Seok Bang、Cuntai Guan、Seong-Whan Lee(高丽大学/NTU)'
+    year: 2022
+    tag: 'INTL'
+    desc: '为CNN设计空间-频谱特征表征以提升运动想象EEG解码精度,处理EEG高维与被试特异性问题'
+  - title: 'Multi-view Multi-label Fine-grained Emotion Decoding from Human Brain Activity'
+    group: '何晖光组(中科院自动化所);付凯成、杜长德、王生佩'
+    year: 2022
+    tag: 'CN'
+    desc: '多视图(左右半球及其差异)变分自编码+多标签分类,从fMRI细粒度解码多达80类情绪状态'
+
+naturemachineintel:
+  - title: 'A neural speech decoding framework leveraging deep learning and speech synthesis'
+    group: 'Xupeng Chen、Yao Wang、Adeen Flinker(纽约大学 NYU)'
+    year: 2024
+    tag: 'INTL'
+    desc: 'ECoG解码器+可微语音合成器把皮层电信号转为自然语音,48名受试者高可复现,神经语音假体代表作'
+  - title: 'Decoding speech perception from non-invasive brain recordings'
+    group: 'Défossez、Jean-Rémi King 等(Meta AI / Inria)'
+    year: 2023
+    tag: 'INTL'
+    desc: '用对比学习从MEG/EEG非侵入脑信号解码所听语音,跨数百名受试者验证,非侵入语音脑机接口里程碑'
+
+informationfusion:
+  - title: 'NeuralOOD: Improving out-of-distribution generalization performance with brain-machine fusion learning framework'
+    group: '何晖光组 (中科院自动化所 脑图谱与类脑智能实验室);Shuangchen Zhao, Changde Du, Hui Li, Huiguang He'
+    year: 2025
+    tag: 'CN'
+    desc: '提出脑机融合学习框架 BMFL,用交叉注意力把计算机视觉模型的视觉知识与人脑 EEG 先验认知融合,显著提升模型的分布外(OOD)泛化能力。'
+  - title: 'Multimodal Deep Generative Adversarial Models for Scalable Doubly Semi-supervised Learning'
+    group: '何晖光组 (中科院自动化所);Changde Du, Huiguang He 等'
+    year: 2021
+    tag: 'CN'
+    desc: '用多模态深度生成对抗模型做可扩展的双重半监督学习,应用于脑信号等多模态表征,何晖光组在 Information Fusion 的代表作之一。'
+
+patternrecognition:
+  - title: 'GITGAN: Generative inter-subject transfer for EEG motor imagery analysis'
+    group: 'Kang 等 (含 GitHub Kang1121 开源实现)'
+    year: 2024
+    tag: 'INTL'
+    desc: '提出无监督端到端跨被试域适应方法,以目标数据为中心、用高质量源数据增广,解决 EEG 运动想象的被试间分布差异,Pattern Recognition Vol.155。'
+
+informationscience:
+  - title: 'Multi-subject data augmentation for target subject semantic decoding with deep multi-view adversarial learning'
+    group: '何晖光组 (中科院自动化所);Dan Li, Changde Du, Shengpei Wang, Haibao Wang, Huiguang He'
+    year: 2021
+    tag: 'CN'
+    desc: '用深度多视图对抗学习把所有被试 fMRI 映射到共享潜空间做数据增广,缓解特征失配,提升单被试语义解码性能。'
+
+knowledgebasedsyst:
+  - title: 'MTLFuseNet: A novel emotion recognition model based on deep latent feature fusion of EEG signals and multi-task learning'
+    group: '国内课题组 (具体机构待核)'
+    year: 2023
+    tag: 'INTL'
+    desc: '基于 EEG 深度潜在特征融合 + 多任务学习的情绪识别模型,Knowledge-Based Systems Vol.276,被多篇 2023-2024 工作引为代表方法。'
+
+neurocomputing:
+  - title: 'Multi-source Selective Graph Domain Adaptation Network for cross-subject EEG emotion recognition'
+    group: '国内课题组 (具体机构待核)'
+    year: 2024
+    tag: 'INTL'
+    desc: '多源选择性图域适应网络,处理跨被试 EEG 情绪识别中的功能差异与脑连接结构差异,Neurocomputing 2024。'
+
+ieeetaffc:
+  - title: 'PR-PL: A Novel Prototypical Representation Based Pairwise Learning Framework for Emotion Recognition Using EEG Signals'
+    group: '吕宝粮/郑伟龙相关组'
+    year: 2024
+    tag: 'CN'
+    desc: '基于原型表示与成对学习的鲁棒框架,提升噪声标签下跨被试 EEG 情感识别泛化性。'
+  - title: 'Contrastive Learning of Subject-Invariant EEG Representations for Cross-Subject Emotion Recognition'
+    group: 'Shen / Song 团队'
+    year: 2023
+    tag: 'CN'
+    desc: '用对比学习提取被试不变的 EEG 表征,解决跨被试情感识别个体差异问题,SEED/SEED-IV 上的代表性方法。'
+  - title: 'TSception: Capturing Temporal Dynamics and Spatial Asymmetry from EEG for Emotion Recognition'
+    group: 'Yi Ding 等(NTU/新加坡)'
+    year: 2022
+    tag: 'INTL'
+    desc: '多尺度时序卷积+空间不对称建模的轻量 EEG 情感网络,被广泛作为基线。'
+  - title: 'EEG-Based Emotion Recognition Using Regularized Graph Neural Networks'
+    group: 'Zhong Peixiang / Cui Miao(NTU)'
+    year: 2022
+    tag: 'INTL'
+    desc: 'RGNN:引入脑区生物拓扑的正则化图神经网络,捕捉通道局部-全局关系,SEED 系列经典方法。'
+
+ieeetcds:
+  - title: 'Transfer Learning for EEG-Based Brain-Computer Interfaces: A Review of Progress Made Since 2016'
+    group: 'Wu Dongrui / Xu / Lu(华中科大)'
+    year: 2022
+    tag: 'CN'
+    desc: '系统综述 2016 年以来 EEG-BCI 迁移学习进展,跨被试/跨会话校准的权威参考。'
+  - title: 'Can Emotion Be Transferred? — A Review on Transfer Learning for EEG-Based Emotion Recognition'
+    group: '国内情感 BCI 研究组'
+    year: 2022
+    tag: 'CN'
+    desc: '专门梳理 EEG 情感识别迁移学习方法与基准,面向跨被试个体差异问题。'
+  - title: 'Cognitive Workload Estimation Using Variational Autoencoder and Attention-Based Deep Model'
+    group: 'Chakladar 等'
+    year: 2022
+    tag: 'INTL'
+    desc: '用变分自编码器+注意力深度模型估计 EEG 认知负荷,被动 BCI 认知状态评估代表作。'
+
+ieeethms:
+  - title: 'Emotion Recognition by Combining EEG and EOG Signals over Relevant Channels with Optimal Windowing'
+    group: 'Huili Cai 等'
+    year: 2023
+    tag: 'CN'
+    desc: '融合 EEG 与 EOG 多模态、做通道选择与最优窗口的情感识别,贴合人机系统应用场景。'
+
+cognitivecomputati:
+  - title: 'A Fuzzy Ensemble-Based Deep Learning Model for EEG-Based Emotion Recognition'
+    group: '国际模糊集成深度学习组'
+    year: 2023
+    tag: 'INTL'
+    desc: '用 Gompertz 模糊秩融合多个深度模型,DEAP/AMIGOS 上 valence/arousal 达 90% 级精度。'
+
+cognitiveneurodyna:
+  - title: 'EEG-Based Emotion Recognition Using a Temporal-Difference Minimizing Neural Network'
+    group: '国内深度学习 EEG 组'
+    year: 2023
+    tag: 'CN'
+    desc: '提出时序差异最小化网络降低 EEG 时序波动影响,提升情感识别稳定性。'
+
+journalofneuraleng:
+  - title: 'Deep learning-based electroencephalography analysis: a systematic review'
+    group: 'Roy, Banville, Gramfort, Falk, Faubert (MIST Lab / Inria)'
+    year: 2021
+    tag: 'INTL'
+    desc: '系统综述 154 篇 EEG 深度学习工作,覆盖 BCI/睡眠/癫痫等,确立了 EEG 深度解码的研究范式与评测惯例,被广泛引用(原刊 2019,JNE 高引代表作)。'
+  - title: 'Generalized neural decoders for transfer learning across participants and recording modalities'
+    group: 'Peterson, Steine-Hanson, Rao, Brunton (University of Washington)'
+    year: 2021
+    tag: 'INTL'
+    desc: '提出可跨被试、跨记录模态迁移的通用神经解码器,缓解 BCI 个体差异与标定成本问题,是 EEG/ECoG 迁移学习的代表工作。'
+
+ieeetnsre:
+  - title: 'EEG Conformer: Convolutional Transformer for EEG Decoding and Visualization'
+    group: 'Song, Zheng, Liu, Gao (Hebei University of Technology / 清华)'
+    year: 2022
+    tag: 'CN'
+    desc: '把卷积局部特征与 Transformer 全局自注意力融合用于 EEG 解码,在运动想象/情绪数据上达 SOTA 并提供可视化,是近年最常被引的 EEG Transformer baseline。'
+  - title: 'An SSVEP-Based Brain-Computer Interface Controlled Soft Robotic Glove for Post-Stroke Hand Function Rehabilitation'
+    group: 'Singapore / 康复 BCI 团队'
+    year: 2022
+    tag: 'INTL'
+    desc: 'SSVEP-BCI 驱动软体机器手套用于卒中后手功能康复,是 TNSRE 对口的 BCI+康复闭环代表性临床工程工作。'
+  - title: 'A Benchmark Dataset for SSVEP-Based Brain-Computer Interfaces'
+    group: 'Wang, Chen, Gao, Gao (清华大学 高小榕/高上凯组)'
+    year: 2021
+    tag: 'CN'
+    desc: '清华 40 目标 SSVEP speller 公开基准数据集(35 被试),成为 SSVEP-BCI 算法评测事实标准,持续高引(原刊 2017,TNSRE 代表作)。'
+
+naturebiomedicalen:
+  - title: 'A bilingual speech neuroprosthesis driven by cortical articulatory representations shared between languages'
+    group: 'Chang Lab, UCSF (Silva, Metzger et al.)'
+    year: 2024
+    tag: 'INTL'
+    desc: '在皮层共享发音表征上实现英/西双语语音神经假体,为高性能侵入式语音 BCI 的跨语言泛化提供里程碑证据。'
+  - title: 'Endocisternal interfaces for minimally invasive neural stimulation and recording of the brain and spinal cord'
+    group: 'Rice University / 神经接口团队'
+    year: 2024
+    tag: 'INTL'
+    desc: '提出经脑池(endocisternal)微创神经接口,用无线磁电供能电子器件实现脑与脊髓的记录/刺激,可慢性植入后取出,代表微创 BCI 硬件方向。'
+
+neuroimage:
+  - title: 'Multi-objective optimization via evolutionary algorithm (MOVEA) for high-definition transcranial electrical stimulation of the human brain'
+    group: '刘泉影组 (NCC Lab, 南方科技大学生物医学工程系)'
+    year: 2023
+    tag: 'CN'
+    desc: '提出 MOVEA 进化算法框架,用 Pareto 多目标优化无需预设方向地设计 tACS/tTIS 经颅电刺激方案,同时权衡靶区强度、聚焦度、深度与避让区,是国内 BCI/神经调控计算方法代表作。'
+  - title: 'A large and rich EEG dataset for modeling human visual object recognition'
+    group: 'Gifford, Dwivedi, Roig, Cichy (Free University Berlin)'
+    year: 2022
+    tag: 'INTL'
+    desc: '发布 10 人、16740 图像条件、82160 试次的毫秒级 EEG 视觉物体识别数据集(THINGS-EEG),成为 EEG 视觉解码/重建研究的基准数据与建模基础。'
+
+humanbrainmapping:
+  - title: 'Brain functional and effective connectivity based on electroencephalography recordings: A review'
+    group: 'EEG 功能/有效连接综述团队'
+    year: 2022
+    tag: 'INTL'
+    desc: '系统综述基于 EEG 的功能连接与有效连接估计方法,梳理度量、陷阱与应用,是 HBM 上 EEG 连接组方法学的高引参考文献。'
+
+braintopography:
+  - title: 'Current State of EEG/ERP Microstate Research'
+    group: '伯尔尼 EEG 微状态共识会议团队(Brain Topography 特刊)'
+    year: 2024
+    tag: 'INTL'
+    desc: '源自 2022 年伯尔尼会议的 EEG/ERP 微状态研究现状与标准化共识,推动微状态分析方法规范化,是该刊微状态特刊的核心综述。'
+  - title: 'On the Reliability of the EEG Microstate Approach'
+    group: 'EEG 微状态可靠性研究团队'
+    year: 2023
+    tag: 'INTL'
+    desc: '在 500+ 受试者大样本上评估 EEG 微状态时长/出现率/覆盖率的重测信度,为微状态作为全脑网络动力学指标提供方法学背书,是 Brain Topography 微状态方向代表作。'
+
+biomedicalsignalpr:
+  - title: 'A classification method for EEG motor imagery signals based on parallel convolutional neural network'
+    group: '运动想象 EEG 深度学习团队(Biomedical Signal Processing and Control)'
+    year: 2022
+    tag: 'INTL'
+    desc: '用并行卷积神经网络做运动想象 EEG 分类,是该刊 EEG-BCI 方向高产代表性深度学习工作之一。'
+
+ieeetransinstrumen:
+  - title: 'Emotion recognition by discriminating EEG segments with high affective content from automatically selected relevant channels'
+    group: 'Sarma & Barma (Tezpur University)'
+    year: 2022
+    tag: 'INTL'
+    desc: '自动选择相关通道并甄别高情感片段做 EEG 情绪识别,体现 IEEE TIM 在 EEG 测量与情绪 BCI 上的方法学贡献。'
+
+computersinbiology:
+  - title: 'EpilepsyNet: Novel automated detection of epilepsy using transformer model with EEG signals from 121 patient population'
+    group: 'EpilepsyNet 团队 (含 USQ 等)'
+    year: 2023
+    tag: 'INTL'
+    desc: '用 Transformer 对 35 通道、121 名受试者 EEG 做癫痫自动检测,首次将可学习位置编码加到相关系数嵌入上,准确率约 85%,是该刊癫痫 EEG 深度学习代表作。'
+  - title: 'A deep learning based ensemble learning method for epileptic seizure prediction'
+    group: 'Usman, Khalid & Bashir'
+    year: 2021
+    tag: 'INTL'
+    desc: '基于深度学习的集成方法做癫痫发作预测,是 Computers in Biology and Medicine 上 EEG 癫痫预测方向的高引代表工作。'

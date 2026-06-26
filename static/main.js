@@ -300,7 +300,7 @@
     els.footer.innerHTML = mode === 'journal' ? t().jFooter : mode === 'dataset' ? t().dFooter : t().footer;
     els.langBtn.textContent = t().langBtn;
     els.papersBtn.textContent = lang === 'en' ? '📄 Papers' : '📄 论文';
-    els.papersBtn.style.display = mode === 'conf' ? '' : 'none';
+    els.papersBtn.style.display = mode === 'dataset' ? 'none' : '';
     els.papersBtn.classList.toggle('on', showPapers);
     els.mtabConf.textContent = t().tabConf;
     els.mtabJournal.textContent = t().tabJournal;
@@ -487,6 +487,7 @@
         <div class="evt-metrics">${metrics}</div>
         <div class="jrnl-pub">${esc(j.publisher || '')}</div>
         ${note ? `<div class="evt-note">${esc(note)}</div>` : ''}
+        ${papersHTML(j)}
       </div>
     </div>`;
   }
