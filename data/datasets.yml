@@ -36,6 +36,8 @@
   note: 'P300 speller 的经典数据,拼写器类研究的历史起点。'
   note_en: 'The classic P300-speller dataset; historical starting point for speller research.'
 
+  tags_en:
+  - P300 classic
 - id: 'bciiii'
   name: 'BCI Comp III-IIIa/IIIb'
   link: 'https://www.bbci.de/competition/iii/'
@@ -53,6 +55,8 @@
   note: '更早的 MI 2/3-class 基准,历史对照用。'
   note_en: 'Older MI 2/3-class benchmark, kept for historical comparison.'
 
+  tags_en:
+  - old baseline
 - id: 'bciiv2a'
   name: 'BCI Competition IV-2a'
   link: 'https://www.bbci.de/competition/iv/'
@@ -70,6 +74,9 @@
   note: '至今 MI 算法的强制 baseline,FBCSP 在此达 kappa 0.569,新 MI 算法不在 2a 上跑没人信。'
   note_en: 'The mandatory MI baseline; FBCSP reached kappa 0.569 here. No MI method is trusted without 2a results.'
 
+  tags_en:
+  - 'benchmark'
+  - MI must-run
 - id: 'bciiv2b'
   name: 'BCI Competition IV-2b'
   link: 'https://www.bbci.de/competition/iv/'
@@ -104,6 +111,8 @@
   note: '含非控期识别,适合连续控制 / 异步 BCI 研究。'
   note_en: 'Includes non-control periods; suited to continuous-control / asynchronous BCI研究.'
 
+  tags_en:
+  - continuous control
 - id: 'eegmmidb'
   name: 'PhysioNet EEGMMIDB'
   link: 'https://physionet.org/content/eegmmidb/1.0.0/'
@@ -121,6 +130,9 @@
   note: '被试量最大的 Wave 1 MI 集,EEGNet 原始论文用此。试次少质量参差,更适合跨被试预训练。'
   note_en: 'Largest Wave-1 MI set (EEGNet was trained on it). Few trials and uneven quality — better for cross-subject pretraining.'
 
+  tags_en:
+  - largest N
+  - large-N pretraining
 - id: 'grossewentrup2009'
   name: 'Grosse-Wentrup 2009 Haptic MI'
   link: 'https://moabb.neurotechx.com/docs/generated/moabb.datasets.GrosseWentrup2009.html'
@@ -138,6 +150,9 @@
   note: '左/右手触觉 MI,128 通道带 3D 电极坐标,MOABB 经典高密度 MI 基准。'
   note_en: 'Left/right-hand haptic MI at 128 channels with 3D coordinates; a classic high-density MOABB benchmark.'
 
+  trials_en: 300/subj
+  tags_en:
+  - high-density MI
 - id: 'weibo2014'
   name: 'Weibo 2014 Compound Limb MI'
   link: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0114853'
@@ -155,6 +170,8 @@
   note: '7 类 MI(3 简单肢体 + 3 复合 + 静息),MOABB 多类/复合 MI 标准基准。'
   note_en: '7-class MI (3 simple, 3 compound limb, rest); a MOABB standard for multi-class / compound MI.'
 
+  tags_en:
+  - compound MI
 - id: 'covertovert'
   name: 'Covert/Overt ERP BCI (BNCI 009-2014)'
   link: 'https://bnci-horizon-2020.eu/database/data-sets'
@@ -172,6 +189,9 @@
   note: 'P300 拼写器隐性 vs 显性注意对照,常与 ALS P300(008)配套做基准。'
   note_en: 'P300 speller with covert vs overt attention; often paired with the ALS 008 set for benchmarks.'
 
+  trials_en: 6 letter matrices
+  tags_en:
+  - ERP attention conditions
 - id: 'nakanishi_ssvep'
   name: 'Nakanishi 2015 12-class SSVEP'
   link: 'https://github.com/mnakanishi/12JFPM_SSVEP'
@@ -189,6 +209,9 @@
   note: '被广泛引用的 12 目标 SSVEP 小基准,在线 ITR 与 IT-CCA 方法的标准对照。'
   note_en: 'Widely cited 12-target SSVEP benchmark; standard for online ITR and IT-CCA methods.'
 
+  trials_en: 12 targets
+  tags_en:
+  - small benchmark
 - id: 'decaf'
   name: 'DECAF'
   link: 'https://decaf-dataset.github.io/'
@@ -206,6 +229,11 @@
   note: '罕见的 MEG(而非 EEG)情绪数据 + 近红外/ECG/EOG,情感计算跨模态参考。'
   note_en: 'A rare MEG (not EEG) affect dataset with NIR/ECG/EOG; a cross-modal affective reference.'
 
+  channels_en: MEG + peripheral
+  trials_en: emotion
+  modality_en: MEG + peripheral
+  tags_en:
+  - MEG emotion
 - id: 'frank2015'
   name: 'Frank 2015 N400 ERP (UCL)'
   link: 'https://www.sciencedirect.com/science/article/pii/S0093934X14001515'
@@ -223,6 +251,9 @@
   note: '逐词阅读自然句子的 ERP(N400 等),语言模型 surprisal 与脑活动对齐研究常用。'
   note_en: 'Word-by-word natural-sentence reading ERPs (N400); common for aligning LM surprisal with brain activity.'
 
+  trials_en: natural sentences
+  tags_en:
+  - N400 language
 - id: 'tsinghua_ssvep'
   name: 'Tsinghua Benchmark SSVEP (Wang 2016)'
   link: 'http://bci.med.tsinghua.edu.cn/download.html'
@@ -240,6 +271,9 @@
   note: 'SSVEP 拼写器最常用基准,40 目标联合频相调制,CCA/深度 SSVEP 解码的金标准。'
   note_en: 'The most-used SSVEP-speller benchmark; 40-target JFPM, the gold standard for CCA / deep SSVEP decoding.'
 
+  trials_en: 40 targets, JFPM
+  tags_en:
+  - first SSVEP benchmark
 - id: 'mamem_ssvep'
   name: 'MAMEM SSVEP (I & II)'
   link: 'https://www.mamem.eu/results/datasets/'
@@ -257,6 +291,8 @@
   note: '高密度 256 通道 SSVEP,MOABB 收录;频率隔离 vs 同时闪烁两种设计。'
   note_en: 'High-density 256-channel SSVEP (in MOABB); isolated-frequency vs simultaneous-flicker designs.'
 
+  tags_en:
+  - 256 channels
 - id: 'zhou2016'
   name: 'Zhou 2016 Three-Class MI'
   link: 'https://doi.org/10.1371/journal.pone.0162657'
@@ -274,6 +310,8 @@
   note: '左/右手/脚三类 MI,跨数天到数月 3 个 session,MOABB 跨 session 小基准。'
   note_en: 'Left/right hand + feet MI across 3 sessions days-to-months apart; a small MOABB cross-session benchmark.'
 
+  tags_en:
+  - cross-session small set
 - id: 'shin2017'
   name: 'Shin EEG-NIRS'
   link: 'https://pubmed.ncbi.nlm.nih.gov/27849545/'
@@ -291,6 +329,9 @@
   note: 'Hybrid BCI 的"祖师爷"数据集,所有 EEG+fNIRS 综述都引它;左/右手 MI vs 心算 vs 静息。'
   note_en: 'The ancestral hybrid-BCI dataset cited by every EEG+fNIRS review; left/right-hand MI vs mental arithmetic vs rest.'
 
+  tags_en:
+  - hybrid-BCI pioneer
+  - bimodal
 - id: 'bonn'
   name: 'Bonn EEG (Andrzejak)'
   link: 'https://www.ukbonn.de/epileptologie/arbeitsgruppen/ag-lehnertz-neurophysik/downloads/'
@@ -308,6 +349,10 @@
   note: '波恩大学癫痫 EEG 五子集,癫痫分类的经典小基准。'
   note_en: 'Bonn five-subset epilepsy EEG; the classic small benchmark for seizure classification.'
 
+  channels_en: single-channel
+  trials_en: epilepsy
+  tags_en:
+  - small epilepsy benchmark
 - id: 'chbmit'
   name: 'CHB-MIT Scalp EEG'
   link: 'https://physionet.org/content/chbmit/1.0.0/'
@@ -325,6 +370,9 @@
   note: '波士顿儿童医院头皮癫痫 EEG,癫痫发作检测/预测最常用公开集。'
   note_en: 'Boston Children’s pediatric scalp-seizure EEG; the most-used public set for seizure detection/prediction.'
 
+  trials_en: seizure
+  tags_en:
+  - pediatric epilepsy classic
 - id: 'alsp300'
   name: 'ALS P300 Speller (BNCI 008-2014, Riccio)'
   link: 'https://bnci-horizon-2020.eu/database/data-sets'
@@ -342,6 +390,9 @@
   note: 'ALS 患者 P300 拼写器经典数据,目标人群 P300 BCI 评测与跨集合并研究的标准参考,补上 ALS 数据缺口。'
   note_en: 'Canonical ALS-patient P300-speller data; the reference for target-population P300 BCI — fills the ALS data gap.'
 
+  tags_en:
+  - ALS clinical
+  - 'P300'
 - id: 'shhs'
   name: 'SHHS (Sleep Heart Health Study)'
   link: 'https://physionet.org/content/shhpsgdb/1.0.0/'
@@ -359,6 +410,9 @@
   note: '近 6000 人整夜 PSG,睡眠分期/心血管研究与基础模型预训练的超大数据池。'
   note_en: '~6000 whole-night PSG records; a very large pool for sleep staging and foundation-model pretraining.'
 
+  trials_en: whole-night
+  tags_en:
+  - huge-N sleep
 - id: 'isruc'
   name: 'ISRUC-Sleep'
   link: 'https://sleeptight.isr.uc.pt/'
@@ -376,6 +430,9 @@
   note: '葡萄牙 ISRUC 整夜 PSG,含健康与睡眠障碍受试,常用睡眠分期基准。'
   note_en: 'Portuguese whole-night PSG with healthy and sleep-disorder subjects; a common staging benchmark.'
 
+  trials_en: whole-night
+  tags_en:
+  - sleep benchmark
 - id: 'tuhsub'
   name: 'TUH EEG Subsets (TUAB / TUEV / TUSZ)'
   link: 'https://isip.piconepress.com/projects/nedc/html/tuh_eeg/'
@@ -395,6 +452,10 @@
 
 # ════════ Wave 2 · 深度学习时代 (2017–2022) ════════
 
+  channels_en: clinical EEG
+  trials_en: abnormal/event/seizure
+  tags_en:
+  - foundation-model eval
 - id: 'deap'
   name: 'DEAP'
   link: 'http://www.eecs.qmul.ac.uk/mmv/datasets/deap/'
@@ -412,6 +473,12 @@
   note: '情绪识别最被引数据集,Valence/Arousal 二维 + 多生理。标签为被试自评,主观性强、跨被试一致性差。'
   note_en: 'The most-cited emotion dataset (Valence/Arousal + peripheral signals). Labels are self-reported — subjective, with poor cross-subject consistency.'
 
+  channels_en: 32 EEG + 8 peripheral
+  trials_en: 40×60s videos
+  modality_en: EEG + peripheral
+  tags_en:
+  - emotion benchmark
+  - subjective labels
 - id: 'mahnob'
   name: 'MAHNOB-HCI'
   link: 'https://ibug.doc.ic.ac.uk/resources/mahnob-hci-tagging-database/'
@@ -429,6 +496,10 @@
   note: '情绪多模态最全的数据之一,含面部、眼动、多生理信号。'
   note_en: 'One of the most complete multimodal emotion datasets, with face, eye-gaze and multiple physiological signals.'
 
+  channels_en: 32 EEG + multi-physio
+  modality_en: EEG + peripheral
+  tags_en:
+  - full multimodal
 - id: 'mass'
   name: 'MASS'
   link: 'http://ceams-carsm.ca/mass/'
@@ -446,6 +517,8 @@
   note: '200 被试 PSG,大规模睡眠分期与预训练数据。'
   note_en: '200-subject PSG; large-scale sleep-staging and pretraining data.'
 
+  tags_en:
+  - large-N sleep
 - id: 'karaone'
   name: 'KARA ONE'
   link: 'http://www.cs.toronto.edu/~complingweb/data/karaOne/karaOne.html'
@@ -463,6 +536,10 @@
   note: '内/外说话同步采集 EEG + 面部 + 音频,音素级分类研究常用。'
   note_en: 'Inner and overt speech with synchronous EEG + face + audio; common for phoneme-level classification.'
 
+  channels_en: 62 + face + audio
+  modality_en: EEG + peripheral
+  tags_en:
+  - phoneme classification
 - id: 'seed'
   name: 'SEED / SEED-IV'
   link: 'https://bcmi.sjtu.edu.cn/home/seed/'
@@ -480,6 +557,9 @@
   note: '中文情绪 EEG 标杆,标签清晰(正/中/负 或 4-class)。N 比 DEAP 少但每被试 trial 多、跨 session 重复。'
   note_en: 'The Chinese emotion-EEG benchmark with cleaner labels (pos/neutral/neg or 4-class). Fewer subjects than DEAP but more trials per subject and repeated sessions.'
 
+  trials_en: film-clip elicited
+  tags_en:
+  - SJTU emotion benchmark
 - id: 'highgamma'
   name: 'High-Gamma Dataset'
   link: 'https://web.gin.g-node.org/robintibor/high-gamma-dataset'
@@ -497,6 +577,8 @@
   note: 'DeepConvNet / ShallowConvNet 原始数据集,与 2a 形成"少 N 多 trial"对照,对深度方法重要。'
   note_en: 'Origin dataset of DeepConvNet / ShallowConvNet; a "few-subjects, many-trials" counterpart to 2a, important for deep methods.'
 
+  tags_en:
+  - DeepConvNet original set
 - id: 'cho2017'
   name: 'Cho 2017 MI'
   link: 'http://gigadb.org/dataset/100295'
@@ -514,6 +596,8 @@
   note: '52 被试 2-class MI,常用跨被试泛化基准。'
   note_en: '52-subject 2-class MI, a common cross-subject generalization benchmark.'
 
+  tags_en:
+  - cross-subject benchmark
 - id: 'dreamer'
   name: 'DREAMER'
   link: 'https://zenodo.org/records/546113'
@@ -531,6 +615,9 @@
   note: '消费级 14 通道头戴采集的情绪数据,贴近低成本落地场景。'
   note_en: 'Emotion data from a consumer-grade 14-channel headset; close to low-cost deployment scenarios.'
 
+  modality_en: EEG + peripheral
+  tags_en:
+  - consumer-grade headset
 - id: 'coretto'
   name: 'Coretto Imagined Speech'
   link: 'https://www.spiedigitallibrary.org/conference-proceedings-of-spie/10160/1016002'
@@ -548,6 +635,8 @@
   note: '想象元音 + 词,仅 6 通道,适合便携 / 低通道想象语音研究。'
   note_en: 'Imagined vowels + words with only 6 channels; suited to portable / low-channel imagined-speech research.'
 
+  tags_en:
+  - few channels but portable
 - id: 'ofner2017'
   name: 'Ofner 2017 Upper-Limb Movements'
   link: 'https://doi.org/10.5281/zenodo.834976'
@@ -565,6 +654,8 @@
   note: '6 类上肢运动(肘屈伸/腕旋/手开合),执行 + 想象,低频时域 EEG 运动解码的奠基集,贴近假肢控制。'
   note_en: 'Six sustained upper-limb movements (executed + imagined); foundational for time-domain movement decoding, close to prosthetic control.'
 
+  tags_en:
+  - upper-limb movement decoding
 - id: 'seedvig'
   name: 'SEED-VIG'
   link: 'https://bcmi.sjtu.edu.cn/home/seed/seed-vig.html'
@@ -582,6 +673,10 @@
   note: '模拟驾驶下的警觉度/疲劳 EEG + EOG,疲劳检测金标数据。'
   note_en: 'Vigilance/fatigue EEG + EOG under simulated driving; a gold-standard fatigue-detection set.'
 
+  trials_en: driving fatigue
+  modality_en: EEG + peripheral
+  tags_en:
+  - vigilance/fatigue
 - id: 'god'
   name: 'Generic Object Decoding (Horikawa & Kamitani)'
   link: 'https://github.com/KamitaniLab/GenericObjectDecoding'
@@ -599,6 +694,9 @@
   note: 'fMRI 视觉对象解码经典(特征解码到 CNN 层),视觉解码社区的 fMRI 端 ground truth 之一。'
   note_en: 'Classic fMRI visual-object decoding (to CNN features); an fMRI-side ground truth for visual-decoding研究. (fMRI, not EEG)'
 
+  trials_en: visual objects
+  tags_en:
+  - fMRI visual decoding origin
 - id: 'camcan'
   name: 'Cam-CAN'
   link: 'https://www.cam-can.org/'
@@ -616,6 +714,9 @@
   note: '剑桥跨龄(18–87 岁)MEG/MRI 大队列,脑龄/老化与跨被试泛化研究的大数据。'
   note_en: 'Cambridge lifespan (18–87) MEG/MRI cohort; big data for brain-age/ageing and cross-subject generalization.'
 
+  trials_en: cross-age
+  tags_en:
+  - cross-age large cohort
 - id: 'kaya2018'
   name: 'Kaya 2018 MI'
   link: 'https://figshare.com/collections/A_large_electroencephalographic_motor_imagery_dataset_for_electroencephalographic_brain_computer_interfaces/3917698'
@@ -633,6 +734,8 @@
   note: '含 5 个 MI 子 paradigm,适合多任务 MI 研究。'
   note_en: 'Contains 5 MI sub-paradigms; suited to multi-task MI研究.'
 
+  tags_en:
+  - 5 subsets
 - id: 'sleepedf'
   name: 'Sleep-EDF Expanded'
   link: 'https://physionet.org/content/sleep-edfx/1.0.0/'
@@ -650,6 +753,8 @@
   note: '睡眠分期最常用公开基准,也是 EEG 基础模型预训练的常用大池之一。'
   note_en: 'The most-used public sleep-staging benchmark, and a common pretraining pool for EEG foundation models.'
 
+  tags_en:
+  - sleep benchmark
 - id: 'shin2018'
   name: 'Shin EEG-NIRS n-back'
   link: 'https://www.nature.com/articles/sdata20183'
@@ -667,6 +772,9 @@
   note: '工作记忆负荷三档对比,认知负荷估计的金标准 paradigm,同步 fNIRS 提供血流动力学验证。'
   note_en: 'Three-level working-memory load — the gold-standard paradigm for cognitive-load estimation, with synchronous fNIRS for hemodynamic validation.'
 
+  tags_en:
+  - cognitive-load gold standard
+  - bimodal
 - id: 'amigos'
   name: 'AMIGOS'
   link: 'http://www.eecs.qmul.ac.uk/mmv/datasets/amigos/'
@@ -684,6 +792,12 @@
   note: '个体与群体观影下的情绪 + 个性多模态数据(EEG/ECG/GSR + 视频),情感计算常用。'
   note_en: 'Affect + personality multimodal data under individual/group video watching (EEG/ECG/GSR + video).'
 
+  channels_en: 14 + peripheral
+  trials_en: short/long videos
+  modality_en: EEG + peripheral
+  tags_en:
+  - multimodal emotion
+  - personality/social
 - id: 'ascertain'
   name: 'ASCERTAIN'
   link: 'https://ascertain-dataset.github.io/'
@@ -701,6 +815,10 @@
   note: '情绪与大五人格关联的多模态生理数据(58 被试),研究 personality-aware 情感识别。'
   note_en: 'Multimodal physiological data linking emotion to Big-Five personality (58 subj).'
 
+  trials_en: emotion + personality
+  modality_en: EEG + peripheral
+  tags_en:
+  - personality × emotion
 - id: 'zuco1'
   name: 'ZuCo 1.0'
   link: 'https://osf.io/q3zws/'
@@ -718,6 +836,12 @@
   note: '自然阅读 EEG + 眼动同步,EEG-to-text(如 DeWave)与脑-语言对齐的核心数据。'
   note_en: 'Natural-reading EEG + eye-tracking; core data for EEG-to-text (e.g. DeWave) and brain-language alignment.'
 
+  channels_en: 128 + eye-tracking
+  trials_en: natural reading
+  modality_en: EEG + peripheral
+  tags_en:
+  - 'EEG-to-text'
+  - reading + eye-tracking
 - id: 'schwarz2018'
   name: 'Schwarz 2018 Reach-and-Grasp'
   link: 'https://iopscience.iop.org/article/10.1088/1741-2552/aa8911'
@@ -735,6 +859,9 @@
   note: '三种自然抓握(掌握/侧握/捏握)+ 无动作,Ofner 的执行抓握姊妹集(Müller-Putz 组)。'
   note_en: 'Three natural grasp types + no-movement; the executed-grasp companion to Ofner (Müller-Putz lab).'
 
+  trials_en: 72/condition
+  tags_en:
+  - grasp types
 - id: 'openbmi'
   name: 'OpenBMI / Lee 2019'
   link: 'http://gigadb.org/dataset/100542'
@@ -752,6 +879,9 @@
   note: 'MI + ERP + SSVEP 同批被试同步采集,研究 paradigm 互补性与跨任务迁移最干净的数据。'
   note_en: 'MI + ERP + SSVEP recorded synchronously on the same subjects — the cleanest data for paradigm complementarity and cross-task transfer.'
 
+  tags_en:
+  - large-N MI
+  - multi-paradigm
 - id: 'seedv'
   name: 'SEED-V'
   link: 'https://bcmi.sjtu.edu.cn/home/seed/seed-v.html'
@@ -769,6 +899,10 @@
   note: 'SEED 家族 5 类情绪扩展(开心/悲伤/恐惧/厌恶/中性)+ 眼动,标签更细。'
   note_en: 'SEED-family 5-class emotion extension (happy/sad/fear/disgust/neutral) + eye movements.'
 
+  trials_en: 5 emotion classes
+  modality_en: EEG + peripheral
+  tags_en:
+  - SJTU emotion, extended
 - id: 'mped'
   name: 'MPED'
   link: 'https://github.com/Tengfei000/MPED'
@@ -786,6 +920,10 @@
   note: '多模态生理情绪库(EEG/ECG/呼吸/GSR),7 类情绪。'
   note_en: 'Multi-modal physiological emotion database (EEG/ECG/respiration/GSR), 7 classes.'
 
+  trials_en: 7 emotion classes
+  modality_en: EEG + peripheral
+  tags_en:
+  - multi-physio emotion
 - id: 'lemon'
   name: 'LEMON (MPI Leipzig)'
   link: 'https://www.nature.com/articles/sdata2018308'
@@ -803,6 +941,10 @@
   note: '莱比锡 MPI 静息态 EEG + MRI(227 人,含老年),EEG 基础模型预训练与脑龄研究常用。'
   note_en: 'Leipzig resting-state EEG + MRI (227 subj incl. elderly); common for EEG foundation-model pretraining and brain-age研究.'
 
+  trials_en: resting-state
+  tags_en:
+  - large-N resting-state
+  - pretraining
 - id: 'zuco2'
   name: 'ZuCo 2.0'
   link: 'https://osf.io/2urht/'
@@ -820,6 +962,9 @@
   note: 'ZuCo 续作,任务特定 vs 自然阅读对照,EEG-to-text 研究常配 1.0 使用。'
   note_en: 'ZuCo follow-up with task-specific vs natural reading; usually paired with 1.0 for EEG-to-text研究.'
 
+  channels_en: 128 + eye-tracking
+  trials_en: natural reading
+  modality_en: EEG + peripheral
 - id: 'broderick'
   name: 'Broderick Natural Speech'
   link: 'https://doi.org/10.5061/dryad.070jc'
@@ -837,6 +982,9 @@
   note: '听有声书时的 EEG,自然语音的神经追踪(envelope/TRF)研究奠基集。'
   note_en: 'EEG while listening to an audiobook; foundational for neural tracking of natural speech (envelope/TRF).'
 
+  trials_en: natural listening
+  tags_en:
+  - auditory tracking
 - id: 'brennan_alice'
   name: 'Brennan & Hale Alice EEG'
   link: 'https://deepblue.lib.umich.edu/data/concern/data_sets/bn999738r'
@@ -854,6 +1002,9 @@
   note: '听《爱丽丝》章节的 EEG(49 人),自然语言句法/语义加工的神经计算研究常用。'
   note_en: 'EEG while listening to a chapter of Alice (49 subj); common for computational study of syntactic/semantic processing.'
 
+  trials_en: natural listening + reading
+  tags_en:
+  - natural language processing
 - id: 'mous'
   name: 'Mother of Unification Studies (MOUS)'
   link: 'https://www.nature.com/articles/s41597-019-0020-y'
@@ -871,6 +1022,9 @@
   note: '204 人阅读/听句子的 MEG + fMRI,大规模语言神经数据。'
   note_en: 'MEG + fMRI from 204 subjects reading/listening to sentences; large-scale language neuroimaging.'
 
+  trials_en: language
+  tags_en:
+  - large-N language MEG
 - id: 'bak2019'
   name: 'Bak 2019 fNIRS Tapping'
   link: 'https://www.mdpi.com/2079-9292/8/12/1486'
@@ -888,6 +1042,9 @@
   note: '单侧手指/脚部 tapping 的 fNIRS(30 被试),纯 fNIRS 运动解码常用小集。'
   note_en: 'Unilateral finger/foot tapping fNIRS (30 subj); a common small set for pure-fNIRS motor decoding.'
 
+  trials_en: hand/foot tapping
+  tags_en:
+  - fNIRS motor
 - id: 'beta_ssvep'
   name: 'BETA SSVEP Database (Liu 2020)'
   link: 'http://bci.med.tsinghua.edu.cn/download.html'
@@ -905,6 +1062,9 @@
   note: '清华 BETA,迄今最大 SSVEP 基准(70 被试),适合人群规模上评测高 ITR 拼写器。'
   note_en: 'Tsinghua BETA, the largest SSVEP benchmark (70 subjects); for population-scale evaluation of high-ITR spellers.'
 
+  trials_en: 40 targets
+  tags_en:
+  - largest SSVEP
 - id: 'kemocon'
   name: 'K-EmoCon'
   link: 'https://zenodo.org/records/3762962'
@@ -922,6 +1082,10 @@
   note: '自然辩论对话中的连续情绪标注 + 可穿戴生理,贴近真实社交情绪。'
   note_en: 'Continuous emotion annotation during naturalistic debate + wearable physiology; close to real social affect.'
 
+  trials_en: natural conversation
+  modality_en: EEG + peripheral
+  tags_en:
+  - natural debate setting
 - id: 'gameemo'
   name: 'GAMEEMO'
   link: 'https://data.mendeley.com/datasets/b3pn4kwpmn/3'
@@ -939,6 +1103,10 @@
   note: '玩不同情绪倾向电脑游戏时的消费级 14 通道情绪 EEG。'
   note_en: 'Consumer-grade 14-channel emotion EEG while playing emotionally distinct computer games.'
 
+  trials_en: gaming
+  tags_en:
+  - gaming emotion
+  - consumer-grade
 - id: 'erpcore'
   name: 'ERP CORE (Kappenman 2021)'
   link: 'https://doi.org/10.1016/j.neuroimage.2020.117465'
@@ -956,6 +1124,8 @@
   note: '事实标准的开放 ERP 资源:N170/MMN/N2pc/N400/P3b/LRP/ERN 七大成分 + 完整 pipeline。'
   note_en: 'The de-facto open ERP resource: seven components (N170, MMN, N2pc, N400, P3b, LRP, ERN) with full pipelines.'
 
+  tags_en:
+  - ERP standard set
 - id: 'stieger2021'
   name: 'Stieger 2021 SMR-BCI Learning'
   link: 'https://doi.org/10.6084/m9.figshare.13123148'
@@ -973,6 +1143,9 @@
   note: '唯一大规模纵向 MI-BCI 学习数据(62 被试 × 7–11 次,>600h 在线光标控制),研究 BCI 学习/SMR/迁移的核心集。'
   note_en: 'The only large longitudinal MI-BCI learning dataset (62 subj × 7–11 sessions, >600h online cursor control); core for BCI-learning / SMR / transfer研究.'
 
+  tags_en:
+  - large-N longitudinal
+  - 'BCI learning'
 - id: 'chbmp'
   name: 'CHBMP (Cuban Human Brain Mapping)'
   link: 'https://www.nature.com/articles/s41597-020-00779-6'
@@ -990,6 +1163,9 @@
   note: '古巴人脑图谱计划 282 人静息态 EEG + MRI,跨人群规模化静息态参考。'
   note_en: 'Cuban Human Brain Mapping resting-state EEG + MRI over 282 subjects; a cross-population resting reference.'
 
+  trials_en: resting-state
+  tags_en:
+  - multimodal resting
 - id: 'tufts_fnirs'
   name: 'Tufts fNIRS Mental Workload (fNIRS2MW)'
   link: 'https://tufts-hci-lab.github.io/code_and_datasets/fNIRS2MW.html'
@@ -1007,6 +1183,8 @@
   note: '68 人 n-back 的 fNIRS 认知负荷数据,纯 fNIRS 工作记忆负荷最大公开集之一。'
   note_en: 'fNIRS mental-workload data from 68 subjects (n-back); one of the largest pure-fNIRS workload sets.'
 
+  tags_en:
+  - large fNIRS cognitive-load set
 - id: 'nieto2022'
   name: 'Inner Speech / Nieto 2022'
   link: 'https://www.nature.com/articles/s41597-022-01147-2'
@@ -1024,6 +1202,10 @@
   note: '内在语音 paradigm 第一个公开 EEG 数据集(西班牙语),inner / pronounced / visualized 三条件可对比,OpenNeuro BIDS 标准。'
   note_en: 'First public inner-speech EEG dataset (Spanish); inner / pronounced / visualized conditions enable paradigm comparison; OpenNeuro BIDS.'
 
+  trials_en: 4 words × 3 conditions
+  tags_en:
+  - first public inner-speech set
+  - 'BIDS'
 - id: 'tuheeg'
   name: 'TUH EEG Corpus'
   link: 'https://isip.piconepress.com/projects/tuh_eeg/'
@@ -1041,6 +1223,10 @@
   note: '约 7 万条临床 EEG 记录,目前最大的开放 EEG 数据池,是 LaBraM/BIOT/Brant 等基础模型预训练的核心来源。'
   note_en: '~70k clinical EEG records — the largest open EEG pool, a core pretraining source for LaBraM, BIOT, Brant and other foundation models.'
 
+  channels_en: clinical EEG
+  tags_en:
+  - largest open EEG
+  - large pretraining pool
 - id: 'physio2018'
   name: 'Physio2018 (You Snooze You Win)'
   link: 'https://physionet.org/content/challenge-2018/1.0.0/'
@@ -1058,6 +1244,9 @@
   note: 'PhysioNet/CinC 2018 挑战赛睡眠数据(994 公开训练),唤醒检测与分期常用。'
   note_en: 'PhysioNet/CinC 2018 Challenge sleep data (994 public train); common for arousal detection and staging.'
 
+  trials_en: whole-night
+  tags_en:
+  - challenge set
 - id: 'kaimiller_ecog'
   name: 'Stanford ECoG Library (Kai Miller)'
   link: 'https://searchworks.stanford.edu/view/zk881ps0522'
@@ -1075,6 +1264,9 @@
   note: '34 名患者、16 种范式、204 个 ECoG 数据集的开放库,侵入式 BCI 多任务参考。'
   note_en: 'An open library of 204 ECoG datasets across 34 patients and 16 paradigms; a multi-task invasive-BCI reference.'
 
+  trials_en: 16 paradigms
+  tags_en:
+  - large ECoG corpus
 - id: 'brain2char'
   name: 'Brain2Char (UCSF ECoG speech-to-text)'
   link: 'https://arxiv.org/abs/1909.01401'
@@ -1092,6 +1284,7 @@
   note: 'UCSF ECoG 端到端语音转文字(3 参与者),侵入式语音 BCI 方法参考。'
   note_en: 'UCSF end-to-end ECoG speech-to-text (3 participants); a method reference for invasive speech BCI.'
 
+  trials_en: speech-to-text
 - id: 'dreem'
   name: 'DOD-H / DOD-O (Dreem)'
   link: 'https://github.com/Dreem-Organization/dreem-learning-open'
@@ -1109,6 +1302,10 @@
   note: 'Dreem 开放数据,干电极头带 PSG(健康 DOD-H + OSA DOD-O),消费级睡眠分期参考。'
   note_en: 'Dreem open datasets, dry-electrode PSG (healthy DOD-H + OSA DOD-O); a consumer-grade staging reference.'
 
+  channels_en: dry-electrode PSG
+  trials_en: whole-night
+  tags_en:
+  - consumer-grade sleep
 - id: 'siena'
   name: 'Siena Scalp EEG'
   link: 'https://physionet.org/content/siena-scalp-eeg/1.0.0/'
@@ -1126,6 +1323,9 @@
   note: '锡耶纳成人癫痫监测 EEG,补充 CHB-MIT 的成人样本。'
   note_en: 'Siena adult epilepsy-monitoring EEG; an adult complement to CHB-MIT.'
 
+  trials_en: seizure
+  tags_en:
+  - adult epilepsy
 - id: 'epilepsyieeg'
   name: 'Epilepsy-iEEG Multicenter (Fragility)'
   link: 'https://openneuro.org/datasets/ds003029'
@@ -1143,6 +1343,9 @@
   note: '多中心 iEEG 癫痫数据(~100 患者),发作区定位/fragility 方法基准。'
   note_en: 'Multi-center iEEG epilepsy data (~100 patients); a benchmark for seizure-onset localization / fragility methods.'
 
+  trials_en: seizure
+  tags_en:
+  - multi-center iEEG
 - id: 'ieegmemory'
   name: 'Human iEEG Memory + Pupillometry'
   link: 'https://www.nature.com/articles/s41597-021-01099-z'
@@ -1162,6 +1365,9 @@
 
 # ════════ Wave 3 · 表征对齐时代 (2022–2026) ════════
 
+  trials_en: memory task
+  tags_en:
+  - memory iEEG
 - id: 'eegimagenet'
   name: 'EEG-ImageNet (Spampinato)'
   link: 'https://github.com/perceivelab/eeg_visual_classification'
@@ -1179,6 +1385,8 @@
   note: '早期 EEG-to-image 常用,但存在 block-design label leakage 争议(Li 2020 / Ahmed 2021)。不要单独用,必须配 THINGS-EEG2 或 Alljoined。'
   note_en: 'Widely used in early EEG-to-image work but has a block-design label-leakage controversy (Li 2020 / Ahmed 2021). Never use it alone — always pair with THINGS-EEG2 or Alljoined.'
 
+  tags_en:
+  - label-leakage controversy
 - id: 'midistraction'
   name: 'MI Under Distraction'
   link: 'https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2020.566147/full'
@@ -1196,6 +1404,8 @@
   note: 'MI + 干扰任务,贴近真实使用场景的鲁棒性评测数据。'
   note_en: 'MI with a distractor task — robustness-evaluation data close to real-world use.'
 
+  tags_en:
+  - real-world setting
 - id: 'thingseeg1'
   name: 'THINGS-EEG1 (Grootswagers)'
   link: 'https://www.nature.com/articles/s41597-021-01102-7'
@@ -1230,6 +1440,8 @@
   note: 'Wave 3 视觉解码 SOTA 共识 baseline。ATM/NICE/BrainMosaic/EEGFormer 等表征对齐论文几乎全在此跑。'
   note_en: 'The consensus SOTA baseline for Wave-3 visual decoding; ATM, NICE, BrainMosaic, EEGFormer and most alignment papers run on it.'
 
+  tags_en:
+  - CLIP-aligned SOTA baseline
 - id: 'ma2022mi'
   name: 'Ma 2022 Cross-Session MI (5 days)'
   link: 'https://www.nature.com/articles/s41597-022-01647-1'
@@ -1247,6 +1459,8 @@
   note: '首个跨 5 天的大型 MI 公开集(25 被试 × 5 次),专为研究跨 session 变异性而建。'
   note_en: 'First large open MI dataset spanning 5 different days; built to study cross-session variability.'
 
+  tags_en:
+  - cross-day sessions
 - id: 'nsd'
   name: 'Natural Scenes Dataset (NSD)'
   link: 'https://naturalscenesdataset.org/'
@@ -1264,6 +1478,9 @@
   note: '7T fMRI 大规模自然场景(NSD),视觉重建/解码的 fMRI 端 ground truth,可作 EEG 蒸馏上游。'
   note_en: 'Large-scale 7T fMRI natural scenes; the fMRI ground truth for visual reconstruction/decoding, usable as upstream for EEG distillation. (fMRI, not EEG)'
 
+  trials_en: natural scenes
+  tags_en:
+  - fMRI visual ground-truth
 - id: 'seedger'
   name: 'SEED-GER'
   link: 'https://bcmi.sjtu.edu.cn/home/seed/'
@@ -1281,6 +1498,10 @@
   note: 'SEED 德语版,跨文化情绪 EEG 对照(配 SEED-FRA)。'
   note_en: 'German-language SEED for cross-cultural emotion comparison (with SEED-FRA).'
 
+  trials_en: German film
+  modality_en: EEG + peripheral
+  tags_en:
+  - cross-cultural emotion
 - id: 'seedfra'
   name: 'SEED-FRA'
   link: 'https://bcmi.sjtu.edu.cn/home/seed/'
@@ -1298,6 +1519,10 @@
   note: 'SEED 法语版,跨文化/跨语言情绪解码对照。'
   note_en: 'French-language SEED for cross-cultural/cross-lingual emotion decoding.'
 
+  trials_en: French film
+  modality_en: EEG + peripheral
+  tags_en:
+  - cross-cultural emotion
 - id: 'dens'
   name: 'DENS (Naturalistic Stimuli Emotion)'
   link: 'https://www.nature.com/articles/s41597-022-01831-3'
@@ -1315,6 +1540,10 @@
   note: '自然刺激诱发的高密度情绪 EEG(40 被试,128 通道),含精细情绪事件时刻标注。'
   note_en: 'Naturalistic-stimulus high-density emotion EEG (40 subj, 128 ch) with fine-grained emotional-event timing.'
 
+  trials_en: naturalistic stimuli
+  modality_en: EEG + peripheral
+  tags_en:
+  - naturalistic-stimulus emotion
 - id: 'armeni2022'
   name: 'Armeni 2022 Audiobook MEG'
   link: 'https://www.nature.com/articles/s41597-022-01382-7'
@@ -1332,6 +1561,8 @@
   note: '3 被试各 10 次 1 小时听有声书 MEG,深度 within-subject 语言解码数据。'
   note_en: '3 subjects × ten 1-hour audiobook-listening MEG sessions; deep within-subject language-decoding data.'
 
+  tags_en:
+  - deep single-subject MEG
 - id: 'wilson2023'
   name: 'Wilson Semantic Concepts'
   link: 'https://www.nature.com/articles/s41597-023-02416-4'
@@ -1349,6 +1580,9 @@
   note: '罕见的"同被试同概念,想象 vs 感知"对照设计,适合研究无视觉刺激下能否解码语义。'
   note_en: 'A rare "same subject, same concept, imagery vs perception" design; useful for decoding semantics without visual stimulus.'
 
+  trials_en: imagined + perceived
+  tags_en:
+  - imagined vs perceived
 - id: 'chenstroop'
   name: 'EEG-fNIRS Stroop (Chen)'
   link: 'https://www.nature.com/articles/s41597-023-02524-1'
@@ -1366,6 +1600,9 @@
   note: '额叶 Stroop 冲突 paradigm,认知控制清洁数据,fNIRS 提供前额叶血氧定位。'
   note_en: 'Frontal Stroop-conflict paradigm — clean cognitive-control data with fNIRS giving prefrontal oxygenation localization.'
 
+  tags_en:
+  - cognitive control
+  - bimodal
 - id: 'eegfmri'
   name: 'Bimodal EEG-fMRI Inner Speech'
   link: 'https://www.nature.com/articles/s41597-023-02286-w'
@@ -1383,6 +1620,8 @@
   note: '被试极少但是少数公开 EEG+fMRI 配对内在语音数据,适合做 fMRI→EEG cross-modal distillation 的起点。'
   note_en: 'Very few subjects, but one of few public EEG+fMRI paired inner-speech datasets — a starting point for fMRI→EEG cross-modal distillation.'
 
+  channels_en: EEG + fMRI, async
+  trials_en: social vs number words
 - id: 'dreyer2023'
   name: 'Dreyer 2023 Large MI Database'
   link: 'https://zenodo.org/records/8089820'
@@ -1400,6 +1639,9 @@
   note: '最大的单次 MI 数据库之一(87 被试,~70h),左/右手 MI + 丰富的人口学/性格/认知元数据,MOABB 收录。'
   note_en: 'One of the largest single-session MI databases (87 subj, ~70h) with rich demographic/personality metadata; in MOABB.'
 
+  tags_en:
+  - largest single-session MI
+  - with user profiles
 - id: 'faced'
   name: 'FACED'
   link: 'https://www.synapse.org/Synapse:syn50614194'
@@ -1417,6 +1659,9 @@
   note: '123 被试细粒度情绪 EEG(9 类),目前最大的情绪 EEG 集之一,适合跨被试与预训练。'
   note_en: 'Fine-grained emotion EEG over 123 subjects (9 classes); one of the largest emotion-EEG sets, good for cross-subject and pretraining.'
 
+  trials_en: 9 emotion classes
+  tags_en:
+  - large-N fine-grained emotion
 - id: 'thingsmeg'
   name: 'THINGS-MEG'
   link: 'https://elifesciences.org/articles/82580'
@@ -1434,6 +1679,9 @@
   note: 'THINGS 图像库的 MEG 版,视觉解码的高时间分辨率对照,与 THINGS-EEG 互补。'
   note_en: 'MEG counterpart over the THINGS image set; a high-temporal-resolution complement to THINGS-EEG.'
 
+  trials_en: THINGS images
+  tags_en:
+  - MEG visual decoding
 - id: 'megmasc'
   name: 'MEG-MASC'
   link: 'https://www.nature.com/articles/s41597-023-02752-5'
@@ -1451,6 +1699,9 @@
   note: '27 人听自然语音的 MEG(对齐到词/音素),脑-语言对齐与语音解码常用。'
   note_en: 'MEG from 27 subjects listening to natural speech (word/phoneme-aligned); common for brain-language alignment and speech decoding.'
 
+  trials_en: natural speech
+  tags_en:
+  - natural-speech MEG
 - id: 'alljoined1'
   name: 'Alljoined1'
   link: 'https://arxiv.org/abs/2404.05553'
@@ -1468,6 +1719,8 @@
   note: 'MS-COCO 自然图,长 SOA 设计,Alljoined-1.6M 的前作。'
   note_en: 'MS-COCO natural images with a long-SOA design; predecessor of Alljoined-1.6M.'
 
+  tags_en:
+  - long-SOA design
 - id: 'chisco'
   name: 'Chisco'
   link: 'https://www.nature.com/articles/s41597-024-04114-1'
@@ -1485,6 +1738,8 @@
   note: '中文想象语音 BCI 数据,少被试但每被试试次极多,适合 subject-specific 解码。'
   note_en: 'Chinese imagined-speech BCI data; few subjects but very many trials each — suited to subject-specific decoding.'
 
+  tags_en:
+  - Mandarin phrases
 - id: 'altstroop'
   name: 'High-Altitude Stroop'
   link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11001964/'
@@ -1519,6 +1774,9 @@
   note: '视觉决策 + 动机 paradigm,EEG/fNIRS 共址采集。'
   note_en: 'Visual-decision + motivation paradigm with co-located EEG/fNIRS.'
 
+  channels_en: EEG + fNIRS, co-located
+  tags_en:
+  - multimodal decision
 - id: 'forenzo2024'
   name: 'Forenzo/He 2024 Continuous-Pursuit MI'
   link: 'https://www.nature.com/articles/s41597-024-04090-6'
@@ -1536,6 +1794,8 @@
   note: '~168h 在线连续追踪 MI 光标控制(深度解码器,CMU 何斌组),罕见的在线深度 BCI 数据。'
   note_en: '~168h of online continuous-pursuit MI cursor control with a deep decoder (Bin He / CMU); a rare online DL-BCI dataset.'
 
+  tags_en:
+  - online DL-BCI
 - id: 'seedvii'
   name: 'SEED-VII'
   link: 'https://bcmi.sjtu.edu.cn/home/seed/'
@@ -1553,6 +1813,10 @@
   note: 'SEED 家族最新 7 类情绪集(2024),含眼动多模态。'
   note_en: 'The newest SEED 7-class emotion set (2024) with multimodal eye-tracking.'
 
+  trials_en: 7 emotion classes
+  modality_en: EEG + peripheral
+  tags_en:
+  - latest SEED
 - id: 'hbneeg'
   name: 'HBN-EEG (Healthy Brain Network)'
   link: 'https://neuromechanist.github.io/data/hbn/'
@@ -1570,6 +1834,9 @@
   note: '儿童青少年大规模 EEG(目标 ~5000 人,多任务,BIDS),最大的发育期 EEG 资源之一。'
   note_en: 'Large-scale child/adolescent EEG (target ~5000, multi-task, BIDS); one of the largest developmental EEG resources.'
 
+  trials_en: multi-task
+  tags_en:
+  - huge pediatric EEG
 - id: 'eav'
   name: 'EAV (EEG-Audio-Video)'
   link: 'https://www.nature.com/articles/s41597-024-03838-4'
@@ -1587,6 +1854,10 @@
   note: '对话场景下 EEG + 音频 + 视频三模态情绪数据(42 被试),多模态情感对齐。'
   note_en: 'Conversation-scenario EEG + audio + video tri-modal emotion data (42 subj); for multimodal affect alignment.'
 
+  trials_en: dialogue
+  modality_en: EEG + peripheral
+  tags_en:
+  - dialogue, tri-modal
 - id: 'alljoined16m'
   name: 'Alljoined-1.6M'
   link: 'https://arxiv.org/abs/2508.18571'
@@ -1604,6 +1875,10 @@
   note: '被试是 THINGS-EEG2 的两倍但用消费级头戴,回答"廉价硬件能否做 SOTA 解码",对商业化落地天花板意义重大。'
   note_en: 'Twice the subjects of THINGS-EEG2 but on a consumer headset — it answers whether cheap hardware can do SOTA decoding, key to the commercialization ceiling.'
 
+  channels_en: 32 (consumer-grade)
+  tags_en:
+  - largest to date
+  - consumer-grade
 - id: 'multijoint'
   name: '多关节上肢 MI'
   link: 'https://www.nature.com/articles/s41597-025-05286-0'
@@ -1621,6 +1896,9 @@
   note: '手/腕/肘/肩四类关节同侧上肢精细 MI(8 类),直接对应假肢多自由度控制,比 2a 现实得多。'
   note_en: 'Fine-grained ipsilateral upper-limb MI over hand/wrist/elbow/shoulder (8 classes) — maps directly to multi-DoF prosthetic control, far more realistic than 2a.'
 
+  trials_en: 320 (8 classes)
+  tags_en:
+  - multi-DoF
 - id: 'lowerlimbfnirs'
   name: 'Lower-limb MI fNIRS'
   link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12714601/'
@@ -1638,6 +1916,8 @@
   note: '膝/踝 MI(纯 fNIRS),下肢康复方向数据。'
   note_en: 'Knee/ankle MI (fNIRS only); lower-limb rehabilitation data.'
 
+  tags_en:
+  - lower-limb rehab
 - id: 'algonauts'
   name: 'Algonauts Project'
   link: 'http://algonauts.csail.mit.edu/'
@@ -1655,6 +1935,9 @@
   note: '提供 fMRI/MEG 配对自然视频刺激的系列竞赛,视觉编码模型对齐的上游资源。'
   note_en: 'A challenge series with fMRI/MEG paired natural-video stimuli; upstream for visual encoding-model alignment. (fMRI/MEG)'
 
+  trials_en: natural video
+  tags_en:
+  - competition/video stimuli
 - id: 'libribrain'
   name: 'LibriBrain (PNPL)'
   link: 'https://arxiv.org/abs/2506.02098'
@@ -1672,6 +1955,8 @@
   note: '单被试 >50h 听有声书的 MEG,within-subject 语音解码与"脑 GPT"式大数据范式。'
   note_en: '>50h within-subject MEG listening to audiobooks; a large within-subject paradigm for speech decoding.'
 
+  tags_en:
+  - ultra-long single-subject MEG
 - id: 'yang2025wrc'
   name: 'Yang 2025 Multi-Day MI (WRC 2019)'
   link: 'https://www.nature.com/articles/s41597-025-04826-y'
@@ -1689,6 +1974,8 @@
   note: '源自 2019 世界机器人大会 BCI 赛,62 被试 × 3 次,2 类/3 类 MI,近期多天大基准。'
   note_en: 'From the 2019 World Robot Conference BCI contest; 62 subj × 3 sessions, 2-/3-class MI — a recent multi-day benchmark.'
 
+  tags_en:
+  - multi-day large-N
 - id: 'ulrehab2025'
   name: 'Multi-Paradigm Upper-Limb Rehab EEG'
   link: 'https://www.nature.com/articles/s41597-025-06147-6'
@@ -1706,6 +1993,9 @@
   note: '同批 28 被试六种上肢康复任务(MI/执行/观察等),多 paradigm 上肢康复集。'
   note_en: 'Same 28 subjects across six upper-limb rehab tasks (MI / execution / observation); a multi-paradigm rehab set.'
 
+  trials_en: 6 tasks
+  tags_en:
+  - multi-task upper-limb
 - id: 'megscans'
   name: 'MEG-SCANS'
   link: 'https://openneuro.org/datasets/ds006468'
@@ -1723,6 +2013,9 @@
   note: '德语故事/啁啾/含噪句子的自然听觉 MEG(24 被试),语音神经追踪。'
   note_en: 'German stories / chirps / noisy sentences natural-listening MEG (24 subj); for speech neural tracking.'
 
+  trials_en: stories/sentences
+  tags_en:
+  - German natural-listening MEG
 - id: 'littleprince_meg'
   name: 'Little Prince MEG (French)'
   link: 'https://openneuro.org/datasets/ds007523'
@@ -1740,6 +2033,9 @@
   note: '听《小王子》的法语自然语言 MEG(Pallier 组,OpenNeuro),与 EEG/fMRI 版互补。'
   note_en: 'French Little Prince natural-language MEG (Pallier lab, OpenNeuro); complements EEG/fMRI versions.'
 
+  trials_en: natural listening + reading
+  tags_en:
+  - natural-language MEG
 - id: 'mind'
   name: 'MIND (4-direction MI)'
   link: 'https://arxiv.org/abs/2602.04299'
@@ -1757,6 +2053,9 @@
   note: '单上肢 4 方向 MI,与上肢闭环假肢控制场景对齐度最高的近期数据;30×120 试次足以训 transformer backbone。'
   note_en: '4-direction unilateral upper-limb MI — the recent dataset best aligned with closed-loop prosthetic control; 30×120 trials suffice to train a transformer backbone.'
 
+  tags_en:
+  - multimodal 4-DoF
+  - prosthesis direction
 - id: 'stanfordecog'
   name: 'Stanford Speech ECoG (Anumanchipalli 2019)'
   link: 'https://www.nature.com/articles/s41586-019-1119-1'
@@ -1774,6 +2073,10 @@
   note: '侵入式语音解码经典(Nature 2019),单患者长期记录,适合 subject-specific 深度模型。'
   note_en: 'A classic invasive speech-decoding study (Nature 2019); long single-patient recordings, suited to subject-specific deep models.'
 
+  n_en: small-N (patients)
+  tags_en:
+  - invasive
+  - speech-decoding classic
 - id: 'changlab'
   name: 'Chang Lab Speech Neuroprosthesis (Willett 2023)'
   link: 'https://www.nature.com/articles/s41586-023-06443-4'
@@ -1791,6 +2094,10 @@
   note: '高性能侵入式语音 BCI(Nature 2023),语音神经假体里程碑。'
   note_en: 'High-performance invasive speech BCI (Nature 2023); a milestone in speech neuroprostheses.'
 
+  n_en: patients
+  tags_en:
+  - invasive
+  - high-performance speech BCI
 - id: 'strokemi2024'
   name: 'Stroke MI (Xuanwu / Liu 2024)'
   link: 'https://www.nature.com/articles/s41597-023-02787-8'
@@ -1808,6 +2115,12 @@
   note: '首个公开急性中风期 MI 数据集,基线仅 72.21%(健康常 90%+)——衡量 domain shift 的尺子。'
   note_en: 'First public acute-stroke MI dataset; baseline only 72.21% (vs 90%+ on healthy) — a ruler for domain shift.'
 
+  n_en: 50 acute stroke
+  channels_en: wireless portable saline electrodes
+  trials_en: onset 1–30 days
+  tags_en:
+  - SOTA halved
+  - must-read for deployment
 - id: 'uet175'
   name: 'UET175 (越南中风 MI)'
   link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12209182/'
@@ -1825,6 +2138,10 @@
   note: '目前最大的中风 MI 数据集之一,但越南人群与中国人群可能有差异,域适应需谨慎。'
   note_en: 'One of the largest stroke-MI datasets, but the Vietnamese cohort may differ from Chinese populations — be careful with domain adaptation.'
 
+  n_en: 175 stroke (planned)
+  channels_en: MI multi-task
+  tags_en:
+  - large-N clinical
 - id: 'lowerstroke2025'
   name: 'Lower-Limb Stroke MI (Liu 2025)'
   link: 'https://www.nature.com/articles/s41597-025-04618-4'
@@ -1842,6 +2159,12 @@
   note: '纵向数据是独有价值——三个时间点观测康复期神经可塑性,研究 BCI 训练前后皮层重组的少数 longitudinal 集。'
   note_en: 'Its unique value is being longitudinal — three timepoints tracking recovery-phase plasticity; one of few longitudinal sets for pre/post-BCI cortical reorganization.'
 
+  n_en: 27 stroke
+  channels_en: 3 paradigms (SES/IES/no-stim)
+  trials_en: 3 timepoints, longitudinal
+  tags_en:
+  - longitudinal
+  - lower-limb rehab
 - id: 'cogitate'
   name: 'Cogitate iEEG (Consciousness)'
   link: 'https://www.arc-cogitate.com/data-release'
@@ -1859,6 +2182,9 @@
   note: '多中心 iEEG 意识视觉感知数据(38 患者,对抗性合作),侵入式视觉/意识研究新资源。'
   note_en: 'Multi-center iEEG data on conscious visual perception (38 patients, adversarial collaboration); a new invasive vision/consciousness resource.'
 
+  trials_en: visual consciousness
+  tags_en:
+  - consciousness, multi-center
 - id: 'vocalmind'
   name: 'VocalMind (sEEG Tonal Speech)'
   link: 'https://zenodo.org/records/14696348'
@@ -1876,6 +2202,9 @@
   note: '单被试 ~68 分钟声调(中文)语音 sEEG,侵入式声调语音解码新资源。'
   note_en: 'Single-subject ~68-min tonal (Chinese) speech sEEG; a new invasive tonal-speech decoding resource.'
 
+  trials_en: tonal speech
+  tags_en:
+  - Mandarin tone sEEG
 - id: 'lfpmultiling'
   name: 'Human Brain LFP (Multilingual)'
   link: 'https://www.nature.com/articles/s41597-025-05222-2'
@@ -1892,3 +2221,6 @@
   tags: ['多语言 LFP']
   note: '多患者多语言认知 + 眼动 LFP,跨语言认知的深部电极数据。'
   note_en: 'Multi-patient multilingual cognitive + eye-tracking LFP; deep-electrode data for cross-lingual cognition.'
+  trials_en: multilingual cognition
+  tags_en:
+  - multilingual LFP

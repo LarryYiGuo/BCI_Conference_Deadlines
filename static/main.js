@@ -533,23 +533,26 @@
   function datasetCardHTML(d) {
     const p = PARADIGM[d.paradigm] || { color: 'var(--ink)', zh: d.paradigm, en: d.paradigm };
     const pLabel = p[lang === 'en' ? 'en' : 'zh'];
+    const nVal = field(d, 'n');
+    const channels = field(d, 'channels'), modality = field(d, 'modality'), trials = field(d, 'trials');
     const meta = [
-      d.channels ? esc(d.channels) : '',
-      d.modality ? esc(d.modality) : '',
-      d.trials && d.trials !== '—' ? esc(d.trials) : '',
+      channels ? esc(channels) : '',
+      modality ? esc(modality) : '',
+      trials && trials !== '—' ? esc(trials) : '',
       d.cohort && d.cohort !== 'healthy' ? esc(d.cohort) : '',
     ].filter(Boolean).join('<span class="sep">·</span>');
     const flags = [
       d.invasive ? `<span class="ds-flag inv">${lang === 'en' ? 'invasive' : '侵入'}</span>` : '',
       d.consumer ? `<span class="ds-flag con">${lang === 'en' ? 'consumer' : '消费级'}</span>` : '',
     ].join('');
-    const tags = (d.tags || []).map(x => `<span class="ds-tag">${esc(x)}</span>`).join('');
+    const dtags = field(d, 'tags') || [];
+    const tags = dtags.map(x => `<span class="ds-tag">${esc(x)}</span>`).join('');
     const note = field(d, 'note');
 
     return `<div class="evt">
       <div class="evt-left">
         <div class="evt-theme"><span class="dot" style="background:${p.color}"></span>${esc(pLabel.split(' ')[0])}</div>
-        <div class="ds-n"><div class="v" style="--tc:${p.color}">${esc(d.n || '—')}</div><div class="k">${t().nK} · N</div></div>
+        <div class="ds-n"><div class="v" style="--tc:${p.color}">${esc(nVal || '—')}</div><div class="k">${t().nK} · N</div></div>
         <div class="ds-era" title="${esc((ERA_LABEL[d.era] || {})[lang === 'en' ? 'en' : 'zh'] || d.era)}">${esc(d.era)}</div>
       </div>
       <div class="evt-right">
