@@ -791,7 +791,7 @@
   year: 2026
   full_name: IEEE International Conference on Bioinformatics and Biomedicine
   link: 'https://ieeebibm.org/BIBM2026/'
-  deadline: '2026-07-05 17:00'
+  deadline: 'TBD'
   abstract_deadline:
   tz: '-05:00'
   tz_label: UTC-5
@@ -806,7 +806,7 @@
   h5: 31
   ccfddl: bibm
   track:
-  estimated: false
+  estimated: true
   note: 日期同步自 ccfddl;notification 约 9/25
   note_en: Date synced from ccfddl; notification ~Sep 25
 
