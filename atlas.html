@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EEG 交互图谱 · 节律 / 刺激范式 ↔ 电极 / 脑区</title>
+<meta name="description" content="Interactive EEG atlas mapping brain waveforms to electrodes and regions for BCI: oscillations, evoked paradigms (SSVEP/P300/ERD), clinical & sleep waveforms, abnormal/epileptiform patterns, seizures and artifacts — with a 10-20/10-10 toggle and step-by-step electrode placement. 交互式 EEG 图谱:脑电波形↔电极↔脑区。中英双语。">
+<meta property="og:title" content="EEG Interactive Atlas · 交互式 EEG 图谱">
+<meta property="og:description" content="Brain waveforms ↔ electrodes ↔ regions for BCI — rhythms, evoked paradigms, clinical/sleep, abnormal, seizures, artifacts. 10-20/10-10 toggle, step-by-step placement, ZH/EN bilingual.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<!-- og:image / og:url: add after publishing (point to the live page + a hosted preview PNG) -->
+<meta name="theme-color" content="#fafaf8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf8; --bg2:#f4f3ef;
+  --text:#2C2C2A; --text-dim:#5F5E5A; --text-muted:#888780;
+  --orange:#D85A30; --blue:#378ADD; --green:#1D9E75; --red:#E24B4A; --purple:#534AB7;
+  --border:#e8e6df;
+  --glass:rgba(255,255,255,.65);
+  --glass-border:rgba(0,0,0,.06);
+  --glass-hover:rgba(255,255,255,.85);
+  --sans:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --serif:'Noto Serif SC',serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.7;font-weight:400;-webkit-font-smoothing:antialiased}
+
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:rgba(250,250,248,.82);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav-inner{max-width:1180px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.nav-brand{font-family:var(--mono);font-size:.76rem;letter-spacing:.08em;color:var(--text-dim);text-transform:uppercase}
+.nav-back{color:var(--orange);text-decoration:none;margin-right:.7rem;padding-right:.7rem;border-right:1px solid var(--border);transition:opacity .15s}
+.nav-back:hover{opacity:.65}
+.nav-ref{font-family:var(--mono);font-size:.72rem;color:var(--text-muted)}
+.nav-ref a{color:var(--orange);text-decoration:none}
+.nav-right{display:flex;align-items:center;gap:.6rem}
+.lang-btn{font-family:var(--mono);font-size:.72rem;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);padding:.28rem .6rem;border-radius:7px;cursor:pointer;transition:all .15s}
+.lang-btn:hover{background:#fff;color:var(--text)}
+
+.hero{position:relative;max-width:1180px;margin:0 auto;padding:3rem 1.5rem 1.5rem;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40px;left:8%;width:280px;height:280px;background:rgba(186,117,23,.06);border-radius:50%;filter:blur(34px);z-index:0}
+.hero::after{content:'';position:absolute;bottom:-60px;right:6%;width:260px;height:260px;background:rgba(83,74,183,.05);border-radius:50%;filter:blur(34px);z-index:0}
+.hero>*{position:relative;z-index:1}
+.eyebrow{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(8px);padding:.38rem .85rem;border-radius:999px;margin-bottom:1.1rem}
+.hero h1{font-weight:600;font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.3;margin-bottom:.7rem}
+.hero .lede{font-size:1rem;color:var(--text-dim);max-width:760px}
+
+.controls{max-width:1180px;margin:1.2rem auto 0;padding:0 1.5rem;display:flex;gap:1.4rem;flex-wrap:wrap;align-items:center}
+.ctrl-group{display:flex;flex-direction:column;gap:.4rem}
+.ctrl-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.toggle{display:inline-flex;flex-wrap:wrap;gap:.15rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:18px;padding:.25rem;backdrop-filter:blur(10px)}
+.toggle button{font-family:var(--sans);font-size:.85rem;font-weight:500;border:none;background:transparent;color:var(--text-dim);padding:.42rem 1.05rem;border-radius:999px;cursor:pointer;transition:all .18s;white-space:nowrap}
+.toggle button.on{background:var(--text);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.toggle.mode button.on{background:var(--orange)}
+.rename-note{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-left:auto;padding:.4rem .7rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px}
+.rename-note b{color:var(--red)}
+.sys-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.view-btn{font-family:var(--sans);font-size:.85rem;font-weight:500;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-dim);padding:.46rem 1rem;border-radius:999px;cursor:pointer;transition:all .15s;white-space:nowrap;backdrop-filter:blur(10px)}
+.view-btn:hover{background:#fff;color:var(--text)}
+.view-btn.on{background:var(--orange);color:#fff;border-color:var(--orange);box-shadow:0 2px 8px rgba(216,90,48,.25)}
+
+.layout{max-width:1180px;margin:1.4rem auto 0;padding:0 1.5rem 4rem;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:1.6rem;align-items:start}
+@media(max-width:880px){.layout{grid-template-columns:minmax(0,1fr)}.map-panel{position:static}}
+
+.map-panel{position:sticky;top:80px}
+.map-card{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:16px;padding:1.1rem 1.1rem .8rem}
+.map-card svg.head{width:100%;height:auto;display:block}
+.map-status{min-height:1.4rem;text-align:center;font-family:var(--mono);font-size:.74rem;color:var(--text-dim);margin-top:.3rem}
+.map-status b{color:var(--orange)}
+.legend{display:flex;gap:1.1rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem;padding-top:.7rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--text-dim)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+
+.elec{cursor:pointer;transition:opacity .2s}
+.elec circle{transition:r .18s,fill .18s,stroke .18s}
+.elec text{pointer-events:none;font-family:var(--mono);font-size:12px}
+.elec.active circle{filter:drop-shadow(0 0 5px currentColor)}
+.elec.active{animation:elecPulse 1.5s ease-in-out infinite}
+@keyframes elecPulse{0%,100%{opacity:1}50%{opacity:.72}}
+.elec.dim{opacity:.32}
+.region{transition:opacity .35s;opacity:0}
+
+.list-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:.7rem}
+.list-head h2{font-size:1.15rem;font-weight:600}
+.list-head .cnt{font-family:var(--mono);font-size:.72rem;color:var(--text-muted)}
+.cards{display:flex;flex-direction:column;gap:.55rem}
+.icard{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:.7rem .9rem;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:.8rem}
+.icard:hover{background:var(--glass-hover);transform:translateX(2px)}
+.icard.sel{background:#fff;border-color:rgba(0,0,0,.12);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.icard .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.icard.sel .dot{box-shadow:0 0 0 4px rgba(0,0,0,.05)}
+.icard .ic-main{flex:1;min-width:0}
+.icard .ic-name{font-weight:600;font-size:.96rem}
+.icard .ic-name small{font-family:var(--mono);font-weight:400;color:var(--text-muted);margin-left:.4rem;font-size:.74rem}
+.icard .ic-sub{font-size:.8rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icard .ic-badge{font-family:var(--mono);font-size:.72rem;color:#fff;padding:.18rem .5rem;border-radius:6px;flex-shrink:0}
+
+.detail{margin-top:1.1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:1.1rem 1.2rem;backdrop-filter:blur(12px)}
+.detail .d-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.detail h3{font-size:1.2rem;font-weight:600}
+.detail h3 .sym{font-family:var(--mono);color:var(--text-muted);font-weight:400;margin-left:.4rem;font-size:.9rem}
+.detail .d-meta{font-family:var(--mono);font-size:.74rem;color:#fff;padding:.22rem .6rem;border-radius:6px;white-space:nowrap}
+.wave-box{margin:.9rem 0 .5rem;background:rgba(0,0,0,.02);border:1px solid var(--border);border-radius:10px;padding:.5rem .6rem}
+.wavesvg{width:100%;max-width:540px;height:auto;display:block;margin:0 auto}
+.wave-axis{stroke:#c9c7c0;stroke-width:1}
+.wave-grid{stroke:#e3e1da;stroke-width:1}
+.wave-draw path.main{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 1.5s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.wave-cap{text-align:center;font-family:var(--mono);font-size:.7rem;color:var(--text-muted);margin-top:.2rem}
+.d-desc{font-size:.92rem;color:var(--text-dim);margin:.7rem 0}
+.d-desc b{color:var(--text)}
+.d-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.6rem}
+.d-row .rk{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-right:.3rem}
+.chip{font-family:var(--mono);font-size:.74rem;padding:.2rem .5rem;border-radius:6px;background:rgba(0,0,0,.04);border:1px solid var(--glass-border);color:var(--text-dim)}
+.chip.reg{background:rgba(83,74,183,.08);color:var(--purple);border-color:rgba(83,74,183,.18)}
+.chip.e-on{background:var(--text);color:#fff;border-color:var(--text)}
+.chip.e-off{opacity:.5;text-decoration:line-through}
+.chip .x{font-size:.62rem;opacity:.7;margin-left:.25rem}
+.bci-note{margin-top:.8rem;padding:.7rem .85rem;border-left:3px solid var(--orange);background:rgba(216,90,48,.04);border-radius:0 8px 8px 0;font-size:.86rem;color:var(--text-dim)}
+.bci-note b{color:var(--orange)}
+.pipe{margin-top:.75rem}
+.pipe-flow{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:.4rem}
+.pstage{font-family:var(--mono);font-size:.74rem;padding:.32rem .6rem;border-radius:7px;background:#fff;border:1px solid var(--glass-border);border-left:3px solid var(--c);color:var(--text);cursor:pointer;transition:background .15s,color .15s}
+.pstage[data-io]:hover{background:rgba(0,0,0,.03)}
+.pstage.act{background:var(--c);color:#fff;border-left-color:var(--c)}
+.parrow{color:var(--text-muted);font-family:var(--mono);font-size:.82rem}
+.model-tabs{display:inline-flex;gap:.3rem;margin-left:.5rem;vertical-align:middle}
+.model-tabs button{font-family:var(--mono);font-size:.68rem;border:1px solid var(--glass-border);background:#fff;color:var(--text-dim);padding:.2rem .55rem;border-radius:6px;cursor:pointer;transition:all .15s}
+.model-tabs button.on{background:var(--text);color:#fff;border-color:var(--text)}
+.model-note{font-family:var(--mono);font-size:.68rem;color:var(--text-muted);margin-top:.4rem}
+.pipe-io{font-family:var(--mono);font-size:.72rem;color:var(--text-dim);margin-top:.45rem;padding:.45rem .65rem;background:rgba(0,0,0,.03);border:1px dashed var(--glass-border);border-radius:7px}
+.pipe-io b{color:var(--text)}
+.chip.ds{background:rgba(55,138,221,.08);color:var(--blue);border-color:rgba(55,138,221,.2);cursor:pointer;text-decoration:none}
+.chip.ds:hover{background:rgba(55,138,221,.16)}
+
+.howto{display:none;max-width:1180px;margin:0 auto;padding:1.4rem 1.5rem 1rem}
+.howto-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.3rem}
+.howto-head h2{font-size:1.3rem;font-weight:600}
+.howto .sub{font-size:.9rem;color:var(--text-dim);margin-bottom:1.2rem;max-width:760px}
+.howto-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:1.6rem;align-items:start}
+@media(max-width:880px){.howto-grid{grid-template-columns:minmax(0,1fr)}.howto-panel{position:static}}
+.howto-svgwrap{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:1rem;backdrop-filter:blur(12px)}
+.howto-svgwrap svg{width:100%;height:auto;display:block}
+.howto-panel{position:sticky;top:80px}
+.place-nav{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
+.place-nav button{font-family:var(--sans);font-size:.9rem;font-weight:500;border:1px solid var(--glass-border);background:#fff;color:var(--text);padding:.45rem .9rem;border-radius:9px;cursor:pointer;transition:all .15s}
+.place-nav button:hover:not(:disabled){background:var(--bg2)}
+.place-nav button:disabled{opacity:.35;cursor:default}
+.place-nav .count{font-family:var(--mono);font-size:.82rem;color:var(--text-muted);margin-left:auto}
+.step-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.step-chip{font-family:var(--mono);font-size:.72rem;padding:.32rem .55rem;border-radius:7px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-dim);cursor:pointer;transition:all .15s}
+.step-chip:hover{background:var(--glass-hover)}
+.step-chip.done{color:var(--text);border-color:rgba(0,0,0,.12)}
+.step-chip.on{background:var(--orange);color:#fff;border-color:var(--orange)}
+.step-detail{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:1rem 1.2rem;backdrop-filter:blur(12px)}
+.step-detail h3{font-size:1.06rem;margin-bottom:.4rem}
+.step-detail .formula{font-family:var(--mono);font-size:.8rem;color:var(--orange);background:rgba(216,90,48,.07);padding:.4rem .6rem;border-radius:7px;margin:.5rem 0;display:inline-block}
+.step-detail p{font-size:.9rem;color:var(--text-dim);margin:.5rem 0 0}
+.step-detail p b{color:var(--text)}
+.pe text{font-family:var(--mono);font-size:11px;pointer-events:none}
+.pe-prior circle{fill:#F1EFE8;stroke:#B4B2A9;stroke-width:.6}
+.pe-prior text{fill:#9a988f}
+.pe-new circle{fill:#FCEBE3;stroke:var(--orange);stroke-width:1.6}
+.pe-new text{fill:#9a3a14;font-weight:500}
+.guide-line{stroke:var(--blue);stroke-width:1.5;stroke-dasharray:5 4;opacity:.75}
+.guide-arc{fill:none;stroke:var(--green);stroke-width:1.8;stroke-dasharray:5 4;opacity:.8}
+.landmark{fill:var(--red)}
+.landmark-tx{font-family:var(--mono);font-size:11px;fill:var(--red)}
+.pct{font-family:var(--mono);font-size:10px;fill:var(--blue);font-weight:500}
+footer{max-width:1180px;margin:0 auto;padding:1.5rem;text-align:center;border-top:1px solid var(--border);color:var(--text-muted);font-size:.76rem;font-family:var(--mono);letter-spacing:.04em}
+footer a{color:var(--orange);text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-brand"><a href="./" class="nav-back" title="返回 BCI Deadlines">← Deadlines</a><span data-i18n="navBrand">BCI · EEG 交互图谱 · 节律 / 范式 ↔ 电极 / 脑区</span></span>
+    <span class="nav-right">
+      <span class="nav-ref" data-i18n-html="navRef">参考 <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 10-20/10-10 · 2026.06.12</span>
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+    </span>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow" data-i18n="eyebrow">BCI 调研 · 交互版 · 2026.06.12</div>
+  <h1 data-i18n="h1">EEG 节律与刺激范式 · 电极与脑区对应交互图</h1>
+  <p class="lede" data-i18n-html="lede">选一个波形，它对应的电极、脑区会在头皮图上点亮并播放示意波。右上角切 <b>10-20 / 10-10</b> 命名；下方六组维度自由切换。</p>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label" data-i18n="ctrlSys">电极系统</span>
+    <div class="sys-row">
+      <div class="toggle sys" id="sysToggle">
+        <button data-sys="10-20" data-i18n="sys2020">10-20 · 临床 19 导</button>
+        <button data-sys="10-10" class="on" data-i18n="sys1010">10-10 · 研究 61 导</button>
+      </div>
+      <button class="view-btn" id="viewBtn" onclick="toggleView()">电极怎么放 · 一步步 ›</button>
+    </div>
+  </div>
+  <div class="ctrl-group" id="modeGroup">
+    <span class="ctrl-label" data-i18n="ctrlMode">查看维度</span>
+    <div class="toggle mode" id="modeToggle">
+      <button data-mode="rhythm" class="on" data-i18n="mode_rhythm">脑节律 · Oscillations</button>
+      <button data-mode="paradigm" data-i18n="mode_paradigm">刺激范式 · Evoked</button>
+      <button data-mode="clinical" data-i18n="mode_clinical">临床/睡眠 · States</button>
+      <button data-mode="abnormal" data-i18n="mode_abnormal">异常/变异 · Abnormal</button>
+      <button data-mode="seizure" data-i18n="mode_seizure">发作 · Seizures</button>
+      <button data-mode="artifact" data-i18n="mode_artifact">伪迹 · Artifacts</button>
+    </div>
+  </div>
+  <div class="rename-note" id="renameNote"></div>
+</div>
+
+<div class="layout" id="layout">
+  <!-- ===== MAP ===== -->
+  <div class="map-panel">
+    <div class="map-card">
+      <svg class="head" viewBox="0 0 680 640" xmlns="http://www.w3.org/2000/svg">
+        <!-- head outline -->
+        <circle cx="340" cy="300" r="240" fill="none" stroke="#888780" stroke-width="1" opacity="0.5"/>
+        <path d="M 320 65 L 340 38 L 360 65" fill="none" stroke="#888780" stroke-width="1.5" opacity="0.5" stroke-linejoin="round"/>
+        <ellipse cx="92" cy="300" rx="10" ry="22" fill="none" stroke="#888780" stroke-width="1" opacity="0.5"/>
+        <ellipse cx="588" cy="300" rx="10" ry="22" fill="none" stroke="#888780" stroke-width="1" opacity="0.5"/>
+        <text x="340" y="22" text-anchor="middle" fill="#aaa89f" font-family="JetBrains Mono,monospace" font-size="11" data-i18n="mapFront">nasion · 前</text>
+        <text x="340" y="572" text-anchor="middle" fill="#aaa89f" font-family="JetBrains Mono,monospace" font-size="11" data-i18n="mapBack">inion · 后</text>
+        <!-- brain-region overlays -->
+        <g id="regions">
+          <ellipse class="region" data-region="frontal"   cx="340" cy="152" rx="196" ry="96"/>
+          <ellipse class="region" data-region="central"   cx="340" cy="300" rx="206" ry="50"/>
+          <ellipse class="region" data-region="temporal"  cx="122" cy="340" rx="54"  ry="98"/>
+          <ellipse class="region" data-region="temporal"  cx="558" cy="340" rx="54"  ry="98"/>
+          <ellipse class="region" data-region="parietal"  cx="340" cy="416" rx="178" ry="80"/>
+          <ellipse class="region" data-region="occipital" cx="340" cy="510" rx="128" ry="64"/>
+        </g>
+        <!-- electrodes injected here -->
+        <g id="electrodes"></g>
+      </svg>
+      <div class="map-status" id="mapStatus"></div>
+      <div class="legend">
+        <span><i style="background:#FAEEDA;border:1px solid #BA7517"></i><span data-i18n="legCore">10-20 原导</span></span>
+        <span><i style="background:#FCEBEB;border:1px solid #E24B4A"></i><span data-i18n="legRenamed">仅改名 4 导</span></span>
+        <span><i style="background:#F1EFE8;border:1px solid #B4B2A9"></i><span data-i18n="legAdded">10-10 新增</span></span>
+        <span><i style="background:var(--orange)"></i><span data-i18n="legActive">当前点亮</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIST + DETAIL ===== -->
+  <div class="list-panel">
+    <div class="list-head">
+      <h2 id="listTitle"></h2>
+      <span class="cnt" id="listCnt"></span>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div class="detail" id="detail"></div>
+  </div>
+</div>
+
+<section class="howto" id="howto">
+  <div class="howto-head">
+    <h2 data-i18n="howtoH2">电极怎么放 · 一步步</h2>
+  </div>
+  <p class="sub" data-i18n-html="howtoSub">国际标准用<b>解剖标志 + 百分比</b>定位:先找鼻根(nasion)、枕外隆突(inion)、左右耳前点,再沿矢状/冠状/头围三条线按 10% / 20% 分段。下面一步步把电极画上去——<b>位置纯靠比例,所以适配各种头围</b>。</p>
+  <div class="howto-grid">
+    <div class="howto-svgwrap">
+      <svg viewBox="0 0 680 600" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="340" cy="300" r="240" fill="none" stroke="#888780" stroke-width="1" opacity="0.4"/>
+        <path d="M 320 65 L 340 38 L 360 65" fill="none" stroke="#888780" stroke-width="1.5" opacity="0.4" stroke-linejoin="round"/>
+        <ellipse cx="92" cy="300" rx="10" ry="22" fill="none" stroke="#888780" stroke-width="1" opacity="0.4"/>
+        <ellipse cx="588" cy="300" rx="10" ry="22" fill="none" stroke="#888780" stroke-width="1" opacity="0.4"/>
+        <g id="placeGuides"></g>
+        <g id="placeElecs"></g>
+      </svg>
+    </div>
+    <div class="howto-panel">
+      <div class="place-nav">
+        <button id="placePrev" data-i18n="placePrevBtn">‹ 上一步</button>
+        <button id="placeNext" data-i18n="placeNextBtn">下一步 ›</button>
+        <span class="count" id="placeCount"></span>
+      </div>
+      <div class="step-chips" id="placeChips"></div>
+      <div class="step-detail" id="placeDetail"></div>
+    </div>
+  </div>
+</section>
+
+<footer data-i18n-html="footer">
+  EEG 交互图谱 · 电极坐标承接 BCI-03（10-20 vs 10-10）· 波形为示意非真实录制 · 参考 <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 2026-06-12
+</footer>
+
+<script>
+// ============ 电极数据（坐标承接 BCI-03 文件）============
+const E = [
+  ['Fp1',266,72,'core'],['Fp2',414,72,'core'],['F7',148,176,'core'],['F3',244,176,'core'],['Fz',340,176,'core'],['F4',436,176,'core'],['F8',532,176,'core'],['C3',220,300,'core'],['Cz',340,300,'core'],['C4',460,300,'core'],['P3',244,424,'core'],['Pz',340,424,'core'],['P4',436,424,'core'],['O1',266,528,'core'],['O2',414,528,'core'],
+  ['T7',100,300,'renamed','T3'],['T8',580,300,'renamed','T4'],['P7',148,424,'renamed','T5'],['P8',532,424,'renamed','T6'],
+  ['Fpz',340,72,'added'],['AF7',212,124,'added'],['AF3',276,124,'added'],['AFz',340,124,'added'],['AF4',404,124,'added'],['AF8',468,124,'added'],['F5',196,176,'added'],['F1',292,176,'added'],['F2',388,176,'added'],['F6',484,176,'added'],['FT7',112,228,'added'],['FC5',169,228,'added'],['FC3',226,228,'added'],['FC1',283,228,'added'],['FCz',340,228,'added'],['FC2',397,228,'added'],['FC4',454,228,'added'],['FC6',511,228,'added'],['FT8',568,228,'added'],['C5',160,300,'added'],['C1',280,300,'added'],['C2',400,300,'added'],['C6',520,300,'added'],['TP7',112,372,'added'],['CP5',169,372,'added'],['CP3',226,372,'added'],['CP1',283,372,'added'],['CPz',340,372,'added'],['CP2',397,372,'added'],['CP4',454,372,'added'],['CP6',511,372,'added'],['TP8',568,372,'added'],['P5',196,424,'added'],['P1',292,424,'added'],['P2',388,424,'added'],['P6',484,424,'added'],['PO7',212,476,'added'],['PO3',276,476,'added'],['POz',340,476,'added'],['PO4',404,476,'added'],['PO8',468,476,'added'],['Oz',340,528,'added']
+];
+const TIER = {
+  core:    {fill:'#FAEEDA',stroke:'#BA7517',sw:0.5,text:'#633806'},
+  renamed: {fill:'#FCEBEB',stroke:'#E24B4A',sw:1.2,text:'#791F1F'},
+  added:   {fill:'#F1EFE8',stroke:'#B4B2A9',sw:0.5,text:'#5F5E5A'}
+};
+const ALT = {T7:'T3',T8:'T4',P7:'T5',P8:'T6'};
+
+const REGION_NAME = {
+  frontal:'额叶 · 执行/注意/运动准备',
+  central:'中央沟 · 感觉运动皮层',
+  temporal:'颞叶 · 听觉/记忆/语言',
+  parietal:'顶叶 · 整合/注意/P300',
+  occipital:'枕叶 · 初级视觉皮层'
+};
+
+// ============ 节律 ============
+const g=(t,c,w)=>Math.exp(-Math.pow((t-c)/w,2));
+const tri=(t,p)=> t<p ? t/p : 1-(t-p)/(1-p);  // 三角/锯齿样瞬变 motif (0..1)
+const RHYTHMS = [
+  {id:'delta',name:'Delta',sym:'δ',freq:'0.5–4 Hz',color:'#534AB7',regions:['frontal'],
+   electrodes:['Fp1','Fpz','Fp2','F3','Fz','F4'],
+   wave:'scroll',cycles:2,dur:4.2,waveCap:'慢、大、稀疏的深睡波（示意）',
+   desc:'深睡 N3 期与婴儿的主导波。<b>清醒成人</b>若在局部持续出现，常提示该处皮层或皮层下病灶（focal slowing）。频率最低、幅度最大。',
+   bci:'BCI 里主要作为<b>睡眠分期</b>特征，或被当作需要剔除的低频漂移。'},
+  {id:'theta',name:'Theta',sym:'θ',freq:'4–8 Hz',color:'#378ADD',regions:['frontal'],
+   electrodes:['Fp1','Fpz','Fp2','F3','Fz','F4','FCz'],
+   wave:'scroll',cycles:4,dur:2.4,waveCap:'困倦/认知负荷下的中频波（示意）',
+   desc:'困倦与记忆编码相关。<b>额中线 theta（Fz/FCz）</b>会随工作记忆和认知负荷升高——是少数"越用脑越强"的节律。',
+   bci:'额中线 theta 用于<b>工作负荷/专注度</b>监测，以及神经反馈训练。'},
+  {id:'alpha',name:'Alpha',sym:'α',freq:'8–13 Hz',color:'#1D9E75',regions:['occipital','parietal'],
+   electrodes:['O1','Oz','O2','POz','PO3','PO4','Pz'],
+   wave:'scroll',cycles:8,dur:1.5,waveCap:'闭眼时枕区主导节律（示意）',
+   desc:'EEG 的"地标节律"——<b>后部优势节律（PDR）</b>。闭眼放松时枕区最强，<b>一睁眼立即被抑制</b>（alpha block / Berger 效应）。它是判断清醒与基线是否正常的标尺。',
+   bci:'睁闭眼 alpha 反应常用作<b>开关/校准信号</b>；alpha 不对称与情绪/注意研究相关。'},
+  {id:'mu',name:'Mu',sym:'μ',freq:'8–13 Hz',color:'#D85A30',regions:['central'],
+   electrodes:['C3','Cz','C4','C1','C2','CP3','CP4'],
+   wave:'scroll',cycles:8,dur:1.5,waveCap:'感觉运动区拱形节律（示意）',
+   desc:'与 alpha 同频段，但位于<b>感觉运动皮层（C3/C4）</b>，形似拱形。关键性质：<b>一动、甚至只是想动，它就被抑制</b>。',
+   bci:'这是<b>运动想象 BCI（MI）的物理基础</b>。左/右手想象会让对侧 C3/C4 的 mu 下降——见"刺激范式"里的 ERD/ERS。'},
+  {id:'beta',name:'Beta',sym:'β',freq:'13–30 Hz',color:'#E24B4A',regions:['frontal','central'],
+   electrodes:['F3','Fz','F4','FC1','FC2','FCz','C3','Cz','C4'],
+   wave:'scroll',cycles:16,dur:1.0,waveCap:'清醒专注/运动控制的快波（示意）',
+   desc:'额中央为主，对应主动专注、警觉与运动控制。动作<b>结束后</b>感觉运动区会出现 <b>beta 反弹（rebound / ERS）</b>。',
+   bci:'与 mu 一起构成 MI 解码的双频段特征；beta rebound 是判断"动作已完成"的可靠标记。'},
+  {id:'gamma',name:'Gamma',sym:'γ',freq:'>30 Hz',color:'#534AB7',regions:['frontal','central','parietal','temporal','occipital'],
+   electrodes:['F3','Fz','F4','C3','Cz','C4','P3','Pz','P4','T7','T8'],
+   wave:'scroll',cycles:28,dur:0.6,waveCap:'局部高频、分布广（示意）',
+   desc:'与局部特征绑定、跨区协同、高阶认知相关。<b>幅度很小、极易被肌电（EMG）污染</b>，头皮 EEG 上的 gamma 须谨慎解读。',
+   bci:'信息量诱人但信噪比差；多用于研究性的<b>认知绑定/注意</b>分析，工程落地少。'}
+];
+
+// ============ 刺激范式 ============
+const PARADIGMS = [
+  {id:'ssvep',name:'SSVEP',sym:'稳态视觉诱发',color:'#1D9E75',regions:['occipital'],
+   electrodes:['Oz','O1','O2','POz','PO3','PO4','PO7','PO8','Pz'],
+   meta:'枕区 · 频率标记',wave:'scroll',cycles:12,dur:1.0,waveCap:'盯住 12 Hz 闪烁 → 枕区同频稳态响应（示意）',
+   desc:'盯住一个以固定频率（如 12 Hz）闪烁的目标，<b>枕区（Oz/POz）</b>会出现与刺激<b>同频及其谐波</b>的稳态响应。信噪比极高、几乎免训练。',
+   bci:'<b>高速拼写器</b>的主力范式：屏幕上多个不同频率的方块，看哪个就解码哪个。是目前 ITR（信息传输率）最高的范式之一。'},
+  {id:'erders',name:'ERD / ERS',sym:'去同步 / 反弹',color:'#D85A30',regions:['central'],
+   electrodes:['C3','Cz','C4','C1','C2','FC3','FC4','CP3','CP4'],
+   meta:'感觉运动 · 对侧化',wave:'envelope',waveCap:'想象动作 → mu/beta 能量下降(ERD) → 结束后反弹(ERS)',
+   desc:'实际或想象运动时，<b>对侧感觉运动区</b>的 mu/beta 能量下降（<b>ERD 事件相关去同步</b>）；动作结束后能量反弹（<b>ERS</b>）。左手→右脑 C4，右手→左脑 C3。',
+   bci:'<b>运动想象 BCI 的核心特征</b>。CSP / Riemannian 方法正是在提取 C3/C4 的对侧化能量差，用于轮椅、假肢、康复外骨骼控制。'},
+  {id:'p300',name:'P300',sym:'oddball 正波',color:'#378ADD',regions:['parietal','central'],
+   electrodes:['Pz','CPz','Cz','CP1','CP2','P3','P4'],
+   meta:'顶区 · ~300 ms',wave:'erp',waveCap:'小概率目标后约 300 ms 的顶区正向大波（正向朝上）',
+   shape:(t)=>-0.4*g(t,0.13,0.045)+1.05*g(t,0.41,0.085),
+   markers:[[0.13,'N1'],[0.41,'P300']],
+   desc:'oddball 范式中，<b>小概率/任务相关</b>目标出现后约 300 ms，<b>顶区（Pz/CPz）</b>出现正向大波。P3a（额区·新异刺激）与 P3b（顶区·任务相关）。',
+   bci:'<b>P300 Speller</b> 的基础：字符矩阵行列随机闪烁，目标行/列闪烁时诱发 P300，由此定位用户注视的字母。鲁棒、跨被试稳定。'},
+  {id:'n400',name:'N400',sym:'语义失匹配负波',color:'#534AB7',regions:['central','parietal'],
+   electrodes:['Cz','CPz','Pz','CP1','CP2','C3','C4'],
+   meta:'中央顶 · ~400 ms',wave:'erp',waveCap:'语义不匹配后约 400 ms 的中央顶区负波（正向朝上）',
+   shape:(t)=>0.45*g(t,0.16,0.05)+0.25*g(t,0.30,0.05)-0.95*g(t,0.5,0.11),
+   markers:[[0.5,'N400']],
+   desc:'当语义出现违例（如"我喝了一杯<b>沙子</b>"），约 400 ms 在<b>中央顶区</b>诱发负波。幅度随语义不匹配程度增大。',
+   bci:'语言/语义加工的电生理指标。用于<b>隐性语义判断、测谎、概念识别</b>等研究型 BCI，也是评估语义解码的探针。'},
+  {id:'errp',name:'ErrP',sym:'错误相关电位',color:'#E24B4A',regions:['frontal','central'],
+   electrodes:['FCz','Cz','Fz','FC1','FC2'],
+   meta:'额中央 · ERN+Pe',wave:'erp',waveCap:'出错后额中央负波(ERN ~80 ms)+ 随后 Pe（正向朝上）',
+   shape:(t)=>-1.0*g(t,0.11,0.028)+0.75*g(t,0.30,0.075),
+   markers:[[0.11,'ERN'],[0.30,'Pe']],
+   desc:'当系统或自己<b>出错</b>时，<b>额中央（FCz/Cz）</b>出现错误相关负波（ERN，~80 ms）+ 随后的 Pe 正波。源定位指向<b>前扣带回（ACC）</b>。',
+   bci:'可作 BCI 的<b>"撤销键 / 在线纠错"</b>：检测到 ErrP 就回滚上一个解码动作，显著提升拼写器与控制类 BCI 的准确率。'},
+  {id:'rsvp',name:'RSVP',sym:'快速串行呈现',color:'#378ADD',regions:['parietal','occipital'],
+   electrodes:['Pz','CPz','Oz','PO7','PO8','O1','O2'],
+   meta:'枕→顶 · P300 触发',wave:'erp',waveCap:'高速串流中目标出现 → 枕区视觉响应 + 顶区 P300',
+   shape:(t)=>-0.3*g(t,0.12,0.04)+1.0*g(t,0.42,0.08),
+   markers:[[0.42,'P300']],
+   desc:'图像/字符以约 10 Hz <b>高速串行闪现</b>，目标出现时触发 P300，并叠加<b>枕区视觉响应</b>。让人当"探测器"。',
+   bci:'<b>脑控图像检索 / brain-triage</b>：让分析员快速扫过大量图像，靠脑电 P300 自动标出"刚才那张有目标"，比手动点选快得多。'}
+];
+
+// ============ 解码模型 / 典型分析 + 标准数据集 ============
+// 数据集均取自《BCI 公开数据集参考手册》(同目录)，已带原始链接，无需另找。
+// ============ 临床波形：清醒 / 睡眠分期（learningeeg normal awake / asleep 系列）============
+const CLINICAL = [
+  // —— 清醒 awake ——
+  {id:'pdr',name:'PDR 后部节律',sym:'α·清醒',color:'#1D9E75',regions:['occipital'],
+   electrodes:['O1','O2','Oz','POz','PO3','PO4'],
+   meta:'枕区 · 8–13Hz',wave:'scroll',cycles:8,dur:1.5,waveCap:'闭眼时枕区主导，睁眼即抑制（反应性）',
+   desc:'临床读图第一眼看的就是它：<b>后部优势节律(PDR)</b>。正常成人闭眼 8–13Hz、枕区最强，<b>睁眼/注意立即衰减</b>。PDR 的频率、对称性、反应性是判断脑功能正常与否的基线。',
+   bci:'<b>清醒 / 警觉基线</b>。PDR 变慢或两侧不对称 → 弥漫性脑病或一侧病变。'},
+  {id:'mu_c',name:'Mu 节律',sym:'μ·清醒',color:'#D85A30',regions:['central'],
+   electrodes:['C3','Cz','C4','C1','C2'],
+   meta:'中央 · 拱形',wave:'scroll',cycles:9,dur:1.5,waveCap:'中央区拱形节律，睁眼不抑制、(想)动才抑制',
+   desc:'感觉运动区的 8–13Hz 拱形节律。和 PDR 的区别：<b>睁眼不动它</b>，只有(想)动对侧手才抑制。读图时别把它误当成枕区 alpha。',
+   bci:'即 MI-BCI 的 mu；读图上是"此刻没在动手"的标志。'},
+  {id:'lambda',name:'Lambda 波',sym:'λ·清醒',color:'#378ADD',regions:['occipital'],
+   electrodes:['O1','O2','Oz'],
+   meta:'枕区 · 扫视诱发',wave:'morph',shape:t=>tri(t,0.32),repeat:3,waveCap:'睁眼扫视有纹理画面时枕区的正向锯齿样尖波',
+   desc:'清醒、<b>睁眼扫视</b>(看有纹理的图像)时枕区出现的正向尖形瞬变。是生理性的，<b>别误判为枕区棘波</b>。和睡眠的 POSTS 同形，但出现在清醒睁眼态。',
+   bci:'视觉/眼动相关生理瞬变；视觉范式预处理时需识别并区分。'},
+  // —— 睡眠 asleep ——
+  {id:'vertex',name:'Vertex 波 (V 波)',sym:'N1',color:'#534AB7',regions:['central'],
+   electrodes:['Cz','C1','C2','FCz'],
+   meta:'顶中央 Cz · N1',wave:'morph',shape:t=>(-1.05*g(t,0.48,0.022)+0.45*g(t,0.56,0.05)),repeat:1,waveCap:'入睡 N1 期顶区(Cz)孤立的尖形高幅瞬变',
+   desc:'浅睡 N1 期的标志：<b>顶区(Cz)孤立、尖形、高波幅的瞬变</b>，儿童尤其尖。双侧同步、中线顶点最大。',
+   bci:'睡眠分期 N1 关键标记；在线 BCI 常用作"被试已困"的预警。'},
+  {id:'spindle',name:'睡眠纺锤',sym:'N2',color:'#378ADD',regions:['central'],
+   electrodes:['Cz','C3','C4','CP1','CP2'],
+   meta:'中央 · 11–16Hz',wave:'morph',shape:t=>Math.sin(2*Math.PI*14*t)*Math.exp(-Math.pow((t-0.5)/0.16,2)),repeat:1,waveCap:'N2 期中央区 11–16Hz、约 0.5–1.5 s 的纺锤状簇',
+   desc:'<b>N2 期定义性波形</b>：中央区 11–16Hz(sigma)、约 1 秒、两头尖中间鼓的纺锤。丘脑网状核的节律产物。',
+   bci:'睡眠分期 N2 金标志；纺锤密度与记忆巩固研究相关。'},
+  {id:'kcomplex',name:'K-复合波',sym:'N2',color:'#534AB7',regions:['frontal','central'],
+   electrodes:['Fz','FCz','Cz'],
+   meta:'额-顶中线 · N2',wave:'morph',shape:t=>(0.55*g(t,0.40,0.02)-1.15*g(t,0.48,0.03)+0.85*g(t,0.62,0.10)+0.16*Math.sin(2*Math.PI*13*t)*g(t,0.8,0.07)),repeat:1,waveCap:'N2 期额顶区大幅双相尖-慢复合波（常带纺锤尾）',
+   desc:'N2 期另一标志：<b>额-顶中线、大波幅、双相(先尖后慢)的复合波</b>，常后接一段纺锤。可自发或被声音诱发。',
+   bci:'睡眠分期 N2；也是听觉诱发 / 觉醒反应的研究对象。'},
+  {id:'posts',name:'POSTS',sym:'睡眠',color:'#1D9E75',regions:['occipital'],
+   electrodes:['O1','O2','Oz'],
+   meta:'枕区 · 正向尖',wave:'morph',shape:t=>tri(t,0.30),repeat:5,waveCap:'枕区成串正向锯齿样睡眠尖波 (POSTS)',
+   desc:'<b>枕区睡眠正相尖瞬变</b>：成串、正向、锯齿样，见于浅-中睡。形态同清醒的 lambda，但出现在睡眠闭眼态。良性，<b>勿误为枕区放电</b>。',
+   bci:'睡眠态枕区生理瞬变；识别它以免误判癫痫样波。'},
+  {id:'sws',name:'慢波睡眠',sym:'N3·δ',color:'#534AB7',regions:['frontal','central','parietal'],
+   electrodes:['Fp1','Fpz','Fp2','Fz','FCz','Cz','Pz'],
+   meta:'弥漫 · 0.5–2Hz',wave:'scroll',cycles:2,dur:4.0,waveCap:'N3 深睡：高幅、弥漫、额区为著的慢波 (δ)',
+   desc:'<b>N3 深睡</b>：高波幅(>75µV)、0.5–2Hz 慢波占比 >20%，额区最显。恢复性睡眠，也是慢波-纺锤耦合做记忆巩固的舞台。',
+   bci:'睡眠分期 N3；闭环声刺激增强慢波是近年神经调控热点。'},
+  {id:'sawtooth',name:'锯齿波 / REM',sym:'REM',color:'#D85A30',regions:['frontal','central'],
+   electrodes:['Fz','FCz','Cz','C3','C4'],
+   meta:'额中央 · REM',wave:'morph',shape:t=>tri(t,0.7),repeat:6,waveCap:'REM 期额中央 2–6Hz 锯齿样波（常伴快速眼动）',
+   desc:'<b>REM 睡眠</b>：低波幅混合频率背景上，额-中央成串<b>锯齿波(2–6Hz)</b>，常先于/伴随快速眼动暴发。肌张力最低、梦境最多的阶段。',
+   bci:'睡眠分期 REM；眼动伪迹强，是 BCI 预处理需重点清理的阶段。'}
+];
+
+// ============ 异常 / 变异：良性变异 + 非癫痫样异常 + 癫痫样放电（learningeeg variants / non-epileptiform / epileptiform）============
+const ABNORMAL = [
+  // —— 良性变异（易误判为癫痫，报告要点是"别过度诊断"）——
+  {id:'wicket',name:'Wicket 拱形波',sym:'变异',color:'#1D9E75',regions:['temporal'],
+   electrodes:['T7','T8','F7','F8','FT7','FT8'],
+   meta:'颞区 · 良性',wave:'morph',shape:t=>Math.pow(Math.max(0,Math.sin(Math.PI*t)),0.6),repeat:4,waveCap:'困倦期颞区成串拱形、尖形轮廓的 6–11Hz 波',
+   desc:'困倦期颞区出现的<b>拱形、尖形轮廓</b>波,单发时极易被误读成颞叶棘波。鉴别点:成串出现、形态一致、无后续慢波、不演变。',
+   bci:'<b>良性变异</b>。读图核心是"别把它当癫痫样波"——过度诊断会误判癫痫。'},
+  {id:'bets',name:'良性小尖棘 BETS',sym:'变异',color:'#1D9E75',regions:['temporal'],
+   electrodes:['T7','T8','F7','F8'],
+   meta:'颞区 · 睡眠',wave:'morph',shape:t=>(-0.55*g(t,0.5,0.011)+0.28*g(t,0.53,0.03)),repeat:1,waveCap:'浅睡期低幅、短时程、双侧独立的小尖棘 (BETS/SSS)',
+   desc:'<b>小尖棘(SSS)</b>:浅睡期低波幅、短时程(<50ms)、陡峭的小棘,双侧独立出现。无后续慢波、不成簇。',
+   bci:'良性,健康人也常见;别误为颞叶致痫棘波。'},
+  {id:'rmtd',name:'颞区节律θ (精神运动变异)',sym:'变异',color:'#1D9E75',regions:['temporal'],
+   electrodes:['T7','T8','TP7','TP8'],
+   meta:'中颞 · 5–7Hz',wave:'morph',shape:t=>(0.85*Math.sin(2*Math.PI*t)+0.18*Math.sin(4*Math.PI*t+Math.PI)),repeat:6,waveCap:'困倦期中颞区单调、有切迹的 5–7Hz 节律串',
+   desc:'"psychomotor variant"。困倦期中颞区<b>单调、有切迹(notched)的 5–7Hz 节律</b>串。关键鉴别:<b>频率不演变、无空间扩散</b>——这点区别于颞叶发作。',
+   bci:'良性变异;像发作但不是发作,靠"无演变"识破。'},
+  {id:'s14_6',name:'14 & 6 Hz 正性簇',sym:'变异',color:'#1D9E75',regions:['temporal','occipital'],
+   electrodes:['P7','P8','T7','T8','O1','O2'],
+   meta:'后颞 · 14&6Hz',wave:'morph',shape:t=>Math.max(0,Math.sin(2*Math.PI*14*t))*Math.exp(-Math.pow((t-0.5)/0.2,2)),repeat:1,waveCap:'青少年睡眠期后颞区 14 或 6Hz 的正性梳状簇',
+   desc:'青少年浅睡期后颞区的<b>正性梳状短簇</b>(14 或 6Hz)。良性、年龄相关,过去被过度联系到各种症状,现公认无病理意义。',
+   bci:'良性年龄相关变异;识别即可,无需处理。'},
+  // —— 非癫痫样异常（提示脑病/病灶，但不是癫痫样波）——
+  {id:'focal_slow',name:'局灶慢波',sym:'非癫痫',color:'#D85A30',regions:['temporal'],
+   electrodes:['T7','F7','TP7','P7'],
+   meta:'局灶(颞) · δ/θ',wave:'scroll',cycles:3,dur:3.0,waveCap:'某一区域持续的多形性慢波（此处示意左颞）',
+   desc:'某一区域<b>持续、多形性</b>的 δ/θ 慢波。<b>提示其下结构性病变</b>(肿瘤、卒中、外伤)。持续性局灶慢波比间歇性更可疑。',
+   bci:'结构病灶定位线索;康复 BCI 选通道时要避开坏死/水肿区。'},
+  {id:'diffuse_slow',name:'弥漫慢波',sym:'非癫痫',color:'#D85A30',regions:['frontal','central','parietal','occipital','temporal'],
+   electrodes:['Fz','Cz','Pz','Oz','F3','F4','C3','C4','P3','P4'],
+   meta:'弥漫 · 背景慢化',wave:'scroll',cycles:2,dur:3.6,waveCap:'整体背景频率变慢、PDR 消失——弥漫性脑功能障碍',
+   desc:'整体背景频率变慢、PDR 变慢或消失,<b>弥漫性脑病</b>的非特异标志(中毒、代谢、缺氧、退行)。分级看主导频率掉到 θ 还是 δ。',
+   bci:'全局脑功能水平指标;意识障碍/麻醉深度监测的基础。'},
+  {id:'firda',name:'FIRDA 额区间歇节律δ',sym:'非癫痫',color:'#D85A30',regions:['frontal'],
+   electrodes:['Fp1','Fpz','Fp2','AF3','AF4','F3','Fz','F4'],
+   meta:'额区 · 间歇δ',wave:'scroll',cycles:3,dur:2.4,waveCap:'额区双侧、间歇出现的单调 2–3Hz 节律性δ 串',
+   desc:'<b>额区间歇性节律性 δ 活动</b>:双侧、单调、成串的 2–3Hz δ。多见于脑病、颅内压增高、中线/深部病变,非特异但提示弥漫功能障碍。',
+   bci:'脑病/颅压线索;常与意识水平下降相伴。'},
+  {id:'triphasic',name:'三相波',sym:'非癫痫',color:'#D85A30',regions:['frontal','central'],
+   electrodes:['Fp1','Fpz','Fp2','Fz','F3','F4','FCz','Cz'],
+   meta:'额-广泛 · 三相',wave:'morph',shape:t=>(0.45*g(t,0.22,0.05)-1.05*g(t,0.46,0.07)+0.6*g(t,0.74,0.10)),repeat:3,waveCap:'广泛、额区为著的三相波（常有前→后相位延迟）',
+   desc:'<b>三相波</b>:广泛、额区最著、有<b>前→后相位延迟</b>的钝性复合波。经典见于<b>肝性/代谢性脑病</b>,但也见于其他重症脑病,需结合临床。',
+   bci:'代谢性脑病标志;易与癫痫样放电混淆,靠三相形态+延迟区分。'},
+  // —— 癫痫样放电（致痫性,报告要点是"定性+定位")——
+  {id:'spike',name:'棘波',sym:'癫痫样',color:'#E24B4A',regions:['temporal','frontal'],
+   electrodes:['T7','F7','FT7','TP7'],
+   meta:'局灶 · 棘波',wave:'morph',shape:t=>(-1.15*g(t,0.5,0.013)+0.28*g(t,0.62,0.05)),repeat:1,waveCap:'时程 <70ms 的陡峭负向瞬变,常带后续慢波（此处示意左颞）',
+   desc:'<b>棘波</b>:时程 <70ms、陡峭、打破背景、常带<b>后续慢波</b>、有合理电场分布。局灶棘波<b>定位致痫区</b>(颞叶癫痫最常见 F7/T7)。',
+   bci:'致痫区定位金标志;与良性变异的核心区别是"打破背景+后随慢波+电场合理"。'},
+  {id:'sharpwave',name:'尖波',sym:'癫痫样',color:'#E24B4A',regions:['temporal'],
+   electrodes:['T7','T8','F7','F8'],
+   meta:'颞区 · 尖波',wave:'morph',shape:t=>(-1.0*g(t,0.5,0.045)+0.25*g(t,0.66,0.09)),repeat:1,waveCap:'时程 70–200ms 的尖形瞬变,意义同棘波',
+   desc:'<b>尖波</b>:时程 70–200ms,比棘波宽,判读意义相同——癫痫样、定位致痫区。颞叶癫痫的 F7/F8/T7/T8 尖波最典型。',
+   bci:'同棘波,用于致痫灶定侧定位。'},
+  {id:'spikewave3',name:'3Hz 棘慢复合',sym:'癫痫样',color:'#E24B4A',regions:['frontal','central'],
+   electrodes:['Fp1','Fpz','Fp2','Fz','F3','F4','FCz','Cz'],
+   meta:'广泛 · 3Hz棘慢',wave:'morph',shape:t=>(-1.1*g(t,0.2,0.016)-0.55*g(t,0.62,0.14)),repeat:3,waveCap:'广泛同步、额区为著的 3Hz 规整棘慢波（典型失神）',
+   desc:'<b>3Hz 棘慢复合波</b>:广泛、双侧同步、额区最大、规整的 3/秒棘+慢。<b>典型失神癫痫</b>标志,过度换气易诱发,发作时伴行为停顿。',
+   bci:'广泛性癫痫标志;过度换气是经典诱发手法。'},
+  {id:'polyspikewave',name:'多棘慢复合',sym:'癫痫样',color:'#534AB7',regions:['frontal','central','parietal'],
+   electrodes:['Fz','FCz','Cz','F3','F4','C3','C4','Pz'],
+   meta:'广泛 · 多棘慢',wave:'morph',shape:t=>(-0.95*g(t,0.10,0.012)-0.95*g(t,0.19,0.012)-0.9*g(t,0.28,0.012)-0.5*g(t,0.62,0.12)),repeat:2,waveCap:'广泛的多个棘波后随一个慢波（与肌阵挛/JME 关联）',
+   desc:'<b>多棘慢波</b>:广泛、一串棘波后随慢波。与<b>肌阵挛、青少年肌阵挛癫痫(JME)</b>强关联,常在晨起、闪光刺激时增多。',
+   bci:'广泛性/肌阵挛癫痫标志;光敏性测试(闪光刺激)的观察对象。'},
+  {id:'hypsarrhythmia',name:'高度失律',sym:'癫痫样',color:'#534AB7',regions:['frontal','central','parietal','temporal','occipital'],
+   electrodes:['Fp1','Fp2','Fz','C3','Cz','C4','T7','T8','P3','Pz','P4','O1','O2'],
+   meta:'多灶 · 高度失律',wave:'morph',shape:t=>0.7*(0.42*Math.sin(2*Math.PI*11*t)+0.5*Math.sin(2*Math.PI*4.3*t+0.6)+0.4*Math.sin(2*Math.PI*1.9*t)-0.85*g(t,0.28,0.02)-0.8*g(t,0.7,0.025)),repeat:1,waveCap:'高波幅、混乱、多灶棘波叠加慢波的无序背景',
+   desc:'<b>高度失律</b>:超高波幅、完全无序、多灶棘波叠加在混乱慢波背景上。<b>婴儿痉挛(West 综合征)</b>的标志性脑电,属儿科急症。',
+   bci:'重度婴儿癫痫性脑病标志;预后差,需紧急干预。'}
+];
+
+// ============ 发作 Seizures（learningeeg seizures · 核心是"时间演变"）============
+const SEIZURE = [
+  {id:'focal_sz',name:'局灶发作',sym:'发作',color:'#E24B4A',regions:['temporal','frontal'],
+   electrodes:['T7','F7','FT7','TP7','T8'],
+   meta:'颞区起始 · 演变',wave:'morph',repeat:1,
+   shape:t=>(t<0.85?(0.25+0.75*Math.min(1,t*1.5)):0.07)*Math.sin(2*Math.PI*(4*t+14*t*t)),
+   waveCap:'时间压缩 ~20s：节律性 θ 起始 → 加速增幅 → 棘慢 → 发作后抑制',
+   desc:'局灶发作的本质是<b>演变</b>：从一处(常颞叶)<b>节律性 θ 起始</b>，逐步<b>增幅、变频、向邻区扩散</b>，可发展为棘慢，结束后<b>发作后抑制</b>(变平/变慢)。<b>无演变的节律 ≠ 发作</b>(十秒律)。',
+   bci:'<b>发作检测/预警 BCI</b> 的目标信号；闭环刺激(RNS)正是一检测到起始就放电阻断。'},
+  {id:'gtc',name:'全面强直阵挛 GTC',sym:'发作',color:'#534AB7',regions:['frontal','central','parietal','temporal','occipital'],
+   electrodes:['Fp1','Fp2','Fz','C3','Cz','C4','T7','T8','P3','Pz','P4'],
+   meta:'全面 · 强直→阵挛',wave:'morph',repeat:1,
+   shape:t=>{if(t<0.42)return 0.85*Math.sin(2*Math.PI*15*t);if(t<0.80){const p=(t-0.42)/0.38;const f=18-11*p;return (1.0-0.35*p)*Math.sin(2*Math.PI*f*t)*Math.abs(Math.sin(2*Math.PI*(3-1.6*p)*t));}return 0.05*Math.sin(2*Math.PI*2.5*t);},
+   waveCap:'强直期(快、肌电样) → 阵挛期(爆发渐慢渐疏) → 发作后抑制',
+   desc:'GTC 两期：<b>强直期</b>快速低幅 + 大量肌电；<b>阵挛期</b>棘慢爆发与抽动同步、<b>频率渐慢、间隔渐宽</b>；随后<b>明显发作后抑制</b>再恢复背景。',
+   bci:'跌倒/惊厥预警；穿戴式发作检测的主目标，强直期肌电反而是有用的触发特征。'},
+  {id:'absence',name:'失神发作',sym:'发作',color:'#E24B4A',regions:['frontal','central'],
+   electrodes:['Fp1','Fpz','Fp2','Fz','F3','F4','FCz','Cz'],
+   meta:'全面 · 3Hz 棘慢串',wave:'morph',repeat:1,
+   shape:t=>{if(t<0.12||t>0.88)return 0.05*Math.sin(2*Math.PI*9*t);const lt=((t-0.12)*9)%1;return -1.0*g(lt,0.2,0.022)-0.5*g(lt,0.62,0.15);},
+   waveCap:'正常背景上突发 3Hz 棘慢串、突止，无发作后改变（典型失神）',
+   desc:'失神发作 = 持续数秒的<b>3Hz 广泛棘慢串</b>，<b>突发突止、行为停顿、无发作后状态</b>。是少数"短而无演变"的发作，过度换气易诱发。',
+   bci:'与 3Hz 棘慢放电同源；这里呈现的是"成串持续"的发作态。'}
+];
+
+// ============ 伪迹 Artifacts（非脑源 · BCI 预处理天天要去除）============
+const ARTIFACT = [
+  {id:'blink',name:'眨眼',sym:'伪迹·眼',color:'#6E7E8C',regions:['frontal'],
+   electrodes:['Fp1','Fpz','Fp2'],
+   meta:'额极 Fp · 无后场',wave:'morph',repeat:1,shape:t=>0.95*g(t,0.5,0.06),waveCap:'额极(Fp1/Fp2)高幅、无后部扩散的钝性偏转',
+   desc:'<b>非脑源</b>。眨眼时眼球上转(Bell 现象),角膜正电在<b>额极 Fp1/Fp2 产生高幅偏转、无后部场</b>。是 EEG 上最常见的伪迹。',
+   bci:'BCI 头号伪迹;ICA 一个独立成分就能拎出来,或用 EOG 回归扣除。'},
+  {id:'lateral_eye',name:'侧视眼动 EOG',sym:'伪迹·眼',color:'#6E7E8C',regions:['frontal'],
+   electrodes:['F7','F8'],
+   meta:'F7/F8 · 反相',wave:'morph',repeat:1,shape:t=>(t>0.18&&t<0.5)?0.85:((t>=0.5&&t<0.82)?-0.85:0),waveCap:'左右额(F7/F8)极性相反的方波样偏转（看向正相侧）',
+   desc:'水平扫视使眼偶极在 <b>F7、F8 产生极性相反</b>的方波样偏转——"看向正相那侧"。和眨眼一起构成眼电(EOG)。',
+   bci:'与眨眼同属眼电;BCI 常加 EOG 导联做参考回归,或 ICA 去除。'},
+  {id:'emg',name:'肌电 EMG',sym:'伪迹·肌',color:'#6E7E8C',regions:['temporal','frontal'],
+   electrodes:['T7','T8','F7','F8','FT7','FT8'],
+   meta:'额-颞 · 高频',wave:'morph',repeat:1,shape:t=>0.55*Math.sin(2*Math.PI*42*t)+0.3*Math.sin(2*Math.PI*73*t+1)+0.18*Math.sin(2*Math.PI*115*t),waveCap:'额、颞肌(frontalis/temporalis)的高频、顶点稀少的快活动',
+   desc:'<b>比脑电快得多</b>的高频活动,来自额肌/颞肌,<b>顶点(vertex)最少</b>、清醒时最显。常盖住真实节律。',
+   bci:'清醒 BCI 的大敌(尤其 gamma 频段);低通+ICA,或贴近肌肉处加参考。'},
+  {id:'ecg',name:'心电 ECG',sym:'伪迹·心',color:'#6E7E8C',regions:['temporal'],
+   electrodes:['F7','T7','P7','O1','Cz'],
+   meta:'广泛(左>右) · QRS',wave:'morph',repeat:4,shape:t=>0.9*g(t,0.5,0.012)-0.18*g(t,0.4,0.02),waveCap:'与 QRS 锁时、规律出现的尖样活动（左侧多见）',
+   desc:'<b>与心电 QRS 锁时</b>、规律(~1/秒)出现的尖样小波,左侧(近心)多见。同步记一路 ECG 即可确认。',
+   bci:'易被误当棘波;同步 ECG + 自适应噪声消除(ANC)或 ICA 去除。'},
+  {id:'electrode_pop',name:'电极脱落 Pop',sym:'伪迹·电极',color:'#6E7E8C',regions:['temporal'],
+   electrodes:['T8'],
+   meta:'单导 · 无电场',wave:'morph',repeat:1,shape:t=>{if(t<0.38)return 0;if(t<0.4)return (t-0.38)/0.02;return Math.exp(-(t-0.4)*6);},waveCap:'单一电极突然陡升、缓降，且完全无邻导电场',
+   desc:'接触不良时<b>单一电极突然陡升、缓降</b>,<b>邻导完全无场</b>——这点是和真实脑电瞬变的关键区别。图上<b>只亮一个电极正是它的特征</b>(此处示例取 T8,实际任一电极都可能 pop;真脑电瞬变则一定有邻导电场)。',
+   bci:'坏导检测必查;阻抗监控 + 坏导插值/剔除。穿戴/干电极尤其高发。'},
+  {id:'line_noise',name:'工频 50/60Hz',sym:'伪迹·工频',color:'#6E7E8C',regions:['frontal','central','parietal','occipital','temporal'],
+   electrodes:['Fz','Cz','Pz','Oz','C3','C4','F3','F4','P3','P4'],
+   meta:'全导 · 50/60Hz',wave:'scroll',cycles:30,dur:0.5,waveCap:'全导、极快、极单调的工频正弦（陷波即可去除）',
+   desc:'市电耦合产生的<b>全导、极快、单调的 50/60Hz 正弦</b>。和脑电频率不重叠,<b>陷波滤波</b>去掉不影响判读。',
+   bci:'最容易处理的伪迹:notch 50/60Hz(及谐波)。屏蔽差/接地不良时变重。'},
+  {id:'sweat',name:'出汗 / 漂移',sym:'伪迹·漂移',color:'#6E7E8C',regions:['frontal'],
+   electrodes:['Fp1','Fp2','F7','F8'],
+   meta:'低频 · <0.5Hz',wave:'scroll',cycles:1,dur:6,waveCap:'<0.5Hz 极慢、起伏不定的基线摆动',
+   desc:'汗液(氯化钠导电)造成的<b><0.5Hz 极慢基线摆动</b>,无固定形态。长时程/暖环境记录常见。',
+   bci:'高通滤波(>0.5Hz)即可去除;但别把高通设太高伤到慢成分(如 P300/CNV)。'}
+];
+
+// 发作检测 pipeline（三个发作项共用,经典 ML / 深度学习两套）
+const SZ_MODELS = {
+  classic:[{s:'带通 + 分窗',io:'C×T → 窗'},{s:'line-length / 谱熵特征',io:'→ 特征'},{s:'SVM / 随机森林',io:'→ 发作?'}],
+  deep:[{s:'分窗',io:'C×T'},{s:'CNN / Transformer 检测',io:'C×T → 概率'},{s:'后处理平滑',io:'→ 发作起止'}]
+};
+
+// 阶段写法：字符串 = 仅显示；{s, io} = 可点击展开"输入→输出维度"。C=通道 T=时间采样
+const EXTRA = {
+  // —— 节律：典型分析（单一 pipeline，无经典/DL 之分）——
+  delta:{plabel:'典型分析',pipeline:[{s:'PSD 功率谱',io:'C×T → C×F'},{s:'δ 频带能量',io:'C×F → C 维 band-power'},{s:'睡眠分期 U-Sleep/YASA',io:'→ N3 / REM …'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'MASS',u:'http://ceams-carsm.ca/mass/'},{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  theta:{plabel:'典型分析',pipeline:[{s:'额中线 θ 能量(Fz/FCz)',io:'C×T → 标量 power'},{s:'工作负荷指数',io:'θ/α 比值'},{s:'神经反馈',io:'→ 实时反馈'}],
+    datasets:[{n:'Shin n-back',u:'https://www.nature.com/articles/sdata20183'},{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  alpha:{plabel:'典型分析',pipeline:[{s:'闭眼 PSD',io:'C×T → C×F'},{s:'α 峰频 / 不对称',io:'→ 峰值 Hz / L-R 差'},{s:'睁闭眼开关 & 基线',io:'→ on/off'}],
+    datasets:[{n:'EEGMMIDB',u:'https://physionet.org/content/eegmmidb/1.0.0/'},{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  mu:{plabel:'典型分析',pipeline:[{s:'8–13 Hz 带通',io:'C×T → C×T'},{s:'对侧 ERD%(C3/C4)',io:'→ 能量降幅 %'},{s:'CSP/FBCSP → LDA',io:'→ 左/右'}],
+    datasets:[{n:'BCI Comp IV-2b',u:'https://www.bbci.de/competition/iv/'},{n:'EEGMMIDB',u:'https://physionet.org/content/eegmmidb/1.0.0/'},{n:'OpenBMI',u:'http://gigadb.org/dataset/100542'}]},
+  beta:{plabel:'典型分析',pipeline:[{s:'13–30 Hz 带通',io:'C×T → C×T'},{s:'beta rebound / ERS 检测',io:'→ 反弹幅值'},{s:'CSP → 分类器',io:'→ 动作完成?'}],
+    datasets:[{n:'BCI Comp IV-2a',u:'https://www.bbci.de/competition/iv/'},{n:'High-Gamma',u:'https://web.gin.g-node.org/robintibor/high-gamma-dataset'}]},
+  gamma:{plabel:'典型分析',pipeline:[{s:'高频带 HFB 能量',io:'C×T → C 维 power'},{s:'严格去肌电',io:'ICA / 回归'},{s:'局部同步分析',io:'→ PLV / 绑定'}],
+    datasets:[{n:'High-Gamma',u:'https://web.gin.g-node.org/robintibor/high-gamma-dataset'},{n:'多为侵入 ECoG',u:null}]},
+  // —— 范式：解码模型（经典 ML / 深度学习 两套对照）——
+  ssvep:{plabel:'解码模型',models:{
+      classic:[{s:'带通 6–40Hz',io:'C×T → C×T'},{s:'FBCCA(滤波器组+CCA)',io:'C×T → 相关系数 ρ_f'},{s:'谐波模板 argmax',io:'ρ_f → 目标频率'}],
+      deep:[{s:'分段+滤波器组',io:'C×T → B×C×T'},{s:'SSVEPNet / EEGNet (CNN)',io:'B×C×T → 特征'},{s:'Softmax',io:'→ N_freq 类'}]},
+    datasets:[{n:'OpenBMI(54)',u:'http://gigadb.org/dataset/100542'},{n:'BNCI Horizon 2020',u:'https://bnci-horizon-2020.eu/database/data-sets'}]},
+  erders:{plabel:'解码模型',models:{
+      classic:[{s:'带通 8–30Hz',io:'C×T → C×T'},{s:'CSP / FBCSP 空间滤波',io:'C×T → 2m 维 log-var'},{s:'LDA / SVM',io:'2m → 左/右手'}],
+      deep:[{s:'带通 + 裁窗',io:'C×T'},{s:'EEGNet / ConvNet / Riemann-Net',io:'C×T → embedding'},{s:'(可选)LaBraM 微调',io:'→ 左/右手…'}]},
+    datasets:[{n:'BCI IV-2a',u:'https://www.bbci.de/competition/iv/'},{n:'BCI IV-2b',u:'https://www.bbci.de/competition/iv/'},{n:'EEGMMIDB',u:'https://physionet.org/content/eegmmidb/1.0.0/'},{n:'Stroke MI·临床',u:'https://www.nature.com/articles/s41597-023-02787-8'}]},
+  p300:{plabel:'解码模型',models:{
+      classic:[{s:'降采样+带通 0.1–20Hz',io:'C×T → C×T↓'},{s:'xDAWN 空间滤波',io:'C×T → K×T'},{s:'LDA(shrinkage)',io:'KT → 目标/非目标'}],
+      deep:[{s:'epoch 0–800ms',io:'C×T'},{s:'EEGNet(深度可分卷积)',io:'C×T → embedding'},{s:'Sigmoid + 行列融合',io:'→ 字符'}]},
+    datasets:[{n:'BCI Comp II-IIb',u:'https://www.bbci.de/competition/ii/'},{n:'OpenBMI',u:'http://gigadb.org/dataset/100542'},{n:'BNCI Horizon 2020',u:'https://bnci-horizon-2020.eu/database/data-sets'}]},
+  n400:{plabel:'解码模型',models:{
+      classic:[{s:'锁时平均(多 trial)',io:'n×C×T → C×T'},{s:'成分幅值(300–500ms)',io:'→ 标量 µV'},{s:'统计 / LDA',io:'→ 匹配?'}],
+      deep:[{s:'单 trial 去噪',io:'C×T'},{s:'RNN / Transformer 编码',io:'C×T → embedding'},{s:'词向量对齐',io:'→ 语义距离'}]},
+    datasets:[{n:'ERP CORE',u:'https://erpinfo.org/erp-core'},{n:'范式专用公开集少',u:null}]},
+  errp:{plabel:'解码模型',models:{
+      classic:[{s:'锁时平均(FCz)',io:'n×C×T → C×T'},{s:'xDAWN / 黎曼协方差',io:'C×T → SPD'},{s:'LDA',io:'→ 正确/错误'}],
+      deep:[{s:'单 trial epoch',io:'C×T'},{s:'EEGNet / ConvNet',io:'C×T → embedding'},{s:'Sigmoid → 在线回滚',io:'→ 撤销?'}]},
+    datasets:[{n:'BNCI Horizon 2020',u:'https://bnci-horizon-2020.eu/database/data-sets'},{n:'Monitoring ErrP',u:null}]},
+  rsvp:{plabel:'解码模型',models:{
+      classic:[{s:'降采样+带通',io:'C×T'},{s:'xDAWN + 黎曼',io:'C×T → SPD 特征'},{s:'LDA 目标检测',io:'→ 命中?'}],
+      deep:[{s:'epoch (CLIP teacher)',io:'C×T + 图像'},{s:'EEGNet / ATM / NICE',io:'C×T → z∈R⁵¹²'},{s:'对比对齐 CLIP 空间',io:'z↔CLIP → 检索'}]},
+    datasets:[{n:'THINGS-EEG2',u:'https://osf.io/3jk45/'},{n:'THINGS-EEG1',u:'https://www.nature.com/articles/s41597-021-01102-7'},{n:'Alljoined-1.6M',u:'https://arxiv.org/abs/2508.18571'}]},
+  // —— 临床波形：典型分析 + 数据集 ——
+  pdr:{plabel:'典型分析',pipeline:[{s:'闭眼 PSD',io:'C×T → C×F'},{s:'α 峰频 / 反应性',io:'→ 峰 Hz / 睁眼降幅'},{s:'正常基线判读',io:'→ 正常?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'EEGMMIDB',u:'https://physionet.org/content/eegmmidb/1.0.0/'}]},
+  mu_c:{plabel:'典型分析',pipeline:[{s:'8–13Hz 带通',io:'C×T → C×T'},{s:'中央 vs 枕区区分',io:'→ 拓扑'},{s:'反应性测试',io:'→ 动/不动'}],
+    datasets:[{n:'EEGMMIDB',u:'https://physionet.org/content/eegmmidb/1.0.0/'},{n:'BCI IV-2b',u:'https://www.bbci.de/competition/iv/'}]},
+  lambda:{plabel:'典型分析',pipeline:[{s:'睁眼扫视段',io:'C×T'},{s:'枕区正瞬变检出',io:'→ 尖波位置'},{s:'与棘波鉴别',io:'→ 生理?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  vertex:{plabel:'典型分析',pipeline:[{s:'N1 段',io:'C×T'},{s:'Cz 尖瞬变检测',io:'→ V 波'},{s:'睡眠分期',io:'→ N1'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'MASS',u:'http://ceams-carsm.ca/mass/'}]},
+  spindle:{plabel:'典型分析',pipeline:[{s:'11–16Hz σ 滤波',io:'C×T → σ 包络'},{s:'纺锤检测/计数',io:'→ 个数/密度'},{s:'N2 标注',io:'→ N2'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'MASS',u:'http://ceams-carsm.ca/mass/'},{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  kcomplex:{plabel:'典型分析',pipeline:[{s:'额顶大波检测',io:'C×T'},{s:'K-complex 标注',io:'→ 双相波'},{s:'睡眠分期',io:'→ N2'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'MASS',u:'http://ceams-carsm.ca/mass/'}]},
+  posts:{plabel:'典型分析',pipeline:[{s:'枕区正瞬变',io:'C×T'},{s:'成串检出',io:'→ 序列'},{s:'与放电鉴别',io:'→ 良性?'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  sws:{plabel:'典型分析',pipeline:[{s:'0.5–2Hz δ 占比',io:'C×T → δ%'},{s:'慢波检测',io:'→ 慢波事件'},{s:'N3 判定',io:'→ N3'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'MASS',u:'http://ceams-carsm.ca/mass/'}]},
+  sawtooth:{plabel:'典型分析',pipeline:[{s:'REM 背景',io:'C×T'},{s:'锯齿波 / 眼动',io:'→ 事件'},{s:'REM 标注',io:'→ REM'}],
+    datasets:[{n:'Sleep-EDF',u:'https://physionet.org/content/sleep-edfx/1.0.0/'},{n:'MASS',u:'http://ceams-carsm.ca/mass/'}]},
+  // —— 异常/变异：临床判读 + 数据集 ——
+  wicket:{plabel:'临床判读',pipeline:[{s:'识别拱形形态',io:'C×T'},{s:'与颞区棘波鉴别',io:'→ 成串/无慢波'},{s:'报"良性变异"',io:'→ 良性'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'良性·公开标注少',u:null}]},
+  bets:{plabel:'临床判读',pipeline:[{s:'睡眠期小尖棘',io:'C×T'},{s:'低幅短时程确认',io:'→ <50ms'},{s:'良性判定',io:'→ 良性'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'良性·公开标注少',u:null}]},
+  rmtd:{plabel:'临床判读',pipeline:[{s:'中颞节律 θ',io:'C×T'},{s:'确认无演变',io:'→ 不像发作'},{s:'良性变异',io:'→ 良性'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'良性·公开标注少',u:null}]},
+  s14_6:{plabel:'临床判读',pipeline:[{s:'后颞正性簇',io:'C×T'},{s:'青少年背景',io:'→ 年龄相关'},{s:'良性判定',io:'→ 良性'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'良性·公开标注少',u:null}]},
+  focal_slow:{plabel:'临床判读',pipeline:[{s:'慢波灶定位',io:'C×T → 区域'},{s:'频率/持续性',io:'→ 多形/持续'},{s:'提示结构病变',io:'→ 病灶?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUAB 异常',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  diffuse_slow:{plabel:'临床判读',pipeline:[{s:'背景频率评估',io:'C×T → 主频'},{s:'弥漫慢化分级',io:'→ θ / δ'},{s:'脑病提示',io:'→ 脑病?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUAB 异常',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  firda:{plabel:'临床判读',pipeline:[{s:'额区节律δ检出',io:'C×T'},{s:'间歇性确认',io:'→ 成串/间歇'},{s:'脑病/颅压↑',io:'→ 弥漫障碍'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUAB 异常',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  triphasic:{plabel:'临床判读',pipeline:[{s:'三相形态',io:'C×T'},{s:'前→后相位延迟',io:'→ 延迟'},{s:'代谢脑病',io:'→ 肝性?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUAB 异常',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  spike:{plabel:'临床判读',pipeline:[{s:'棘波检出(模板/DL)',io:'C×T → 候选'},{s:'定侧定位',io:'→ 电场'},{s:'致痫区',io:'→ 病灶定位'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUEV 事件',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'CHB-MIT',u:'https://physionet.org/content/chbmit/1.0.0/'}]},
+  sharpwave:{plabel:'临床判读',pipeline:[{s:'尖波检出',io:'C×T → 候选'},{s:'颞叶癫痫关联',io:'→ F7/T7'},{s:'定位',io:'→ 致痫区'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUEV 事件',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  spikewave3:{plabel:'临床判读',pipeline:[{s:'3Hz 广泛棘慢',io:'C×T'},{s:'失神关联',io:'→ 行为停顿'},{s:'过度换气诱发',io:'→ 诱发?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUSZ 癫痫',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'CHB-MIT',u:'https://physionet.org/content/chbmit/1.0.0/'}]},
+  polyspikewave:{plabel:'临床判读',pipeline:[{s:'多棘慢检出',io:'C×T'},{s:'肌阵挛/JME 关联',io:'→ 晨起↑'},{s:'光敏测试',io:'→ 闪光诱发?'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'TUSZ 癫痫',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  hypsarrhythmia:{plabel:'临床判读',pipeline:[{s:'混乱高幅背景',io:'C×T'},{s:'多灶棘波叠加',io:'→ 无序'},{s:'婴儿痉挛(West)',io:'→ 急症'}],
+    datasets:[{n:'TUH EEG',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'婴儿痉挛·稀缺',u:null}]},
+  // —— 发作：发作检测模型(经典/深度) + 数据集 ——
+  focal_sz:{plabel:'发作检测',models:SZ_MODELS,
+    datasets:[{n:'CHB-MIT',u:'https://physionet.org/content/chbmit/1.0.0/'},{n:'TUSZ 癫痫',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'Siena Scalp',u:'https://physionet.org/content/siena-scalp-eeg/1.0.0/'}]},
+  gtc:{plabel:'发作检测',models:SZ_MODELS,
+    datasets:[{n:'CHB-MIT',u:'https://physionet.org/content/chbmit/1.0.0/'},{n:'TUSZ 癫痫',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'Siena Scalp',u:'https://physionet.org/content/siena-scalp-eeg/1.0.0/'}]},
+  absence:{plabel:'发作检测',models:SZ_MODELS,
+    datasets:[{n:'CHB-MIT',u:'https://physionet.org/content/chbmit/1.0.0/'},{n:'TUSZ 癫痫',u:'https://isip.piconepress.com/projects/tuh_eeg/'}]},
+  // —— 伪迹：去伪迹 pipeline + 数据集 ——
+  blink:{plabel:'去伪迹',pipeline:[{s:'Fp 检出眨眼',io:'C×T'},{s:'ICA / EOG 回归',io:'→ 去成分'},{s:'重建',io:'→ 干净 EEG'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'EEGdenoiseNet',u:'https://github.com/ncclabsustech/EEGdenoiseNet'}]},
+  lateral_eye:{plabel:'去伪迹',pipeline:[{s:'F7/F8 反相检出',io:'C×T'},{s:'EOG 回归',io:'→ 扣除'},{s:'重建',io:'→ 去眼动'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'EEGdenoiseNet',u:'https://github.com/ncclabsustech/EEGdenoiseNet'}]},
+  emg:{plabel:'去伪迹',pipeline:[{s:'高频能量检出',io:'C×T'},{s:'低通 / ICA',io:'→ 抑制'},{s:'重建',io:'→ 去肌电'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'EEGdenoiseNet',u:'https://github.com/ncclabsustech/EEGdenoiseNet'}]},
+  ecg:{plabel:'去伪迹',pipeline:[{s:'QRS 模板对齐',io:'C×T + ECG'},{s:'自适应滤波 ANC',io:'→ 扣除'},{s:'重建',io:'→ 去心电'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'EEGdenoiseNet',u:'https://github.com/ncclabsustech/EEGdenoiseNet'}]},
+  electrode_pop:{plabel:'去伪迹',pipeline:[{s:'单导突变检测',io:'C×T'},{s:'坏导插值/剔除',io:'→ 修复'},{s:'阻抗监控',io:'→ 干净导'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'预处理即可',u:null}]},
+  line_noise:{plabel:'去伪迹',pipeline:[{s:'50/60Hz 检出',io:'C×T'},{s:'陷波滤波',io:'→ notch'},{s:'重建',io:'→ 去工频'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'notch 即可',u:null}]},
+  sweat:{plabel:'去伪迹',pipeline:[{s:'<0.5Hz 漂移',io:'C×T'},{s:'高通滤波',io:'→ >0.5Hz'},{s:'重建',io:'→ 去漂移'}],
+    datasets:[{n:'TUAR 伪迹',u:'https://isip.piconepress.com/projects/tuh_eeg/'},{n:'高通即可',u:null}]}
+};
+const MODEL_NOTE={classic:'经典 ML · 几乎免训练 / 数据少也稳 / 可解释',deep:'深度学习 · 端到端 / 需更多数据 / 跨被试更强'};
+
+// ============ 状态 ============
+let state = {sys:'10-10', mode:'rhythm', sel:'alpha'};
+let modelView = 'classic';  // 'classic' | 'deep'（仅范式有两套）
+const GROUPS = {rhythm:RHYTHMS, paradigm:PARADIGMS, clinical:CLINICAL, abnormal:ABNORMAL, seizure:SEIZURE, artifact:ARTIFACT};
+const items = () => GROUPS[state.mode] || RHYTHMS;
+const cur = () => items().find(i=>i.id===state.sel) || items()[0];
+const visible = id => state.sys==='10-10' ? true : (TIER && E.find(e=>e[0]===id) && E.find(e=>e[0]===id)[3]!=='added');
+
+// involvement: 哪些电极参与当前 item
+function involvement(){
+  const map={};
+  items().forEach(it=>{const v=L(it);it.electrodes.forEach(eid=>{(map[eid]=map[eid]||[]).push(v.name);});});
+  return map;
+}
+
+// ============ 渲染电极 ============
+function renderElectrodes(){
+  const it = cur();
+  const onSet = new Set(it.electrodes);
+  const G = document.getElementById('electrodes');
+  let html='';
+  E.forEach(([id,x,y,tier])=>{
+    const isAdded = tier==='added';
+    if(isAdded && state.sys==='10-20') return; // 10-20 不显示新增导
+    const active = onSet.has(id);
+    const label = (state.sys==='10-20' && ALT[id]) ? ALT[id] : id;
+    let fill,stroke,sw,tcol,r=17,cls='elec';
+    if(active){
+      fill=it.color; stroke=it.color; sw=0.5; tcol='#fff'; r=19; cls+=' active';
+    }else{
+      const T=TIER[tier]; fill=T.fill; stroke=T.stroke; sw=T.sw; tcol=T.text;
+      cls+=' dim';
+    }
+    html += `<g class="${cls}" style="color:${it.color}" data-id="${id}" onclick="pokeElec('${id}')">`
+      + `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`
+      + `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="${tcol}">${label}</text></g>`;
+  });
+  G.innerHTML = html;
+  // regions
+  document.querySelectorAll('.region').forEach(r=>{
+    const on = it.regions.includes(r.dataset.region);
+    r.setAttribute('fill', it.color);
+    r.style.opacity = on ? 0.12 : 0;
+  });
+  // status
+  const onVisible = it.electrodes.filter(visible);
+  const regsTxt = it.regions.map(r=>tReg(r).split(' · ')[0]).join(' / ');
+  document.getElementById('mapStatus').innerHTML = lang==='en'
+    ? `<b>${onVisible.length}</b> ch lit · regions: ${regsTxt}`
+    : `点亮 <b>${onVisible.length}</b> 导 · 脑区：${regsTxt}`;
+}
+
+// 点击电极 → 状态行显示它参与哪些
+function pokeElec(id){
+  const inv = involvement()[id]||[];
+  const label = (state.sys==='10-20' && ALT[id]) ? `${ALT[id]} (=${id})` : id;
+  const el = E.find(e=>e[0]===id);
+  const tierTxt = (lang==='en'?{core:'10-20 original',renamed:'renamed',added:'10-10 added'}:{core:'10-20 原导',renamed:'仅改名',added:'10-10 新增'})[el[3]];
+  const invTxt = inv.length?inv.join(' / '):'—';
+  document.getElementById('mapStatus').innerHTML = lang==='en'
+    ? `Electrode <b>${label}</b> · ${tierTxt} · in this view: ${invTxt}`
+    : `电极 <b>${label}</b> · ${tierTxt} · 参与本视图：${invTxt}`;
+}
+
+// ============ 渲染列表 ============
+function renderList(){
+  const list = items();
+  document.getElementById('listTitle').textContent = u('lt_'+state.mode);
+  document.getElementById('listCnt').textContent = lang==='en' ? `${list.length} items · click` : `${list.length} 项 · 点击切换`;
+  let html='';
+  list.forEach(it=>{
+    const v = L(it);
+    const sub = v.desc.replace(/<[^>]+>/g,'').slice(0, lang==='en'?42:28)+'…';
+    const badge = state.mode==='rhythm' ? it.freq : v.meta;
+    html += `<div class="icard ${it.id===state.sel?'sel':''}" onclick="select('${it.id}')">`
+      + `<span class="dot" style="background:${it.color}"></span>`
+      + `<span class="ic-main"><div class="ic-name">${v.name}<small>${v.sym}</small></div>`
+      + `<div class="ic-sub">${sub}</div></span>`
+      + `<span class="ic-badge" style="background:${it.color}">${badge}</span></div>`;
+  });
+  document.getElementById('cards').innerHTML = html;
+}
+
+// ============ 波形 ============
+function pathFromPoints(pts){return 'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');}
+
+function buildWave(it){
+  if(it.wave==='scroll'){
+    const W=520,mid=66,amp=36,total=W*2,cyc=it.cycles*2;
+    let pts=[];for(let x=0;x<=total;x+=3)pts.push([x,mid-amp*Math.sin(2*Math.PI*cyc/total*x)]);
+    return `<svg class="wavesvg" viewBox="0 0 520 132">
+      <line class="wave-axis" x1="0" y1="66" x2="520" y2="66"/>
+      <g><path d="${pathFromPoints(pts)}" fill="none" stroke="${it.color}" stroke-width="2.4" stroke-linejoin="round"/>
+        <animateTransform attributeName="transform" type="translate" from="0 0" to="-520 0" dur="${it.dur}s" repeatCount="indefinite"/></g>
+      <rect x="0" y="0" width="520" height="132" fill="none"/></svg>`;
+  }
+  if(it.wave==='envelope'){
+    const x0=46,x1=502,mid=62;
+    const env=t=>Math.max(0.08,Math.min(1.12,0.85-0.72*g(t,0.46,0.11)+0.55*g(t,0.8,0.07)));
+    let pts=[];for(let t=0;t<=1;t+=0.004){const x=x0+(x1-x0)*t;pts.push([x,mid-32*env(t)*Math.sin(2*Math.PI*16*t)]);}
+    let marks='';
+    marks+=`<g font-family="JetBrains Mono,monospace" font-size="10" fill="${it.color}">`
+      +`<text x="${x0+(x1-x0)*0.46}" y="118" text-anchor="middle">ERD ↓</text>`
+      +`<text x="${x0+(x1-x0)*0.8}" y="118" text-anchor="middle">ERS ↑</text></g>`;
+    return `<svg class="wavesvg wave-draw" viewBox="0 0 540 126">
+      <line class="wave-axis" x1="${x0}" y1="62" x2="${x1}" y2="62"/>
+      <path class="main" d="${pathFromPoints(pts)}" fill="none" stroke="${it.color}" stroke-width="2.2"/>
+      ${marks}</svg>`;
+  }
+  if(it.wave==='morph'){
+    const x0=44,x1=504,mid=66,R=it.repeat||1;
+    let pts=[];for(let gt=0;gt<=1;gt+=0.0025){const lt=(gt*R)%1;pts.push([x0+(x1-x0)*gt, mid-it.shape(lt)*36]);}
+    return `<svg class="wavesvg wave-draw" viewBox="0 0 540 126">
+      <line class="wave-axis" x1="${x0}" y1="${mid}" x2="${x1}" y2="${mid}"/>
+      <path class="main" d="${pathFromPoints(pts)}" fill="none" stroke="${it.color}" stroke-width="2.3" stroke-linejoin="round"/>
+      <text x="${x0-6}" y="18" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#aaa89f">µV</text>
+      <text x="${x1}" y="118" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#aaa89f">~1–3 s</text></svg>`;
+  }
+  // erp
+  const x0=48,x1=502,baseY=80;
+  let pts=[];for(let t=0;t<=1;t+=0.005){pts.push([x0+(x1-x0)*t, baseY-it.shape(t)*52]);}
+  // time ticks 0..800ms
+  let ticks='';[0,0.25,0.5,0.75,1].forEach(t=>{
+    const x=x0+(x1-x0)*t;
+    ticks+=`<line class="wave-grid" x1="${x}" y1="14" x2="${x}" y2="104"/>`
+      +`<text x="${x}" y="118" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#aaa89f">${Math.round(t*800)}</text>`;
+  });
+  let marks='';(it.markers||[]).forEach(([t,lab])=>{
+    const x=x0+(x1-x0)*t, y=baseY-it.shape(t)*52;
+    marks+=`<circle cx="${x}" cy="${y}" r="3.2" fill="${it.color}"/>`
+      +`<text x="${x}" y="${y<baseY?y-8:y+16}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="${it.color}">${lab}</text>`;
+  });
+  return `<svg class="wavesvg wave-draw" viewBox="0 0 540 126">
+    ${ticks}
+    <line class="wave-axis" x1="${x0}" y1="${baseY}" x2="${x1}" y2="${baseY}"/>
+    <line class="wave-axis" x1="${x0}" y1="14" x2="${x0}" y2="104"/>
+    <path class="main" d="${pathFromPoints(pts)}" fill="none" stroke="${it.color}" stroke-width="2.4" stroke-linejoin="round"/>
+    ${marks}
+    <text x="${x0-6}" y="18" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#aaa89f">µV</text>
+    <text x="${x1}" y="118" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#aaa89f">ms</text></svg>`;
+}
+
+// ============ 渲染详情 ============
+function renderDetail(){
+  const it=L(cur());
+  const meta = state.mode==='rhythm' ? it.freq : it.meta;
+  // electrode chips
+  const chips = it.electrodes.map(eid=>{
+    const on = visible(eid);
+    const lab = (state.sys==='10-20' && ALT[eid]) ? ALT[eid] : eid;
+    if(on) return `<span class="chip e-on">${lab}</span>`;
+    return `<span class="chip e-off">${eid}<span class="x">10-10</span></span>`;
+  }).join('');
+  const regs = it.regions.map(r=>`<span class="chip reg">${tReg(r)}</span>`).join('');
+  // 解码模型 / 典型分析 —— 阶段可点开看 输入→输出 维度
+  const stageHTML = arr => arr.map(st=>{
+    const s = typeof st==='string' ? st : st.s;
+    const io = typeof st==='string' ? '' : st.io;
+    return `<span class="pstage" style="--c:${it.color}"${io?` data-io="${tIO(io)}" onclick="pipeIO(this)"`:''}>${tStage(s)}</span>`;
+  }).join('<span class="parrow">→</span>');
+  let pipe='';
+  if(it.models){
+    const tabs = `<span class="model-tabs">`
+      + `<button class="${modelView==='classic'?'on':''}" onclick="setModelView('classic')">${u('mClassic')}</button>`
+      + `<button class="${modelView==='deep'?'on':''}" onclick="setModelView('deep')">${u('mDeep')}</button></span>`;
+    pipe = `<div class="pipe"><span class="rk">${tPlabel(it.plabel)}</span>${tabs}`
+      + `<div class="pipe-flow">${stageHTML(it.models[modelView])}</div>`
+      + `<div class="model-note">${tNote(modelView)}</div>`
+      + `<div class="pipe-io" id="pipeIO">${u('pipeHint')}</div></div>`;
+  } else if(it.pipeline){
+    pipe = `<div class="pipe"><span class="rk">${tPlabel(it.plabel||'分析')}</span>`
+      + `<div class="pipe-flow">${stageHTML(it.pipeline)}</div>`
+      + `<div class="pipe-io" id="pipeIO">${u('pipeHint2')}</div></div>`;
+  }
+  const ds = it.datasets ? `<div class="d-row"><span class="rk">${u('rkDataset')}</span>`
+    + it.datasets.map(d=>d.u?`<a class="chip ds" href="${d.u}" target="_blank" rel="noopener">${tDs(d.n)}</a>`:`<span class="chip">${tDs(d.n)}</span>`).join('')
+    + `</div>` : '';
+  document.getElementById('detail').innerHTML =
+    `<div class="d-top"><h3>${it.name}<span class="sym">${it.sym}</span></h3>`
+    + `<span class="d-meta" style="background:${it.color}">${meta}</span></div>`
+    + `<div class="wave-box">${buildWave(it)}<div class="wave-cap">${it.waveCap}</div></div>`
+    + `<p class="d-desc">${it.desc}</p>`
+    + `<div class="d-row"><span class="rk">${u('rkRegion')}</span>${regs}</div>`
+    + `<div class="d-row"><span class="rk">${u('rkElec')}</span>${chips}</div>`
+    + pipe + ds
+    + `<div class="bci-note"><b>${u('bciNote')}</b>${it.bci||it.desc}</div>`;
+}
+
+// ============ 交互 ============
+function select(id){ state.sel=id; renderElectrodes(); renderList(); renderDetail(); }
+function setModelView(v){ modelView=v; renderDetail(); }
+function pipeIO(el){
+  document.querySelectorAll('#detail .pstage').forEach(s=>s.classList.remove('act'));
+  el.classList.add('act');
+  const io=document.getElementById('pipeIO');
+  if(io) io.innerHTML = `<b>${el.textContent}</b> &nbsp;&nbsp; ${el.dataset.io}`;
+}
+function setSys(s){
+  state.sys=s;
+  document.querySelectorAll('#sysToggle button').forEach(b=>b.classList.toggle('on',b.dataset.sys===s));
+  document.getElementById('renameNote').innerHTML = s==='10-20' ? u('rename20') : u('rename10');
+  if(typeof pstate!=='undefined'){ pstate.sys=s; pstate.step=0; if(view==='placement' && typeof placeRender==='function') placeRender(); }
+  renderElectrodes(); renderDetail();
+}
+function setMode(m){
+  state.mode=m;
+  document.querySelectorAll('#modeToggle button').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
+  state.sel = items()[0].id;
+  renderElectrodes(); renderList(); renderDetail();
+}
+document.querySelectorAll('#sysToggle button').forEach(b=>b.onclick=()=>setSys(b.dataset.sys));
+document.querySelectorAll('#modeToggle button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+
+// ============ 中英双语 i18n ============
+let lang = 'zh';
+const UIT = {
+  navBrand:{zh:'BCI · EEG 交互图谱 · 节律 / 范式 ↔ 电极 / 脑区',en:'BCI · EEG Interactive Atlas · rhythms / paradigms ↔ electrodes / regions'},
+  navRef:{zh:'参考 <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 10-20/10-10 · 2026.06.12',en:'ref. <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 10-20/10-10 · 2026.06.12'},
+  eyebrow:{zh:'BCI 调研 · 交互版 · 2026.06.12',en:'BCI research · interactive · 2026.06.12'},
+  h1:{zh:'EEG 节律与刺激范式 · 电极与脑区对应交互图',en:'EEG rhythms & paradigms · electrode–region interactive atlas'},
+  lede:{zh:'选一个波形，它对应的电极、脑区会在头皮图上点亮并播放示意波。右上角切 <b>10-20 / 10-10</b> 命名；下方六组维度自由切换。',en:'Pick a waveform — its electrodes and brain regions light up on the scalp map and a schematic wave plays. Switch <b>10-20 / 10-10</b> naming top-right; six dimensions below.'},
+  ctrlSys:{zh:'电极系统',en:'Electrode system'},
+  ctrlMode:{zh:'查看维度',en:'Dimension'},
+  sys2020:{zh:'10-20 · 临床 19 导',en:'10-20 · clinical 19ch'},
+  sys1010:{zh:'10-10 · 研究 61 导',en:'10-10 · research 61ch'},
+  mode_rhythm:{zh:'脑节律 · Oscillations',en:'Oscillations'},
+  mode_paradigm:{zh:'刺激范式 · Evoked',en:'Evoked'},
+  mode_clinical:{zh:'临床/睡眠 · States',en:'Clinical / Sleep'},
+  mode_abnormal:{zh:'异常/变异 · Abnormal',en:'Abnormal'},
+  mode_seizure:{zh:'发作 · Seizures',en:'Seizures'},
+  mode_artifact:{zh:'伪迹 · Artifacts',en:'Artifacts'},
+  mapFront:{zh:'nasion · 前',en:'nasion · front'},
+  mapBack:{zh:'inion · 后',en:'inion · back'},
+  legCore:{zh:'10-20 原导',en:'10-20 original'},
+  legRenamed:{zh:'仅改名 4 导',en:'renamed ×4'},
+  legAdded:{zh:'10-10 新增',en:'10-10 added'},
+  legActive:{zh:'当前点亮',en:'active'},
+  howtoH2:{zh:'电极怎么放 · 一步步',en:'How electrodes are placed · step by step'},
+  howtoSub:{zh:'国际标准用<b>解剖标志 + 百分比</b>定位:先找鼻根(nasion)、枕外隆突(inion)、左右耳前点,再沿矢状/冠状/头围三条线按 10% / 20% 分段。下面一步步把电极画上去——<b>位置纯靠比例,所以适配各种头围</b>。',en:'The international standard uses <b>landmarks + percentages</b>: find nasion, inion and the two preauricular points, then divide the sagittal / coronal / circumference lines by 10% / 20%. Below, electrodes are drawn on step by step — <b>positions are pure proportions, so it fits any head size</b>.'},
+  placeSys2020:{zh:'10-20 画法',en:'10-20 method'},
+  placeSys1010:{zh:'10-10 画法',en:'10-10 method'},
+  placePrevBtn:{zh:'‹ 上一步',en:'‹ Prev'},
+  placeNextBtn:{zh:'下一步 ›',en:'Next ›'},
+  viewBtn:{zh:'电极怎么放 · 一步步 ›',en:'How to place ›'},
+  viewBack:{zh:'‹ 返回图谱',en:'‹ Back to atlas'},
+  footer:{zh:'EEG 交互图谱 · 电极坐标承接 BCI-03（10-20 vs 10-10）· 波形为示意非真实录制 · 参考 <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 2026-06-12',en:'EEG Interactive Atlas · electrode coords from BCI-03 (10-20 vs 10-10) · waveforms are schematic, not real recordings · ref. <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 2026-06-12'},
+  lt_rhythm:{zh:'脑节律 · 自发振荡',en:'Oscillations · spontaneous rhythms'},
+  lt_paradigm:{zh:'刺激范式 · 诱发电位',en:'Evoked · event-related potentials'},
+  lt_clinical:{zh:'临床波形 · 清醒 / 睡眠',en:'Clinical · awake / asleep'},
+  lt_abnormal:{zh:'异常 / 变异 · 良性变异 / 非癫痫 / 癫痫样',en:'Abnormal · variants / non-epileptiform / epileptiform'},
+  lt_seizure:{zh:'发作 · 时间演变',en:'Seizures · time evolution'},
+  lt_artifact:{zh:'伪迹 · 非脑源（BCI 预处理）',en:'Artifacts · non-cerebral (BCI preprocessing)'},
+  rkRegion:{zh:'脑区',en:'Region'},
+  rkElec:{zh:'电极',en:'Electrodes'},
+  rkDataset:{zh:'数据集',en:'Datasets'},
+  bciNote:{zh:'BCI 含义 · ',en:'BCI meaning · '},
+  mClassic:{zh:'经典 ML',en:'Classic ML'},
+  mDeep:{zh:'深度学习',en:'Deep learning'},
+  pipeHint:{zh:'点击任一阶段 → 查看该步的输入 → 输出维度（C=通道, T=时间采样）',en:'Click any stage → see its input → output dims (C=channels, T=time samples)'},
+  pipeHint2:{zh:'点击任一阶段 → 查看该步的输入 → 输出维度',en:'Click any stage → see its input → output dims'},
+  rename20:{zh:'临床命名：<b>T3 T4 T5 T6</b> · 19 导',en:'Clinical naming: <b>T3 T4 T5 T6</b> · 19ch'},
+  rename10:{zh:'研究命名：<b>T7 T8 P7 P8</b>（位置同 T3/T4/T5/T6）· 61 导',en:'Research naming: <b>T7 T8 P7 P8</b> (same sites as T3/T4/T5/T6) · 61ch'}
+};
+function u(k){ return UIT[k] ? UIT[k][lang] : ''; }
+
+const EN = {
+  region:{frontal:'Frontal · executive/attention/motor prep',central:'Central sulcus · sensorimotor cortex',temporal:'Temporal · auditory/memory/language',parietal:'Parietal · integration/attention/P300',occipital:'Occipital · primary visual cortex'},
+  modelNote:{classic:'Classic ML · near training-free / robust on little data / interpretable',deep:'Deep learning · end-to-end / needs more data / better cross-subject'},
+  io:{'目标/非目标':'target/non-target','发作起止':'seizure on/offset','不像发作':'not seizure-like','病灶定位':'lesion localized','弥漫障碍':'diffuse dysfunction','语义距离':'semantic dist','语义匹配':'semantic match','相关系数':'correlation','目标频率':'target freq','干净 EEG':'clean EEG','干净导':'clean channels','去眼动':'eye removed','去肌电':'EMG removed','去心电':'ECG removed','去工频':'mains removed','去漂移':'drift removed','去成分':'component removed','行为停顿':'behavioral arrest','闪光诱发':'photic-provoked','年龄相关':'age-related','多形/持续':'polymorphic/persistent','个数/密度':'count/density','双相波':'biphasic','致痫区':'epileptogenic zone','睁眼降幅':'eyes-open drop','峰 Hz':'peak Hz','时间采样':'time samples','左/右手':'left/right hand','目标':'target','病灶':'lesion','诱发':'provoked','晨起':'on waking','良性':'benign','脑病':'encephalopathy','延迟':'lag','肝性':'hepatic','无序':'disorganized','急症':'emergency','区域':'region','主频':'dominant freq','候选':'candidates','电场':'field','概率':'prob','特征':'features','谐波':'harmonic','检索':'retrieval','命中':'hit','字符':'character','图像':'image','包络':'envelope','扣除':'subtract','抑制':'suppress','修复':'repair','成分':'component','正确/错误':'correct/error','成串/无慢波':'runs / no slow wave','成串/间歇':'runs / intermittent','慢波事件':'slow-wave event','尖波位置':'sharp-wave site','实时反馈':'real-time feedback','能量降幅':'power drop','反弹幅值':'rebound amp','动作完成':'movement done','V 波':'V wave','动/不动':'move/still','标量':'scalar','比值':'ratio','峰值':'peak','回归':'regression','绑定':'binding','匹配':'match','正常':'normal','拓扑':'topology','生理':'physiological','序列':'sequence','事件':'event','发作':'seizure','左/右':'left/right','差':'diff','窗':'window','维':'-dim','类':'classes'},
+  plabel:{'典型分析':'Typical analysis','解码模型':'Decoding model','发作检测':'Seizure detection','去伪迹':'Artifact removal','临床判读':'Clinical reading','分析':'Analysis','模型':'Model'},
+  ds:{'TUSZ 癫痫':'TUSZ (seizure)','TUAB 异常':'TUAB (abnormal)','TUEV 事件':'TUEV (events)','TUAR 伪迹':'TUAR (artifacts)','Stroke MI·临床':'Stroke MI (clinical)','OpenBMI(54)':'OpenBMI (54)','良性·公开标注少':'benign · few public labels','范式专用公开集少':'few dedicated public sets','婴儿痉挛·稀缺':'infantile spasms · scarce','预处理即可':'preprocessing suffices','notch 即可':'notch suffices','高通即可':'high-pass suffices','多为侵入 ECoG':'mostly invasive ECoG'},
+  guide:{'nasion 鼻根':'nasion','inion 枕':'inion','旧 T3':'was T3','旧 T4':'was T4','旧 T5':'was T5','旧 T6':'was T6'},
+  stage:{'PSD 功率谱':'PSD','δ 频带能量':'δ band power','睡眠分期 U-Sleep/YASA':'sleep staging (U-Sleep/YASA)','额中线 θ 能量(Fz/FCz)':'frontal-midline θ (Fz/FCz)','工作负荷指数':'workload index','神经反馈':'neurofeedback','闭眼 PSD':'eyes-closed PSD','α 峰频 / 不对称':'α peak / asymmetry','睁闭眼开关 & 基线':'eyes open/closed switch & baseline','8–13 Hz 带通':'8–13 Hz band-pass','8–13Hz 带通':'8–13 Hz band-pass','对侧 ERD%(C3/C4)':'contralateral ERD% (C3/C4)','CSP/FBCSP → LDA':'CSP/FBCSP → LDA','13–30 Hz 带通':'13–30 Hz band-pass','beta rebound / ERS 检测':'beta rebound / ERS detection','CSP → 分类器':'CSP → classifier','高频带 HFB 能量':'high-freq HFB power','严格去肌电':'strict EMG removal','局部同步分析':'local synchrony analysis','带通 6–40Hz':'band-pass 6–40 Hz','FBCCA(滤波器组+CCA)':'FBCCA (filter-bank+CCA)','谐波模板 argmax':'harmonic-template argmax','分段+滤波器组':'segment + filter bank','SSVEPNet / EEGNet (CNN)':'SSVEPNet / EEGNet (CNN)','Softmax':'Softmax','带通 8–30Hz':'band-pass 8–30 Hz','CSP / FBCSP 空间滤波':'CSP / FBCSP spatial filter','LDA / SVM':'LDA / SVM','带通 + 裁窗':'band-pass + window','EEGNet / ConvNet / Riemann-Net':'EEGNet / ConvNet / Riemann-Net','(可选)LaBraM 微调':'(optional) LaBraM fine-tune','降采样+带通 0.1–20Hz':'downsample + band-pass 0.1–20 Hz','xDAWN 空间滤波':'xDAWN spatial filter','LDA(shrinkage)':'LDA (shrinkage)','epoch 0–800ms':'epoch 0–800 ms','EEGNet(深度可分卷积)':'EEGNet (depthwise-sep conv)','Sigmoid + 行列融合':'Sigmoid + row/col fusion','锁时平均(多 trial)':'time-locked average (many trials)','成分幅值(300–500ms)':'component amplitude (300–500 ms)','统计 / LDA':'stats / LDA','单 trial 去噪':'single-trial denoise','RNN / Transformer 编码':'RNN / Transformer encoder','词向量对齐':'word-vector alignment','锁时平均(FCz)':'time-locked average (FCz)','xDAWN / 黎曼协方差':'xDAWN / Riemannian cov','LDA':'LDA','单 trial epoch':'single-trial epoch','EEGNet / ConvNet':'EEGNet / ConvNet','Sigmoid → 在线回滚':'Sigmoid → online rollback','降采样+带通':'downsample + band-pass','xDAWN + 黎曼':'xDAWN + Riemannian','LDA 目标检测':'LDA target detection','epoch (CLIP teacher)':'epoch (CLIP teacher)','EEGNet / ATM / NICE':'EEGNet / ATM / NICE','对比对齐 CLIP 空间':'contrastive align to CLIP','α 峰频 / 反应性':'α peak / reactivity','正常基线判读':'normal-baseline read','中央 vs 枕区区分':'central vs occipital','反应性测试':'reactivity test','睁眼扫视段':'eyes-open scanning segment','枕区正瞬变检出':'detect occipital positive transient','与棘波鉴别':'distinguish from spikes','N1 段':'N1 segment','Cz 尖瞬变检测':'detect Cz sharp transient','睡眠分期':'sleep staging','11–16Hz σ 滤波':'11–16 Hz σ filter','纺锤检测/计数':'spindle detect/count','N2 标注':'N2 labeling','额顶大波检测':'detect fronto-parietal big wave','K-complex 标注':'K-complex labeling','枕区正瞬变':'occipital positive transient','成串检出':'run detection','与放电鉴别':'distinguish from discharges','0.5–2Hz δ 占比':'0.5–2 Hz δ ratio','慢波检测':'slow-wave detection','N3 判定':'N3 decision','REM 背景':'REM background','锯齿波 / 眼动':'sawtooth / eye movement','REM 标注':'REM labeling','识别拱形形态':'recognize arch shape','与颞区棘波鉴别':'distinguish from temporal spikes','报"良性变异"':'report "benign variant"','睡眠期小尖棘':'sleep small sharp spike','低幅短时程确认':'confirm low-amp short-duration','良性判定':'benign decision','中颞节律 θ':'mid-temporal θ rhythm','确认无演变':'confirm no evolution','良性变异':'benign variant','后颞正性簇':'post-temporal positive burst','青少年背景':'adolescent context','慢波灶定位':'localize slow focus','频率/持续性':'frequency/persistence','提示结构病变':'suggest structural lesion','背景频率评估':'background-frequency assess','弥漫慢化分级':'grade diffuse slowing','脑病提示':'encephalopathy clue','额区节律δ检出':'detect frontal rhythmic δ','间歇性确认':'confirm intermittent','脑病/颅压↑':'encephalopathy / raised ICP','三相形态':'triphasic morphology','前→后相位延迟':'anterior→posterior lag','代谢脑病':'metabolic encephalopathy','棘波检出(模板/DL)':'spike detection (template/DL)','定侧定位':'lateralize/localize','致痫区':'epileptogenic zone','尖波检出':'sharp-wave detection','颞叶癫痫关联':'temporal-lobe-epilepsy link','定位':'localize','3Hz 广泛棘慢':'3 Hz generalized SW','失神关联':'absence link','过度换气诱发':'hyperventilation provocation','多棘慢检出':'polyspike-wave detection','肌阵挛/JME 关联':'myoclonus/JME link','光敏测试':'photosensitivity test','混乱高幅背景':'chaotic high-amp background','多灶棘波叠加':'multifocal spikes superimposed','婴儿痉挛(West)':'infantile spasms (West)','带通 + 分窗':'band-pass + windowing','line-length / 谱熵特征':'line-length / spectral-entropy features','SVM / 随机森林':'SVM / random forest','分窗':'windowing','CNN / Transformer 检测':'CNN / Transformer detection','后处理平滑':'post-process smoothing','Fp 检出眨眼':'detect blink at Fp','ICA / EOG 回归':'ICA / EOG regression','重建':'reconstruct','F7/F8 反相检出':'detect F7/F8 out-of-phase','EOG 回归':'EOG regression','高频能量检出':'detect high-freq power','低通 / ICA':'low-pass / ICA','QRS 模板对齐':'QRS template align','自适应滤波 ANC':'adaptive filter (ANC)','单导突变检测':'single-channel jump detect','坏导插值/剔除':'bad-channel interp/drop','阻抗监控':'impedance monitor','50/60Hz 检出':'detect 50/60 Hz','陷波滤波':'notch filter','<0.5Hz 漂移':'<0.5 Hz drift','高通滤波':'high-pass filter'},
+  place:{
+    '10-20':[
+      {t:'① Landmarks + 3 measuring lines',f:'sagittal · coronal · circumference',d:'First fix 4 anatomical landmarks: <b>nasion, inion, left & right preauricular points</b>. Measure three lines: sagittal (nasion↔inion), coronal (ear↔ear over vertex), circumference. Every electrode is then placed by <b>percentages</b> of these lines.'},
+      {t:'② Sagittal midline · 10-20-20-20-20-10',f:'Fpz10 · Fz30 · Cz50 · Pz70 · Oz90 (%)',d:'Along the sagittal line from nasion: <b>Fpz at 10%</b>, then every <b>20%</b> → Fz(30%), <b>Cz(50%, the vertex)</b>, Pz(70%), Oz(90%), ending 10% before inion.'},
+      {t:'③ Coronal midline · same 10-20-20-20-20-10',f:'T7 · C3 · Cz · C4 · T8',d:'Along the coronal line from the left ear: <b>10% is T7</b> (old T3), then every 20% → C3(30%), Cz(50%, meeting the previous step at the vertex), C4(70%), <b>T8(90%, old T4)</b>.'},
+      {t:'④ Circumference · fronto-temporal chain',f:'distributed at 5% / 10%',d:'Around the circumference (through Fpz, T7, Oz, T8) place the outer ring: frontopolar <b>Fp1/Fp2</b>, frontal <b>F7/F8</b>, occipital <b>O1/O2</b>, and <b>P7/P8</b> (old T5/T6).'},
+      {t:'⑤ Fill parasagittal · 19 channels done',f:'F3/F4 · P3/P4',d:'Finally add the parasagittal chain: <b>F3/F4</b> (between F7–Fz), <b>P3/P4</b> (between P7–Pz), at the midpoints. The classic 19 channels are complete (+ A1/A2 ear refs = 21).'}
+    ],
+    '10-10':[
+      {t:'① Build the 10-20 skeleton (19/21 ch)',f:'10-10 ⊃ 10-20',d:'10-10 is a <b>superset</b> of 10-20 — first lay down the 10-20 electrodes as the skeleton, <b>not moving an inch</b>. The rest just densifies the sampling between them.'},
+      {t:'② Fill the midline · 20%→10%',f:'AFz · FCz · CPz · POz',d:'Refine the sagittal-midline spacing from 20% to <b>10%</b>, adding <b>AFz, FCz, CPz, POz</b> (Fpz/Fz/Cz/Pz/Oz already there).'},
+      {t:'③ Add FC / CP rows',f:'FT7…FT8 · TP7…TP8',d:'Insert a full <b>FC</b> row between F and C (FT7/FC5/FC3/FC1/FC2/FC4/FC6/FT8), and a <b>CP</b> row between C and P (TP7…TP8).'},
+      {t:'④ Add AF / PO rows + in-row fill',f:'AF · PO · F/C/P 5/1/2/6',d:'Add an <b>AF</b> row in front (AF7/AF3/AF4/AF8) and a <b>PO</b> row before occiput (PO7/PO3/PO4/PO8), and fill the F/C/P rows at 10% (F5/F1/F2/F6, C5/C1/C2/C6, P5/P1/P2/P6).'},
+      {t:'⑤ Rename 4 electrodes · ~61 ch done',f:'T3→T7 · T4→T8 · T5→P7 · T6→P8',d:'Finally standardize naming: rename the 4 temporal-chain electrodes to 10-10 (<b>positions unchanged, names only</b>). This map now has 61 channels (full 10-10 ≈ 75–81).'}
+    ]
+  },
+  item:{
+    delta:{name:'Delta',waveCap:'slow, large, sparse deep-sleep waves (illustrative)',desc:'Dominant wave of deep N3 sleep and infancy. In an <b>awake adult</b>, if it persists focally it usually signals an underlying cortical/subcortical lesion (focal slowing). Lowest frequency, highest amplitude.',bci:'In BCI mainly a <b>sleep-staging</b> feature, or low-frequency drift to remove.'},
+    theta:{name:'Theta',waveCap:'mid-band waves of drowsiness / cognitive load (illustrative)',desc:'Linked to drowsiness and memory encoding. <b>Frontal-midline theta (Fz/FCz)</b> rises with working memory and cognitive load — one of the few rhythms that grows the more you think.',bci:'Frontal-midline theta indexes <b>workload / focus</b> and is used in neurofeedback.'},
+    alpha:{name:'Alpha',waveCap:'posterior dominant rhythm with eyes closed (illustrative)',desc:'The landmark EEG rhythm — the <b>posterior dominant rhythm (PDR)</b>. Strongest over occiput with eyes closed and relaxed; <b>suppressed the instant eyes open</b> (alpha block / Berger effect). The yardstick for a normal wakeful baseline.',bci:'Eyes-open/closed alpha is a common <b>switch / calibration</b> signal; alpha asymmetry relates to emotion/attention research.'},
+    mu:{name:'Mu',waveCap:'arch-shaped sensorimotor rhythm; blocked by (intended) movement, not eye opening (illustrative)',desc:'Same band as alpha but over <b>sensorimotor cortex (C3/C4)</b>, arch-shaped. Key property: <b>moving — or even just imagining moving — suppresses it</b>.',bci:'The <b>physical basis of motor-imagery BCI</b>. Imagining left/right hand suppresses contralateral C3/C4 mu — see ERD/ERS under Evoked.'},
+    beta:{name:'Beta',waveCap:'fast waves of alert focus / motor control (illustrative)',desc:'Mainly frontocentral; active focus, vigilance and motor control. <b>After</b> a movement the sensorimotor cortex shows a <b>beta rebound (ERS)</b>.',bci:'With mu, forms the dual-band feature for MI decoding; beta rebound reliably marks "movement done".'},
+    gamma:{name:'Gamma',waveCap:'local, high-frequency, broadly distributed (illustrative)',desc:'Tied to local feature binding, cross-area coordination and higher cognition. <b>Small amplitude, easily contaminated by EMG</b> — scalp gamma must be read with caution.',bci:'Tempting information but poor SNR; mostly research on <b>cognitive binding/attention</b>, rarely deployed.'},
+    ssvep:{name:'SSVEP',sym:'steady-state visual',meta:'occipital · freq-tagged',waveCap:'stare at a 12 Hz flicker → same-frequency steady-state over occiput (illustrative)',desc:'Stare at a target flickering at a fixed frequency (e.g. 12 Hz) and the <b>occiput (Oz/POz)</b> shows a steady-state response at the <b>same frequency and its harmonics</b>. Very high SNR, near training-free.',bci:'Workhorse of <b>high-speed spellers</b>: many boxes flickering at different frequencies, decode whichever you look at. Among the highest-ITR paradigms.'},
+    erders:{name:'ERD / ERS',sym:'desync / rebound',meta:'sensorimotor · lateralized',waveCap:'motor imagery → mu/beta power drops (ERD) → rebounds after (ERS)',desc:'Real or imagined movement drops mu/beta power over the <b>contralateral sensorimotor cortex</b> (<b>ERD</b>); after movement the power rebounds (<b>ERS</b>). Left hand → right brain C4, right hand → left brain C3.',bci:'<b>Core feature of motor-imagery BCI</b>. CSP / Riemannian methods extract the lateralized C3/C4 power difference for wheelchair, prosthesis and rehab control.'},
+    p300:{name:'P300',sym:'oddball positivity',meta:'parietal · ~300 ms',waveCap:'large parietal positivity ~300 ms after a rare target (positive-up)',desc:'In an oddball task, a <b>rare/task-relevant</b> target evokes a large positivity over the <b>parietal region (Pz/CPz)</b> at ~300 ms. P3a (frontal · novelty) vs P3b (parietal · task-relevant).',bci:'Basis of the <b>P300 speller</b>: rows/columns of a character matrix flash; the target evokes P300, locating the gazed letter. Robust and cross-subject stable.'},
+    n400:{name:'N400',sym:'semantic mismatch',meta:'centro-parietal · ~400 ms',waveCap:'centro-parietal negativity ~400 ms after a semantic mismatch (positive-up)',desc:'A semantic violation (e.g. "I drank a glass of <b>sand</b>") evokes a negativity over the <b>centro-parietal region</b> at ~400 ms, scaling with the degree of mismatch.',bci:'An electrophysiological index of language/semantic processing — used for <b>covert semantic judgment, lie detection, concept ID</b> and as a probe for semantic decoding.'},
+    errp:{name:'ErrP',sym:'error-related potential',meta:'frontocentral · ERN+Pe',waveCap:'frontocentral negativity after an error (ERN ~80 ms) + later Pe (positive-up)',desc:'When the system or you make an <b>error</b>, the <b>frontocentral region (FCz/Cz)</b> shows an error-related negativity (ERN, ~80 ms) plus a later Pe positivity. Source: the <b>anterior cingulate (ACC)</b>.',bci:'A BCI <b>"undo / online correction"</b>: detect an ErrP and roll back the last decoded action, markedly improving speller and control accuracy.'},
+    rsvp:{name:'RSVP',sym:'rapid serial visual',meta:'occ→par · P300-triggered',waveCap:'a target in the fast stream → occipital visual response + parietal P300',desc:'Images/characters flash in a <b>rapid serial stream</b> at ~10 Hz; a target triggers a P300 plus an <b>occipital visual response</b>. It turns a person into a detector.',bci:'<b>Brain-controlled image retrieval / brain-triage</b>: scan many images fast and flag "that one had a target" via P300 — far faster than manual clicking.'},
+    pdr:{name:'PDR (posterior rhythm)',sym:'α·awake',meta:'occipital · 8–13 Hz',waveCap:'occiput-dominant with eyes closed; suppressed on eye opening (reactivity)',desc:'The first thing you read clinically: the <b>posterior dominant rhythm (PDR)</b>. Normal adult eyes-closed 8–13 Hz, strongest over occiput, <b>attenuating immediately on eye opening / attention</b>. Its frequency, symmetry and reactivity define a normal baseline.',bci:'<b>Awake / alert baseline</b>. A slowed or asymmetric PDR → diffuse encephalopathy or a focal lesion.'},
+    mu_c:{name:'Mu rhythm',sym:'μ·awake',meta:'central · arciform',waveCap:'central arciform rhythm; not blocked by eye opening, only by (intended) movement',desc:'An 8–13 Hz arciform rhythm over sensorimotor cortex. Unlike PDR, <b>eye opening does not block it</b> — only (imagining) moving the contralateral hand does. Do not mistake it for occipital alpha.',bci:'The mu of MI-BCI; on a read it marks "not currently moving the hand".'},
+    lambda:{name:'Lambda waves',sym:'λ·awake',meta:'occipital · saccade-evoked',waveCap:'occipital positive saw-tooth sharp waves while scanning a textured scene, eyes open',desc:'Positive sharp transients over occiput while <b>scanning with eyes open</b> (a textured image). Physiological — <b>do not mistake for occipital spikes</b>. Same shape as sleep POSTS but in the awake eyes-open state.',bci:'A visual/eye-movement physiological transient; identify and separate it during visual-paradigm preprocessing.'},
+    vertex:{name:'Vertex wave (V wave)',sym:'N1',meta:'vertex Cz · N1',waveCap:'isolated sharp high-amplitude transient at the vertex (Cz) in N1 sleep',desc:'Hallmark of light N1 sleep: an <b>isolated, sharp, high-amplitude transient over the vertex (Cz)</b>, especially pointed in children. Bilaterally synchronous, maximal at the midline vertex.',bci:'A key N1 staging marker; online BCI often uses it as an early "subject is drowsy" warning.'},
+    spindle:{name:'Sleep spindle',sym:'N2',meta:'central · 11–16 Hz',waveCap:'central 11–16 Hz waxing-waning spindle, ~0.5–1.5 s, in N2 sleep',desc:'The <b>defining waveform of N2 sleep</b>: a central 11–16 Hz (sigma) spindle lasting ~1 s, tapered at both ends. A product of the thalamic reticular nucleus.',bci:'Gold marker for N2 staging; spindle density relates to memory-consolidation research.'},
+    kcomplex:{name:'K-complex',sym:'N2',meta:'fronto-vertex · N2',waveCap:'large biphasic sharp-then-slow complex over fronto-parietal midline in N2 (often with a spindle tail)',desc:'The other N2 hallmark: a <b>large-amplitude, biphasic (sharp-then-slow) complex over the fronto-parietal midline</b>, often followed by a spindle. Spontaneous or evoked by sound.',bci:'N2 staging; also a subject of auditory-evoked / arousal-response research.'},
+    posts:{name:'POSTS',sym:'sleep',meta:'occipital · positive sharp',waveCap:'runs of occipital positive saw-tooth sleep sharp waves (POSTS)',desc:'<b>Positive occipital sharp transients of sleep</b>: runs of positive, saw-tooth transients in light–moderate sleep. Same shape as awake lambda but in eyes-closed sleep. Benign — <b>do not mistake for occipital discharges</b>.',bci:'A sleep-state occipital physiological transient; recognize it to avoid mislabeling epileptiform waves.'},
+    sws:{name:'Slow-wave sleep',sym:'N3·δ',meta:'diffuse · 0.5–2 Hz',waveCap:'N3 deep sleep: high-amplitude, diffuse, frontally-dominant slow waves (δ)',desc:'<b>N3 deep sleep</b>: high amplitude (>75 µV), >20% of the epoch as 0.5–2 Hz slow waves, frontally maximal. Restorative sleep, and where slow-wave–spindle coupling does memory consolidation.',bci:'N3 staging; closed-loop acoustic enhancement of slow waves is a recent neuromodulation focus.'},
+    sawtooth:{name:'Sawtooth / REM',sym:'REM',meta:'frontocentral · REM',waveCap:'frontocentral 2–6 Hz sawtooth waves in REM (often with rapid eye movements)',desc:'<b>REM sleep</b>: on a low-amplitude mixed-frequency background, fronto-central runs of <b>sawtooth waves (2–6 Hz)</b>, often with bursts of rapid eye movements. The stage of lowest muscle tone and most dreaming.',bci:'REM staging; eye-movement artifact is strong, a stage BCI preprocessing must clean heavily.'},
+    wicket:{name:'Wicket spikes',sym:'variant',meta:'temporal · benign',waveCap:'drowsy runs of arch-shaped, sharply-contoured 6–11 Hz temporal waves',desc:'Arch-shaped, sharply-contoured temporal waves in drowsiness; a single one is easily misread as a temporal spike. Tells: come in runs, uniform shape, no aftercoming slow wave, no evolution.',bci:'<b>Benign variant.</b> The point on a read is "do not call it epileptiform" — overcalling mislabels epilepsy.'},
+    bets:{name:'Small sharp spikes (BETS)',sym:'variant',meta:'temporal · sleep',waveCap:'low-amplitude, short, bilaterally independent small sharp spikes in light sleep (BETS/SSS)',desc:'<b>Small sharp spikes (SSS)</b>: low-amplitude, short (<50 ms), steep little spikes in light sleep, bilaterally independent. No aftercoming slow wave, not in runs.',bci:'Benign, common in healthy people; do not mistake for temporal epileptogenic spikes.'},
+    rmtd:{name:'Rhythmic mid-temporal theta (psychomotor variant)',sym:'variant',meta:'mid-temporal · 5–7 Hz',waveCap:'drowsy runs of monotonous, notched 5–7 Hz mid-temporal rhythm',desc:'"Psychomotor variant." Runs of <b>monotonous, notched 5–7 Hz rhythm</b> over mid-temporal regions in drowsiness. Key tell: <b>frequency does not evolve, no spatial spread</b> — distinguishing it from a temporal seizure.',bci:'A benign variant; seizure-like but not a seizure, identified by "no evolution".'},
+    s14_6:{name:'14 & 6 Hz positive bursts',sym:'variant',meta:'post-temporal · 14&6 Hz',waveCap:'adolescent sleep posterior-temporal positive comb-like bursts at 14 or 6 Hz',desc:'Posterior-temporal <b>positive comb-like bursts</b> (14 or 6 Hz) in adolescent light sleep. Benign, age-related; once over-associated with symptoms, now accepted as non-pathological.',bci:'A benign age-related variant; just identify, no action needed.'},
+    focal_slow:{name:'Focal slowing',sym:'non-epi',meta:'focal (temporal) · δ/θ',waveCap:'persistent polymorphic slowing over one region (shown: left temporal)',desc:'<b>Persistent, polymorphic</b> δ/θ slowing over one region. <b>Suggests an underlying structural lesion</b> (tumor, stroke, trauma). Persistent focal slowing is more worrisome than intermittent.',bci:'A clue to a structural lesion; rehab BCI should avoid channels over necrotic/edematous tissue.'},
+    diffuse_slow:{name:'Diffuse slowing',sym:'non-epi',meta:'diffuse · slowed background',waveCap:'whole background slowed, PDR lost — diffuse cerebral dysfunction',desc:'The whole background slows and the PDR slows or vanishes — a non-specific marker of <b>diffuse encephalopathy</b> (toxic, metabolic, hypoxic, degenerative). Grade by whether the dominant frequency falls to θ or δ.',bci:'A global brain-function indicator; the basis for consciousness/anesthesia-depth monitoring.'},
+    firda:{name:'FIRDA (frontal intermittent rhythmic delta)',sym:'non-epi',meta:'frontal · intermittent δ',waveCap:'bilateral, intermittent, monotonous 2–3 Hz rhythmic delta runs over frontal regions',desc:'<b>Frontal intermittent rhythmic delta activity</b>: bilateral, monotonous runs of 2–3 Hz delta. Seen in encephalopathy, raised intracranial pressure, midline/deep lesions — non-specific but indicating diffuse dysfunction.',bci:'A clue to encephalopathy / raised ICP; often with reduced consciousness.'},
+    triphasic:{name:'Triphasic waves',sym:'non-epi',meta:'frontal-generalized · triphasic',waveCap:'generalized, frontally-dominant triphasic waves (often with an anterior→posterior phase lag)',desc:'<b>Triphasic waves</b>: generalized, frontally maximal, blunt complexes with an <b>anterior→posterior phase lag</b>. Classic in <b>hepatic/metabolic encephalopathy</b>, but also other severe encephalopathies — correlate clinically.',bci:'A marker of metabolic encephalopathy; easily confused with epileptiform discharges, told apart by triphasic shape + lag.'},
+    spike:{name:'Spike',sym:'epileptiform',meta:'focal · spike',waveCap:'<70 ms steep negative transient, often with an aftercoming slow wave (shown: left temporal)',desc:'<b>Spike</b>: <70 ms, steep, disrupts the background, usually with an <b>aftercoming slow wave</b> and a plausible field. A focal spike <b>localizes the epileptogenic zone</b> (temporal-lobe epilepsy most often F7/T7).',bci:'Gold marker for localizing the epileptogenic zone; the core difference from benign variants is "disrupts background + aftercoming slow wave + plausible field".'},
+    sharpwave:{name:'Sharp wave',sym:'epileptiform',meta:'temporal · sharp wave',waveCap:'70–200 ms sharp transient; same meaning as a spike',desc:'<b>Sharp wave</b>: 70–200 ms, broader than a spike, same meaning — epileptiform, localizes the epileptogenic zone. Temporal F7/F8/T7/T8 sharp waves are most typical.',bci:'Same as a spike; used to lateralize/localize the focus.'},
+    spikewave3:{name:'3 Hz spike-and-wave',sym:'epileptiform',meta:'generalized · 3 Hz SW',waveCap:'generalized, frontally-maximal, regular 3 Hz spike-and-wave (typical absence)',desc:'<b>3 Hz spike-and-wave</b>: generalized, bilaterally synchronous, frontally maximal, regular 3/s spike+slow-wave. Hallmark of <b>typical absence epilepsy</b>; provoked by hyperventilation, with behavioral arrest during the run.',bci:'A generalized-epilepsy marker; hyperventilation is the classic provocation.'},
+    polyspikewave:{name:'Polyspike-and-wave',sym:'epileptiform',meta:'generalized · polyspike',waveCap:'generalized run of several spikes followed by a slow wave (linked to myoclonus/JME)',desc:'<b>Polyspike-and-wave</b>: generalized, a train of spikes followed by a slow wave. Strongly linked to <b>myoclonus and juvenile myoclonic epilepsy (JME)</b>, often increasing on waking and with photic stimulation.',bci:'A generalized/myoclonic-epilepsy marker; a target of photic-stimulation (photosensitivity) testing.'},
+    hypsarrhythmia:{name:'Hypsarrhythmia',sym:'epileptiform',meta:'multifocal · hypsarrhythmia',waveCap:'high-amplitude, chaotic, multifocal spikes over a disorganized slow background',desc:'<b>Hypsarrhythmia</b>: very high amplitude, completely disorganized, multifocal spikes on a chaotic slow background. Hallmark EEG of <b>infantile spasms (West syndrome)</b> — a pediatric emergency.',bci:'A marker of severe infantile epileptic encephalopathy; poor prognosis, needs urgent treatment.'},
+    focal_sz:{name:'Focal seizure',sym:'seizure',meta:'temporal onset · evolution',waveCap:'time-compressed ~20 s: rhythmic θ onset → accelerating/growing → spike-wave → postictal suppression',desc:'A focal seizure is defined by <b>evolution</b>: starting in one region (often temporal) as <b>rhythmic θ</b>, then progressively <b>growing, changing frequency and spreading</b>, possibly into spike-wave, ending in <b>postictal suppression</b> (flatter/slower). <b>Rhythm without evolution ≠ seizure</b> (ten-second rule).',bci:'The target of <b>seizure-detection / warning BCI</b>; closed-loop stimulation (RNS) fires on onset to abort it.'},
+    gtc:{name:'Generalized tonic-clonic (GTC)',sym:'seizure',meta:'generalized · tonic→clonic',waveCap:'tonic phase (fast, EMG-like) → clonic phase (bursts slowing and spacing out) → postictal suppression',desc:'Two phases: a <b>tonic phase</b> of fast low-amplitude activity plus heavy EMG; a <b>clonic phase</b> of spike-wave bursts time-locked to jerks, <b>slowing and spacing out</b>; then marked <b>postictal suppression</b> before recovery.',bci:'Fall/convulsion warning; the main target of wearable seizure detection — the tonic-phase EMG is actually a useful trigger feature.'},
+    absence:{name:'Absence seizure',sym:'seizure',meta:'generalized · 3 Hz SW run',waveCap:'a 3 Hz spike-wave run on a normal background, abrupt offset, no postictal change (typical absence)',desc:'An absence seizure is a several-second <b>3 Hz generalized spike-wave run</b> with <b>abrupt onset/offset, behavioral arrest, and no postictal state</b>. One of the few "short, non-evolving" seizures; readily provoked by hyperventilation.',bci:'Same source as the 3 Hz spike-wave discharge; here shown as the sustained ictal run.'},
+    blink:{name:'Eye blink',sym:'artifact·eye',meta:'frontopolar Fp · no posterior field',waveCap:'high-amplitude frontopolar (Fp1/Fp2) deflection with no posterior spread',desc:'<b>Non-cerebral.</b> On blinking the eyes roll up (Bell phenomenon) and the corneal positivity makes a <b>high-amplitude deflection at the frontal poles Fp1/Fp2, with no posterior field</b>. The most common EEG artifact.',bci:'The #1 BCI artifact; a single ICA component captures it, or regress it out with EOG.'},
+    lateral_eye:{name:'Lateral eye movement (EOG)',sym:'artifact·eye',meta:'F7/F8 · out-of-phase',waveCap:'opposite-polarity square-ish deflections at left/right frontal (F7/F8) — toward the positive side',desc:'A horizontal saccade makes the eye dipole produce <b>opposite-polarity</b> square-ish deflections at <b>F7 vs F8</b> — "you look toward the positive side". With blinks it forms the EOG.',bci:'Part of the EOG with blinks; BCI often adds EOG channels for regression, or removes via ICA.'},
+    emg:{name:'Muscle (EMG)',sym:'artifact·muscle',meta:'fronto-temporal · high-freq',waveCap:'high-frequency, vertex-sparing fast activity of frontalis/temporalis muscles',desc:'<b>Much faster than brain activity</b>, from frontalis/temporalis muscle, <b>least at the vertex</b>, most prominent awake. Often buries real rhythms.',bci:'The enemy of awake BCI (especially the gamma band); low-pass + ICA, or a reference near the muscle.'},
+    ecg:{name:'ECG (cardiac)',sym:'artifact·heart',meta:'widespread (L>R) · QRS',waveCap:'spike-like activity time-locked to the QRS, regular (more on the left)',desc:'Spike-like waves <b>time-locked to the QRS</b>, regular (~1/s), more prominent on the left (near the heart). Confirm with a simultaneous ECG channel.',bci:'Easily mistaken for spikes; remove with simultaneous ECG + adaptive noise cancellation (ANC) or ICA.'},
+    electrode_pop:{name:'Electrode pop',sym:'artifact·electrode',meta:'single channel · no field',waveCap:'a single electrode jumps steeply up and decays slowly, with no neighboring field',desc:'With poor contact a <b>single electrode jumps steeply up then decays slowly</b>, with <b>no field on neighbors</b> — the key difference from a real cerebral transient. On the map <b>lighting only one electrode is its signature</b> (shown at T8 as an example; any electrode can pop; a real transient always has a neighbor field).',bci:'A must-check for bad channels; impedance monitoring + bad-channel interpolation/exclusion. Common with wearable/dry electrodes.'},
+    line_noise:{name:'Line noise 50/60 Hz',sym:'artifact·mains',meta:'all channels · 50/60 Hz',waveCap:'all-channel, very fast, very monotonous mains sinusoid (removed by a notch)',desc:'Mains-coupled <b>all-channel, very fast, monotonous 50/60 Hz sinusoid</b>. It does not overlap with brain frequencies, so a <b>notch filter</b> removes it without affecting interpretation.',bci:'The easiest artifact to handle: notch 50/60 Hz (and harmonics). Worse with poor shielding/grounding.'},
+    sweat:{name:'Sweat / drift',sym:'artifact·drift',meta:'low-freq · <0.5 Hz',waveCap:'<0.5 Hz very slow, undulating baseline sway',desc:'Sweat (sodium-chloride conductivity) causes a <b><0.5 Hz very slow baseline sway</b> with no fixed shape. Common in long or warm recordings.',bci:'Remove with a high-pass (>0.5 Hz); but do not set it too high or you harm slow components (e.g. P300/CNV).'}
+  }
+};
+function L(it){ return (lang==='en' && EN.item[it.id]) ? Object.assign({}, it, EN.item[it.id]) : it; }
+function tReg(r){ return lang==='en' ? (EN.region[r]||REGION_NAME[r]) : REGION_NAME[r]; }
+function tStage(s){ return lang==='en' ? (EN.stage[s]||s) : s; }
+function tPlabel(p){ return lang==='en' ? (EN.plabel[p]||p) : p; }
+function tDs(n){ return lang==='en' ? (EN.ds[n]||n) : n; }
+function tNote(k){ return lang==='en' ? EN.modelNote[k] : MODEL_NOTE[k]; }
+function tIO(io){ if(lang!=='en'||!io) return io; let s=io; for(const k in EN.io) s=s.split(k).join(EN.io[k]); return s; }
+function applyChrome(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n'); if(UIT[k]) el.textContent=UIT[k][lang];});
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{const k=el.getAttribute('data-i18n-html'); if(UIT[k]) el.innerHTML=UIT[k][lang];});
+}
+let view = 'atlas'; // 'atlas' | 'placement'
+let pstate = {sys:'10-10', step:0}; // 画法步进状态（提前声明，避免 setSys 触发 TDZ）
+function applyView(){
+  const p = view==='placement';
+  const lay=document.getElementById('layout'); if(lay) lay.style.display = p?'none':'';
+  const ho=document.getElementById('howto'); if(ho) ho.style.display = p?'block':'none';
+  const mg=document.getElementById('modeGroup'); if(mg) mg.style.display = p?'none':'';
+  const rn=document.getElementById('renameNote'); if(rn) rn.style.display = p?'none':'';
+  const vb=document.getElementById('viewBtn'); if(vb){ vb.classList.toggle('on',p); vb.textContent = p?u('viewBack'):u('viewBtn'); }
+  if(p && typeof placeRender==='function') placeRender();
+}
+function toggleView(){ view = view==='atlas'?'placement':'atlas'; if(view==='placement' && typeof pstate!=='undefined') pstate.step=0; applyView(); window.scrollTo({top:0,behavior:'instant'}); }
+function applyLang(l){
+  lang=l;
+  document.documentElement.lang = (l==='zh'?'zh-CN':'en');
+  applyChrome();
+  setSys(state.sys);
+  renderList(); renderDetail();
+  if(typeof placeRender==='function') placeRender();
+  applyView();
+  const lb=document.getElementById('langBtn'); if(lb) lb.textContent = l==='zh'?'EN':'中';
+}
+function toggleLang(){ const l=lang==='zh'?'en':'zh'; try{localStorage.setItem('eegLang',l);}catch(e){} applyLang(l); }
+function detectLang(){
+  let saved=null; try{saved=localStorage.getItem('eegLang');}catch(e){}
+  if(saved){ applyLang(saved); return; }
+  const guess = (navigator.language||'').toLowerCase().indexOf('zh')===0 ? 'zh' : 'en';
+  applyLang(guess);
+  fetch('https://api.country.is/').then(r=>r.json()).then(d=>{
+    let s=null; try{s=localStorage.getItem('eegLang');}catch(e){}
+    if(s) return;
+    const want = (d && d.country==='CN') ? 'zh' : 'en';
+    if(want!==lang) applyLang(want);
+  }).catch(()=>{});
+}
+
+// init
+[...RHYTHMS,...PARADIGMS,...CLINICAL,...ABNORMAL,...SEIZURE,...ARTIFACT].forEach(it=>Object.assign(it,EXTRA[it.id]||{}));
+setSys('10-10');
+renderList(); renderElectrodes(); renderDetail();
+
+// ============ 电极画法 · 一步步 ============
+const POS = Object.fromEntries(E.map(e=>[e[0],[e[1],e[2]]]));
+// 测量辅助线 / 标志 / 百分比
+const G_LM = `<circle class="landmark" cx="340" cy="56" r="4"/><text class="landmark-tx" x="340" y="44" text-anchor="middle">nasion 鼻根</text>`
+  +`<circle class="landmark" cx="340" cy="556" r="4"/><text class="landmark-tx" x="340" y="574" text-anchor="middle">inion 枕</text>`
+  +`<circle class="landmark" cx="78" cy="300" r="4"/><text class="landmark-tx" x="58" y="300" text-anchor="middle" dominant-baseline="central">L</text>`
+  +`<circle class="landmark" cx="602" cy="300" r="4"/><text class="landmark-tx" x="622" y="300" text-anchor="middle" dominant-baseline="central">R</text>`;
+const G_SAG = `<line class="guide-line" x1="340" y1="58" x2="340" y2="552"/>`;
+const G_COR = `<line class="guide-line" x1="80" y1="300" x2="600" y2="300"/>`;
+const G_CIRC = `<circle class="guide-arc" cx="340" cy="300" r="240"/>`;
+const G_SAGPCT = `<text class="pct" x="366" y="72">10%</text><text class="pct" x="366" y="176">30%</text><text class="pct" x="366" y="300">50%</text><text class="pct" x="366" y="424">70%</text><text class="pct" x="366" y="528">90%</text>`;
+const G_CORPCT = `<text class="pct" x="100" y="262" text-anchor="middle">10%</text><text class="pct" x="220" y="262" text-anchor="middle">30%</text><text class="pct" x="340" y="262" text-anchor="middle">50%</text><text class="pct" x="460" y="262" text-anchor="middle">70%</text><text class="pct" x="580" y="262" text-anchor="middle">90%</text>`;
+const G_RENAME = `<text class="landmark-tx" x="100" y="340" text-anchor="middle" font-size="10">旧 T3</text><text class="landmark-tx" x="580" y="340" text-anchor="middle" font-size="10">旧 T4</text><text class="landmark-tx" x="148" y="464" text-anchor="middle" font-size="10">旧 T5</text><text class="landmark-tx" x="532" y="464" text-anchor="middle" font-size="10">旧 T6</text>`;
+
+const SK10_20 = ['Fpz','Fz','Cz','Pz','Oz','T7','C3','C4','T8','Fp1','Fp2','F7','F8','P7','P8','O1','O2','F3','F4','P3','P4'];
+
+const PLACE = {
+  '10-20':[
+    {t:'① 定 4 标志 + 量三线',f:'矢状 · 冠状 · 头围',d:'先确定 4 个解剖标志:<b>鼻根 nasion、枕外隆突 inion、左右耳前点</b>。量三条线:矢状(鼻根↔枕)、冠状(双耳↔顶)、头围。之后所有电极都按这三条线的<b>百分比</b>定位。',add:[],g:G_LM+G_SAG+G_COR},
+    {t:'② 矢状中线 · 10-20-20-20-20-10',f:'Fpz10 · Fz30 · Cz50 · Pz70 · Oz90（%）',d:'沿矢状线从鼻根起:<b>10% 处放 Fpz</b>,之后每 <b>20%</b> 一个 → Fz(30%)、<b>Cz(50%,正好头顶)</b>、Pz(70%)、Oz(90%),末端 10% 到枕。',add:['Fpz','Fz','Cz','Pz','Oz'],g:G_SAG+G_SAGPCT},
+    {t:'③ 冠状中线 · 同样 10-20-20-20-20-10',f:'T7 · C3 · Cz · C4 · T8',d:'沿冠状线从左耳前起:<b>10% 是 T7</b>(旧 T3),再每 20% → C3(30%)、Cz(50%,与上一步交于顶点)、C4(70%)、<b>T8(90%,旧 T4)</b>。',add:['T7','C3','C4','T8'],g:G_COR+G_CORPCT},
+    {t:'④ 外周圈 · 前后颞链',f:'沿头围 5% / 10% 分布',d:'沿头围(经 Fpz、T7、Oz、T8)放外圈:额极 <b>Fp1/Fp2</b>、额 <b>F7/F8</b>、枕 <b>O1/O2</b>,以及 <b>P7/P8</b>(旧 T5/T6)。',add:['Fp1','Fp2','F7','F8','P7','P8','O1','O2'],g:G_CIRC},
+    {t:'⑤ 填旁矢状 · 完成 19 导',f:'F3/F4 · P3/P4',d:'最后补旁矢状链:<b>F3/F4</b>(在 F7–Fz 之间)、<b>P3/P4</b>(在 P7–Pz 之间),取等分点。至此经典 19 导齐全(加双耳 A1/A2 参考 = 21 导)。',add:['F3','F4','P3','P4'],g:''}
+  ],
+  '10-10':[
+    {t:'① 先搭 10-20 骨架(19/21 导)',f:'10-10 ⊃ 10-20',d:'10-10 是 10-20 的<b>超集</b>——先把上面那套 10-20 电极放好作骨架,<b>位置一毫米不动</b>。下面只是在它们之间把采样加密。',add:SK10_20,g:''},
+    {t:'② 中线填满 · 间距 20%→10%',f:'AFz · FCz · CPz · POz',d:'把矢状中线的间距从 20% 细分到 <b>10%</b>,补上 <b>AFz、FCz、CPz、POz</b>(Fpz/Fz/Cz/Pz/Oz 已有)。',add:['AFz','FCz','CPz','POz'],g:G_SAG},
+    {t:'③ 加 FC / CP 两行',f:'FT7…FT8 · TP7…TP8',d:'在 F 行与 C 行之间插一整行 <b>FC</b>(FT7/FC5/FC3/FC1/FC2/FC4/FC6/FT8),在 C 行与 P 行之间插 <b>CP</b>(TP7/CP5/CP3/CP1/CP2/CP4/CP6/TP8)。',add:['FT7','FC5','FC3','FC1','FC2','FC4','FC6','FT8','TP7','CP5','CP3','CP1','CP2','CP4','CP6','TP8'],g:''},
+    {t:'④ 加 AF / PO 行 + 行内填充',f:'AF · PO · F/C/P 各 5/1/2/6',d:'额前加 <b>AF 行</b>(AF7/AF3/AF4/AF8)、枕前加 <b>PO 行</b>(PO7/PO3/PO4/PO8),并把 F/C/P 行内按 10% 填满(F5/F1/F2/F6、C5/C1/C2/C6、P5/P1/P2/P6)。',add:['AF7','AF3','AF4','AF8','PO7','PO3','PO4','PO8','F5','F1','F2','F6','C5','C1','C2','C6','P5','P1','P2','P6'],g:''},
+    {t:'⑤ 4 个改名 · 完成 ~61 导',f:'T3→T7 · T4→T8 · T5→P7 · T6→P8',d:'最后统一命名:把颞链 4 个旧名换成 10-10 规范(<b>位置不变,只改名</b>)。至此本图 61 导(完整 10-10 约 75–81 导)。',add:['T7','T8','P7','P8'],g:G_RENAME}
+  ]
+};
+
+function placeElecHTML(ids,cls){return ids.map(id=>{const p=POS[id];if(!p)return '';return `<g class="pe ${cls}"><circle cx="${p[0]}" cy="${p[1]}" r="${cls==='pe-new'?16:14}"/><text x="${p[0]}" y="${p[1]}" text-anchor="middle" dominant-baseline="central">${id}</text></g>`;}).join('');}
+function placeRender(){
+  const steps=PLACE[pstate.sys], cur=steps[pstate.step];
+  const prior=new Set();
+  for(let i=0;i<pstate.step;i++) steps[i].add.forEach(x=>prior.add(x));
+  cur.add.forEach(x=>prior.delete(x));
+  document.getElementById('placeElecs').innerHTML = placeElecHTML([...prior],'pe-prior')+placeElecHTML(cur.add,'pe-new');
+  let guides = cur.g||'';
+  if(lang==='en' && typeof EN!=='undefined') for(const k in EN.guide) guides = guides.split(k).join(EN.guide[k]);
+  document.getElementById('placeGuides').innerHTML = guides;
+  const tr = (lang==='en' && EN.place[pstate.sys]) ? EN.place[pstate.sys][pstate.step] : cur;
+  document.getElementById('placeDetail').innerHTML = `<h3>${tr.t}</h3>`+(tr.f?`<div class="formula">${tr.f}</div>`:'')+`<p>${tr.d}</p>`;
+  document.getElementById('placeChips').innerHTML = steps.map((s,i)=>`<span class="step-chip ${i===pstate.step?'on':(i<pstate.step?'done':'')}" onclick="placeGo(${i})">${i+1}</span>`).join('');
+  document.getElementById('placeCount').textContent = lang==='en' ? `Step ${pstate.step+1} / ${steps.length}` : `第 ${pstate.step+1} / ${steps.length} 步`;
+  document.getElementById('placePrev').disabled = pstate.step===0;
+  document.getElementById('placeNext').disabled = pstate.step===steps.length-1;
+}
+function placeGo(i){ pstate.step=i; placeRender(); }
+function placeSetSys(s){ pstate.sys=s; pstate.step=0; document.querySelectorAll('#placeSysToggle button').forEach(b=>b.classList.toggle('on',b.dataset.psys===s)); placeRender(); }
+document.getElementById('placePrev').onclick=()=>{ if(pstate.step>0){pstate.step--;placeRender();} };
+document.getElementById('placeNext').onclick=()=>{ if(pstate.step<PLACE[pstate.sys].length-1){pstate.step++;placeRender();} };
+placeRender();
+applyView();
+
+// language: detect from saved choice → browser language → IP (CN→zh, else en)
+detectLang();
+</script>
+</body>
+</html>

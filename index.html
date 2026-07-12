@@ -31,7 +31,7 @@ a{color:inherit}
 .brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:500}
 .brand em{font-style:normal;color:var(--orange)}
 .modetabs{display:inline-flex;border:1px solid var(--hair);margin-left:.4rem}
-.mtab{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);background:none;border:none;padding:.3rem .7rem;cursor:pointer;transition:all .15s;white-space:nowrap}
+.mtab{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);background:none;border:none;padding:.3rem .7rem;cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
 .mtab+.mtab{border-left:1px solid var(--hair)}
 .mtab:hover{color:var(--ink)}
 .mtab.on{background:var(--orange);color:#fff}
@@ -223,6 +223,7 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
       <button class="mtab on" data-mode="conf" id="mtabConf"></button>
       <button class="mtab" data-mode="journal" id="mtabJournal"></button>
       <button class="mtab" data-mode="dataset" id="mtabDataset"></button>
+      <a class="mtab" href="atlas.html" id="mtabAtlas"></a>
     </div>
     <span class="spacer"></span>
     <input class="search" id="search" type="search" placeholder="">
@@ -249,6 +250,6 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-<script src="static/main.js?v=20260612-17"></script>
+<script src="static/main.js?v=20260612-18"></script>
 </body>
 </html>

@@ -29,7 +29,7 @@ per-venue **recent-paper index**. Editorial style inspired by
 
 ## Datasets
 
-- **111 public BCI/EEG/MEG/fNIRS datasets**, grouped by era (*Wave 1/2/3*) and filtered by
+- **112 public BCI/EEG/MEG/fNIRS datasets**, grouped by era (*Wave 1/2/3*) and filtered by
   **paradigm** (MI / Vision / Emotion / Speech / Cognitive / Sleep / ERP-SSVEP / Clinical)
 - Each card shows subject count (**N**), modality, cohort and tags; clinical and
   invasive/consumer-grade datasets are flagged
@@ -41,6 +41,14 @@ per-venue **recent-paper index**. Editorial style inspired by
   venues**, each linking to a Google Scholar search
 - Curated from a top-venue paper list plus source-verified parallel search; **fully
   bilingual** (titles + one-line descriptions in EN/中文)
+
+## EEG Atlas
+
+- An **EEG Atlas** button in the nav (after Datasets) opens an interactive atlas mapping
+  **EEG waveforms ↔ electrodes ↔ brain regions** — oscillations, evoked paradigms, clinical/
+  sleep, abnormal/epileptiform patterns, seizures and artifacts light up a scalp map with a
+  schematic waveform; 10-20/10-10 naming toggle and step-by-step electrode placement
+- **Schematic illustrations for teaching, not real recordings**; bilingual EN/中文
 
 ## Shared
 
@@ -98,7 +106,7 @@ MIT
 
 ## 数据集
 
-- **111 个公开 BCI/EEG/MEG/fNIRS 数据集**,按时代(*Wave 1/2/3*)分组,按**范式**过滤
+- **112 个公开 BCI/EEG/MEG/fNIRS 数据集**,按时代(*Wave 1/2/3*)分组,按**范式**过滤
   (运动想象 / 视觉 / 情绪 / 语音 / 认知负荷 / 睡眠 / ERP-SSVEP / 临床)
 - 卡片显示被试数(**N**)、模态、cohort 与标签;临床、侵入式/消费级数据集会标记
 
@@ -107,6 +115,13 @@ MIT
 - 导航栏 **📄 论文** 开关(会议与期刊视图)在每个 venue 卡片下展开*近年 BCI/EEG 论文*索引——
   **213 篇 2021-2026 代表作,覆盖 57 个 venue**,每篇链到 Google Scholar 搜索
 - 整理自顶会论文清单 + 带来源核验的并行检索;**完全中英双语**(标题 + 一句话说明)
+
+## EEG 图谱
+
+- 导航栏 **EEG 波形** 按钮(数据集之后)打开交互式图谱,把 **脑电波形 ↔ 电极 ↔ 脑区** 对应起来
+  —— 脑节律、刺激范式、临床/睡眠、异常/癫痫样放电、发作、伪迹,选中即在头皮图上点亮并播放示意波;
+  支持 10-20/10-10 命名切换与电极放置分步画法
+- **波形为教学示意图,非真实记录**;中英双语
 
 ## 通用
 

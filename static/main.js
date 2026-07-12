@@ -85,6 +85,7 @@
       tabConf: '会议',
       tabJournal: '期刊',
       tabDataset: '数据集',
+      tabAtlas: 'EEG 波形',
       papersTip: '点击展示各会议 / 期刊近五年的经典论文',
       dHeroTitle: '脑机接口<br>公开<em>数据集</em>',
       dStatTotal: '收录数据集',
@@ -146,6 +147,7 @@
       tabConf: 'Conferences',
       tabJournal: 'Journals',
       tabDataset: 'Datasets',
+      tabAtlas: 'EEG Atlas',
       papersTip: 'Show landmark BCI/EEG papers (last 5 years) under each conference & journal',
       dHeroTitle: 'Brain-Computer Interface<br>Public <em>Datasets</em>',
       dStatTotal: 'datasets',
@@ -190,6 +192,7 @@
     mtabConf: document.getElementById('mtabConf'),
     mtabJournal: document.getElementById('mtabJournal'),
     mtabDataset: document.getElementById('mtabDataset'),
+    mtabAtlas: document.getElementById('mtabAtlas'),
     papersBtn: document.getElementById('papersBtn'),
   };
 
@@ -308,6 +311,7 @@
     els.mtabConf.textContent = t().tabConf;
     els.mtabJournal.textContent = t().tabJournal;
     els.mtabDataset.textContent = t().tabDataset;
+    if (els.mtabAtlas) els.mtabAtlas.textContent = t().tabAtlas;
     els.mtabConf.classList.toggle('on', mode === 'conf');
     els.mtabJournal.classList.toggle('on', mode === 'journal');
     els.mtabDataset.classList.toggle('on', mode === 'dataset');

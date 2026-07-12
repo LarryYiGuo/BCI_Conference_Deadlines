@@ -2244,3 +2244,25 @@
   tags_en:
   - active silent speech
   - active-BCI
+- id: 'hsstroke'
+  name: 'HS Stroke MI(慢性卒中)'
+  link: 'https://doi.org/10.1038/s41597-026-07742-x'
+  year: '2026'
+  paradigm: 'MI'
+  modality: 'EEG'
+  n: '14'
+  channels: '—'
+  trials: '57,902 试次 · 278 session'
+  cohort: 'clinical'
+  era: 'W3'
+  invasive: false
+  consumer: false
+  tags: ['卒中康复', '运动想象', 'Fugl-Meyer']
+  note: '14 名慢性卒中患者的左/右手运动想象 EEG:57,902 试次、278 session,附 Fugl-Meyer 等完整临床评估。MI 特征与运动恢复评分相关,SOTA 深度模型跨试次分类达 82.65%;面向卒中后 MI-BCI 康复,弥补临床级大样本数据稀缺。Scientific Data 2026。(通道数与 figshare 链接待正文确认)'
+  note_en: 'Left/right-hand motor-imagery EEG from 14 chronic stroke patients: 57,902 trials across 278 sessions with full clinical assessments (Fugl-Meyer). MI features correlate with motor-recovery scores; SOTA deep models reach 82.65% cross-trial accuracy. Aimed at post-stroke MI-BCI rehabilitation, addressing the scarcity of clinically relevant datasets. Scientific Data 2026. (Channel count and figshare link pending full text.)'
+  name_en: 'HS Stroke MI (chronic stroke)'
+  trials_en: 57,902 trials · 278 sessions
+  tags_en:
+  - stroke rehab
+  - motor imagery
+  - Fugl-Meyer
