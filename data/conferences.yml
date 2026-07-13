@@ -35,7 +35,7 @@
   year: 2026
   full_name: Asian Conference on Machine Learning
   link: 'https://www.acml-conf.org/2026/'
-  deadline: '2026-07-05 23:59'
+  deadline: 'TBD'
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
@@ -49,8 +49,8 @@
   core: C
   h5: 25
   ccfddl: acml
-  track: Conference Track
-  estimated: false
+  track:
+  estimated: true
   note: Journal Track 截稿 6/20;每篇投稿须至少一位作者担任审稿人,否则 desk reject
   note_en: Journal Track deadline Jun 20; each submission must name at least one author as a reviewer or risk desk rejection
 
@@ -252,12 +252,12 @@
   title: WWW
   year: 2027
   full_name: The ACM Web Conference
-  link: 'https://thewebconf.org/'
-  deadline: '2026-10-07 23:59'
-  abstract_deadline: '2026-09-30 23:59'
+  link: 'https://acmweb2027.org/'
+  deadline: '2026-10-18 23:59'
+  abstract_deadline: '2026-10-11 23:59'
   tz: '-12:00'
   tz_label: AoE
-  date: '2027'
+  date: 'May 10 - 14, 2027'
   place: Dublin, Ireland
   format: 'https://www.acm.org/publications/proceedings-template'
   format_type: ACM sigconf 模板
@@ -268,7 +268,7 @@
   h5: 120
   ccfddl: www
   track:
-  estimated: true
+  estimated: false
   note: 举办地 Dublin 已官宣;截稿按 WWW 2026 规律推测
   note_en: Dublin officially announced; deadline estimated from the WWW 2026 pattern
 
@@ -568,13 +568,13 @@
   title: MM Asia
   year: 2026
   full_name: ACM Multimedia Asia
-  link: 'https://www.acmmmasia.org/'
-  deadline: TBD
+  link: 'https://www.mmasia2026.org/'
+  deadline: 2026-08-03 23:59
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: Dec 2026
-  place: TBD (Asia)
+  date: December 15-18, 2026
+  place: VinUniversity, Hanoi, Vietnam
   format: 'https://www.acmmmasia.org/'
   format_type: ACM sigconf 模板(官网投稿说明)
   format_type_en: ACM sigconf template
@@ -583,8 +583,8 @@
   core: N
   h5: 14
   ccfddl: mmasia
-  track:
-  estimated: true
+  track: Regular Paper / Special Session Submission
+  estimated: false
   note: 2026 届官网未上线;据指导委员会文件投稿截止目标定在 2026 年 7 月中旬
   note_en: 2026 site not yet online; steering documents target a mid-July 2026 deadline
 
