@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EEG 交互图谱 · 节律 / 刺激范式 ↔ 电极 / 脑区</title>
+<title>EEG 交互图谱 · 节律 / 任务相关信号 ↔ 电极 / 脑区</title>
 <meta name="description" content="Interactive EEG atlas mapping brain waveforms to electrodes and regions for BCI: oscillations, evoked paradigms (SSVEP/P300/ERD), clinical & sleep waveforms, abnormal/epileptiform patterns, seizures and artifacts — with a 10-20/10-10 toggle and step-by-step electrode placement. 交互式 EEG 图谱:脑电波形↔电极↔脑区。中英双语。">
 <meta property="og:title" content="EEG Interactive Atlas · 交互式 EEG 图谱">
 <meta property="og:description" content="Brain waveforms ↔ electrodes ↔ regions for BCI — rhythms, evoked paradigms, clinical/sleep, abnormal, seizures, artifacts. 10-20/10-10 toggle, step-by-step placement, ZH/EN bilingual.">
@@ -100,7 +100,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 .icard .ic-sub{font-size:.8rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .icard .ic-badge{font-family:var(--mono);font-size:.72rem;color:#fff;padding:.18rem .5rem;border-radius:6px;flex-shrink:0}
 
-.detail{margin-top:1.1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:1.1rem 1.2rem;backdrop-filter:blur(12px)}
+.detail{margin-top:1.1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:1.1rem 1.2rem;backdrop-filter:blur(12px);scroll-margin-top:66px}
 .detail .d-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .detail h3{font-size:1.2rem;font-weight:600}
 .detail h3 .sym{font-family:var(--mono);color:var(--text-muted);font-weight:400;margin-left:.4rem;font-size:.9rem}
@@ -123,6 +123,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 .chip .x{font-size:.62rem;opacity:.7;margin-left:.25rem}
 .bci-note{margin-top:.8rem;padding:.7rem .85rem;border-left:3px solid var(--orange);background:rgba(216,90,48,.04);border-radius:0 8px 8px 0;font-size:.86rem;color:var(--text-dim)}
 .bci-note b{color:var(--orange)}
+.bound-note{margin:.7rem 0 0;padding:.6rem .8rem;border-left:3px solid var(--text-muted);background:rgba(0,0,0,.028);border-radius:0 8px 8px 0;font-size:.83rem;color:var(--text-dim)}
+.bound-note b{color:var(--text-muted);font-family:var(--mono);font-size:.7rem;letter-spacing:.02em}
 .pipe{margin-top:.75rem}
 .pipe-flow{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:.4rem}
 .pstage{font-family:var(--mono);font-size:.74rem;padding:.32rem .6rem;border-radius:7px;background:#fff;border:1px solid var(--glass-border);border-left:3px solid var(--c);color:var(--text);cursor:pointer;transition:background .15s,color .15s}
@@ -132,6 +134,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:
 .model-tabs{display:inline-flex;gap:.3rem;margin-left:.5rem;vertical-align:middle}
 .model-tabs button{font-family:var(--mono);font-size:.68rem;border:1px solid var(--glass-border);background:#fff;color:var(--text-dim);padding:.2rem .55rem;border-radius:6px;cursor:pointer;transition:all .15s}
 .model-tabs button.on{background:var(--text);color:#fff;border-color:var(--text)}
+/* 机制分组小标题 + Zander 功能标签 */
+.subhead{font-family:var(--mono);font-size:.6rem;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);padding:.75rem .15rem .35rem;margin-top:.35rem;border-top:1px solid var(--border)}
+.subhead:first-child{border-top:none;margin-top:0;padding-top:.2rem}
+.zpill{display:inline-block;font-family:var(--mono);font-size:.54rem;letter-spacing:.02em;line-height:1.4;padding:.02rem .3rem;border-radius:5px;margin-left:.45rem;vertical-align:middle;border:1px solid transparent}
+.z-active{background:rgba(29,158,117,.13);color:#177a5a;border-color:rgba(29,158,117,.32)}
+.z-reactive{background:rgba(55,138,221,.13);color:#2c6cb0;border-color:rgba(55,138,221,.32)}
+.z-passive{background:rgba(216,90,48,.13);color:#b0492a;border-color:rgba(216,90,48,.32)}
 .model-note{font-family:var(--mono);font-size:.68rem;color:var(--text-muted);margin-top:.4rem}
 .pipe-io{font-family:var(--mono);font-size:.72rem;color:var(--text-dim);margin-top:.45rem;padding:.45rem .65rem;background:rgba(0,0,0,.03);border:1px dashed var(--glass-border);border-radius:7px}
 .pipe-io b{color:var(--text)}
@@ -190,7 +199,7 @@ footer a{color:var(--orange);text-decoration:none}
 
 <header class="hero">
   <div class="eyebrow" data-i18n="eyebrow">BCI 调研 · 交互版 · 2026.06.12</div>
-  <h1 data-i18n="h1">EEG 节律与刺激范式 · 电极与脑区对应交互图</h1>
+  <h1 data-i18n="h1">EEG 节律与任务相关信号 · 电极与脑区对应交互图</h1>
   <p class="lede" data-i18n-html="lede">选一个波形，它对应的电极、脑区会在头皮图上点亮并播放示意波。右上角切 <b>10-20 / 10-10</b> 命名；下方六组维度自由切换。</p>
 </header>
 
@@ -209,7 +218,7 @@ footer a{color:var(--orange);text-decoration:none}
     <span class="ctrl-label" data-i18n="ctrlMode">查看维度</span>
     <div class="toggle mode" id="modeToggle">
       <button data-mode="rhythm" class="on" data-i18n="mode_rhythm">脑节律 · Oscillations</button>
-      <button data-mode="paradigm" data-i18n="mode_paradigm">刺激范式 · Evoked</button>
+      <button data-mode="paradigm" data-i18n="mode_paradigm">任务相关 · Task-related</button>
       <button data-mode="clinical" data-i18n="mode_clinical">临床/睡眠 · States</button>
       <button data-mode="abnormal" data-i18n="mode_abnormal">异常/变异 · Abnormal</button>
       <button data-mode="seizure" data-i18n="mode_seizure">发作 · Seizures</button>
@@ -260,7 +269,6 @@ footer a{color:var(--orange);text-decoration:none}
       <span class="cnt" id="listCnt"></span>
     </div>
     <div class="cards" id="cards"></div>
-    <div class="detail" id="detail"></div>
   </div>
 </div>
 
@@ -325,75 +333,173 @@ const RHYTHMS = [
   {id:'delta',name:'Delta',sym:'δ',freq:'0.5–4 Hz',color:'#534AB7',regions:['frontal'],
    electrodes:['Fp1','Fpz','Fp2','F3','Fz','F4'],
    wave:'scroll',cycles:2,dur:4.2,waveCap:'慢、大、稀疏的深睡波（示意）',
-   desc:'深睡 N3 期与婴儿的主导波。<b>清醒成人</b>若在局部持续出现，常提示该处皮层或皮层下病灶（focal slowing）。频率最低、幅度最大。',
+   desc:'深睡 N3 期与婴儿的主导波,<b>频率最低(0.5–4 Hz)、幅度最大</b>,额区显著。<b>清醒成人</b>局部持续出现常提示该处皮层/皮层下病灶(focal slowing);弥漫慢化则见于中毒-代谢-缺氧性脑病。',
+   bound:'清醒时头部的"delta"很多是<b>眼动 / 出汗 / 运动伪迹</b>——先排伪迹再谈病理;低频端与放大器慢漂移重叠,别把漂移当 delta。',
    bci:'BCI 里主要作为<b>睡眠分期</b>特征，或被当作需要剔除的低频漂移。'},
   {id:'theta',name:'Theta',sym:'θ',freq:'4–8 Hz',color:'#378ADD',regions:['frontal'],
    electrodes:['Fp1','Fpz','Fp2','F3','Fz','F4','FCz'],
    wave:'scroll',cycles:4,dur:2.4,waveCap:'困倦/认知负荷下的中频波（示意）',
-   desc:'困倦与记忆编码相关。<b>额中线 theta（Fz/FCz）</b>会随工作记忆和认知负荷升高——是少数"越用脑越强"的节律。',
+   desc:'4–8 Hz。困倦与记忆编码相关;<b>额中线 theta(Fz/FCz)</b>随工作记忆负荷、认知控制升高——少数"越用脑越强"的节律,与前额-海马环路相关。',
+   bound:'额中线 theta(认知)与困倦 / 病理颞区 theta <b>来源不同</b>,不可混谈;与负荷相关但非特异的"负荷仪表",受个体、任务与困倦度强烈影响。',
    bci:'额中线 theta 用于<b>工作负荷/专注度</b>监测，以及神经反馈训练。'},
   {id:'alpha',name:'Alpha',sym:'α',freq:'8–13 Hz',color:'#1D9E75',regions:['occipital','parietal'],
    electrodes:['O1','Oz','O2','POz','PO3','PO4','Pz'],
    wave:'scroll',cycles:8,dur:1.5,waveCap:'闭眼时枕区主导节律（示意）',
-   desc:'EEG 的"地标节律"——<b>后部优势节律（PDR）</b>。闭眼放松时枕区最强，<b>一睁眼立即被抑制</b>（alpha block / Berger 效应）。它是判断清醒与基线是否正常的标尺。',
+   desc:'EEG 的"地标节律"——<b>后部优势节律(PDR)</b>,8–13 Hz。闭眼放松枕区最强,<b>一睁眼/注意即被抑制</b>(alpha block / Berger 效应)。枕顶 alpha 的<b>偏侧化</b>还随空间注意变化(注意侧幅度降、另一侧升)。',
+   bound:'alpha 是 8–13 Hz <b>节律</b>,不是慢电位(MRCP/SCP 才是 <3 Hz);枕 alpha 与中央 mu <b>同频不同源</b>,须靠拓扑与反应性区分,别只凭频段名。',
    bci:'睁闭眼 alpha 反应常用作<b>开关/校准信号</b>；alpha 不对称与情绪/注意研究相关。'},
   {id:'mu',name:'Mu',sym:'μ',freq:'8–13 Hz',color:'#D85A30',regions:['central'],
    electrodes:['C3','Cz','C4','C1','C2','CP3','CP4'],
    wave:'scroll',cycles:8,dur:1.5,waveCap:'感觉运动区拱形节律（示意）',
-   desc:'与 alpha 同频段，但位于<b>感觉运动皮层（C3/C4）</b>，形似拱形。关键性质：<b>一动、甚至只是想动，它就被抑制</b>。',
-   bci:'这是<b>运动想象 BCI（MI）的物理基础</b>。左/右手想象会让对侧 C3/C4 的 mu 下降——见"刺激范式"里的 ERD/ERS。'},
+   desc:'与 alpha 同频段(8–13 Hz,常带 beta 谐波),但位于<b>感觉运动皮层(C3/C4)</b>,呈拱形。关键性质:<b>实际、观察、乃至想象运动都会抑制它</b>(与镜像神经系统相关);<b>睁眼不抑制</b>它,可据此与枕 alpha 区分。',
+   bound:'别按频段当成 alpha——<b>靠中央拓扑 + 对"运动"(而非睁眼)的反应</b>识别;单看 mu 抑制难分想象 / 实际 / 观察运动。',
+   bci:'这是<b>运动想象 BCI（MI）的物理基础</b>。左/右手想象会让对侧 C3/C4 的 mu 下降——见"任务相关"里的 感觉运动 ERD/ERS。'},
   {id:'beta',name:'Beta',sym:'β',freq:'13–30 Hz',color:'#E24B4A',regions:['frontal','central'],
    electrodes:['F3','Fz','F4','FC1','FC2','FCz','C3','Cz','C4'],
    wave:'scroll',cycles:16,dur:1.0,waveCap:'清醒专注/运动控制的快波（示意）',
-   desc:'额中央为主，对应主动专注、警觉与运动控制。动作<b>结束后</b>感觉运动区会出现 <b>beta 反弹（rebound / ERS）</b>。',
+   desc:'13–30 Hz,额中央为主,对应主动专注、警觉与<b>维持当前运动 / 姿态(status quo)</b>。动作<b>结束后</b>感觉运动区出现 <b>beta 反弹(PMBR / ERS)</b>,约完成后 0.5–1 s。',
+   bound:'<b>beta 反弹不是通用的"成功 / 完成"标签</b>,受任务、反馈与感觉输入调制;头皮 beta 高频端易混入 <b>EMG</b>,须与肌电区分。',
    bci:'与 mu 一起构成 MI 解码的双频段特征；beta rebound 是判断"动作已完成"的可靠标记。'},
   {id:'gamma',name:'Gamma',sym:'γ',freq:'>30 Hz',color:'#534AB7',regions:['frontal','central','parietal','temporal','occipital'],
    electrodes:['F3','Fz','F4','C3','Cz','C4','P3','Pz','P4','T7','T8'],
    wave:'scroll',cycles:28,dur:0.6,waveCap:'局部高频、分布广（示意）',
-   desc:'与局部特征绑定、跨区协同、高阶认知相关。<b>幅度很小、极易被肌电（EMG）污染</b>，头皮 EEG 上的 gamma 须谨慎解读。',
+   desc:'>30 Hz,与局部特征绑定、跨区协同、高阶认知相关。<b>幅度很小、极易被肌电(EMG)与微眼跳(saccadic spike)污染</b>,头皮 EEG 上的 gamma 须极谨慎解读。',
+   bound:'头皮上的"gamma"很多其实是<b>肌电 / 微眼跳伪迹</b>而非皮层节律;报头皮 gamma 前须严格去肌电,别当成认知绑定的直接证据。',
    bci:'信息量诱人但信噪比差；多用于研究性的<b>认知绑定/注意</b>分析，工程落地少。'}
 ];
 
 // ============ 刺激范式 ============
+// 机制主轴(sub)+ Zander 功能标签(zander: active/reactive/passive)
 const PARADIGMS = [
-  {id:'ssvep',name:'SSVEP',sym:'稳态视觉诱发',color:'#1D9E75',regions:['occipital'],
-   electrodes:['Oz','O1','O2','POz','PO3','PO4','PO7','PO8','Pz'],
-   meta:'枕区 · 频率标记',wave:'scroll',cycles:12,dur:1.0,waveCap:'盯住 12 Hz 闪烁 → 枕区同频稳态响应（示意）',
-   desc:'盯住一个以固定频率（如 12 Hz）闪烁的目标，<b>枕区（Oz/POz）</b>会出现与刺激<b>同频及其谐波</b>的稳态响应。信噪比极高、几乎免训练。',
-   bci:'<b>高速拼写器</b>的主力范式：屏幕上多个不同频率的方块，看哪个就解码哪个。是目前 ITR（信息传输率）最高的范式之一。'},
-  {id:'erders',name:'ERD / ERS',sym:'去同步 / 反弹',color:'#D85A30',regions:['central'],
-   electrodes:['C3','Cz','C4','C1','C2','FC3','FC4','CP3','CP4'],
-   meta:'感觉运动 · 对侧化',wave:'envelope',waveCap:'想象动作 → mu/beta 能量下降(ERD) → 结束后反弹(ERS)',
-   desc:'实际或想象运动时，<b>对侧感觉运动区</b>的 mu/beta 能量下降（<b>ERD 事件相关去同步</b>）；动作结束后能量反弹（<b>ERS</b>）。左手→右脑 C4，右手→左脑 C3。',
-   bci:'<b>运动想象 BCI 的核心特征</b>。CSP / Riemannian 方法正是在提取 C3/C4 的对侧化能量差，用于轮椅、假肢、康复外骨骼控制。'},
-  {id:'p300',name:'P300',sym:'oddball 正波',color:'#378ADD',regions:['parietal','central'],
+  // ── 瞬态相位锁定 ERP / EP ──
+  {id:'vep',name:'VEP',sym:'视觉诱发',color:'#1D9E75',sub:'transient',zander:'reactive',regions:['occipital'],
+   electrodes:['Oz','O1','O2','POz','PO3','PO4'],
+   meta:'枕区 · P1/N1/P2 · 相位锁定',wave:'erp',waveCap:'闪光/翻转棋盘 → 枕区 P1(~100)–N1(~135)–P2(~200 ms)（正向朝上）',
+   shape:(t)=>0.7*g(t,0.12,0.028)-0.85*g(t,0.17,0.03)+0.6*g(t,0.26,0.055),
+   markers:[[0.12,'P1'],[0.17,'N1'],[0.26,'P2']],
+   desc:'视觉刺激（闪光 / 翻转棋盘 / 图形）经视通路在<b>枕区（Oz/POz）</b>锁相诱发的一串成分:<b>P1(~100 ms)–N1(~135)–P2(~200 ms)</b>（翻转棋盘另有稳定的 <b>P100</b>）。<b>潜伏期比幅度更可靠</b>、个体内稳定,是所有视觉范式(SSVEP/c-VEP/RSVP)的底层积木。',
+   bound:'不是"看见"本身——它反映刺激的物理属性(对比度 / 空间频率 / 亮度),不等于知觉内容;临床读 <b>P100 潜伏期</b>,不看幅度绝对值。',
+   bci:'感觉通道父响应。临床查视觉通路完整性;BCI 里作为视觉范式的生理基础,单独很少直接做控制。'},
+  {id:'aep',name:'AEP',sym:'听觉诱发',color:'#378ADD',sub:'transient',zander:'reactive',regions:['temporal','central'],
+   electrodes:['Cz','Fz','FCz','T7','T8'],
+   meta:'颞+顶点 · P50/N1/P2 · 相位锁定',wave:'erp',waveCap:'短声 → 顶点 P50–N1(~100)–P2(~180 ms)（正向朝上）',
+   shape:(t)=>0.5*g(t,0.06,0.02)-0.9*g(t,0.125,0.03)+0.7*g(t,0.23,0.05),
+   markers:[[0.06,'P50'],[0.125,'N1'],[0.23,'P2']],
+   desc:'声音刺激在<b>颞叶听皮层(横颞回)</b>产生,经切向偶极子在<b>顶点(Cz)</b>记录到最大的中潜伏 <b>P50–N1(~100)–P2(~180 ms)</b>;更早还有脑干 ABR(<10 ms)。<b>P50 感觉门控</b>(双击范式 S2/S1 比值)是精神分裂等研究常用指标。',
+   bound:'顶点最大 ≠ 源在顶点——源在颞叶,是切向偶极子的头皮投影;N1 受<b>注意与刺激间隔(SOA)</b>强烈调制,别当成纯被动感觉量。',
+   bci:'听觉通道父响应,不依赖注视,适合<b>免视觉 / 闭眼 BCI</b>与意识评估;是 ASSR、MMN 的瞬态对应。'},
+  {id:'sep',name:'SEP',sym:'体感诱发',color:'#534AB7',sub:'transient',zander:'reactive',regions:['central','parietal'],
+   electrodes:['C3','C4','CP3','CP4','CPz'],
+   meta:'对侧 S1 · N20/P27 · 短潜伏',wave:'erp',waveCap:'正中神经电刺激 → 对侧 S1 短潜伏 N20–P27（毫秒级,正向朝上）',
+   shape:(t)=>-0.85*g(t,0.045,0.016)+0.8*g(t,0.075,0.02)+0.3*g(t,0.16,0.05),
+   markers:[[0.045,'N20'],[0.075,'P27']],
+   desc:'腕部正中神经电刺激,经丘脑-皮层通路在<b>对侧初级体感区(中央后回,C3′/C4′)</b>锁相诱发<b>短潜伏 N20 / P27</b>(此处 800 ms 轴上示意压缩)。N20 是皮层最早成分,为术中监测脊髓 / 皮层通路的金标准。',
+   bound:'时程是<b>毫秒级</b>,不是 ERP 的数百 ms;头皮 SEP 幅度小、需大量平均;N20 缺失提示通路中断,而非"没感觉到"。',
+   bci:'感觉通道父响应,临床监测体感通路完整性;是 SSSEP(体感稳态)的瞬态对应。'},
+  {id:'n2pc',name:'N2pc',sym:'空间注意负波',color:'#D85A30',sub:'transient',zander:'reactive',regions:['parietal','occipital'],
+   electrodes:['PO7','PO8','P7','P8','O1','O2'],
+   meta:'对侧后颞顶 · ~200–300 ms',wave:'erp',waveCap:'注意投向一侧目标 → 对侧后部(PO7/PO8)负走行(正向朝上)',
+   shape:(t)=>0.3*g(t,0.15,0.04)-0.8*g(t,0.28,0.06),
+   markers:[[0.28,'N2pc']],
+   desc:'当空间注意<b>选中一侧目标</b>时,<b>对侧后颞顶(PO7/PO8)</b>相对同侧在 ~200–300 ms 出现负走行(用左右电极之差提取)。反映注意的<b>空间选择 / 分配</b>,先于并部分预测随后的 P300。',
+   bound:'是<b>相对</b>(对侧–同侧)差,不是绝对电位;标定的是注意投向哪一侧,不直接编码"是什么物体"。',
+   bci:'解释 RSVP 里目标为何被"选中":先有 N2pc 的注意锁定,再有 P300。用于注意 / 目标选择类 BCI。'},
+  {id:'p300',name:'P300',sym:'oddball 正波',color:'#378ADD',sub:'transient',zander:'reactive',regions:['parietal','central'],
    electrodes:['Pz','CPz','Cz','CP1','CP2','P3','P4'],
-   meta:'顶区 · ~300 ms',wave:'erp',waveCap:'小概率目标后约 300 ms 的顶区正向大波（正向朝上）',
+   meta:'顶区 Pz · ~300–500 ms · P3a/P3b',wave:'erp',waveCap:'小概率目标后约 300 ms 的顶区正向大波（正向朝上）',
    shape:(t)=>-0.4*g(t,0.13,0.045)+1.05*g(t,0.41,0.085),
    markers:[[0.13,'N1'],[0.41,'P300']],
-   desc:'oddball 范式中，<b>小概率/任务相关</b>目标出现后约 300 ms，<b>顶区（Pz/CPz）</b>出现正向大波。P3a（额区·新异刺激）与 P3b（顶区·任务相关）。',
+   desc:'oddball 范式中,<b>小概率 / 任务相关</b>目标出现后约 300–500 ms,<b>顶区(Pz/CPz)</b>出现正向大波。分 <b>P3a</b>(额中央 · 新异刺激自动捕获)与 <b>P3b</b>(顶区 · 任务相关、情境更新);潜伏期随分类难度延长,幅度随目标概率下降而增大。',
+   bound:'不是"识别到内容"的读数,而是<b>情境更新 / 资源分配</b>信号;潜伏期受任务难度影响,别钉死在 300 ms。',
    bci:'<b>P300 Speller</b> 的基础：字符矩阵行列随机闪烁，目标行/列闪烁时诱发 P300，由此定位用户注视的字母。鲁棒、跨被试稳定。'},
-  {id:'n400',name:'N400',sym:'语义失匹配负波',color:'#534AB7',regions:['central','parietal'],
+  {id:'mmn',name:'MMN',sym:'失匹配负波',color:'#E24B4A',sub:'transient',zander:'reactive',regions:['frontal','central','temporal'],
+   electrodes:['Fz','FCz','Cz','F3','F4'],
+   meta:'额中央 · ~150–250 ms · 前注意',wave:'erp',waveCap:'序列中的偏差刺激 → 额中央自动失匹配负波(正向朝上)',
+   shape:(t)=>0.2*g(t,0.1,0.04)-0.85*g(t,0.24,0.06),
+   markers:[[0.24,'MMN']],
+   desc:'规律序列里出现<b>偏差刺激</b>时,即使<b>不主动注意</b>,额中央(Fz/FCz)在 ~150–250 ms 出现失匹配负波(偏差–标准之差),常在乳突极性翻转。反映听皮层对规律的<b>自动预测与偏差检测(预测编码)</b>;源含颞上回 + 额下回。',
+   bound:'是<b>差异波</b>、须偏差减标准;"前注意"不等于完全不受注意影响;单被试单试次幅度小,别当成能逐 trial 稳读。',
+   bci:'<b>前注意、免主动配合</b>——被动 BCI 与<b>意识障碍(DoC)床旁评估</b>的核心指标(有 MMN ↔ 预后较好)。'},
+  {id:'n400',name:'N400',sym:'语义失匹配负波',color:'#534AB7',sub:'transient',zander:'reactive',regions:['central','parietal'],
    electrodes:['Cz','CPz','Pz','CP1','CP2','C3','C4'],
-   meta:'中央顶 · ~400 ms',wave:'erp',waveCap:'语义不匹配后约 400 ms 的中央顶区负波（正向朝上）',
+   meta:'中央顶 · 峰~400 ms(300–500)',wave:'erp',waveCap:'语义不匹配后约 400 ms 的中央顶区负波（正向朝上）',
    shape:(t)=>0.45*g(t,0.16,0.05)+0.25*g(t,0.30,0.05)-0.95*g(t,0.5,0.11),
    markers:[[0.5,'N400']],
-   desc:'当语义出现违例（如"我喝了一杯<b>沙子</b>"），约 400 ms 在<b>中央顶区</b>诱发负波。幅度随语义不匹配程度增大。',
+   desc:'当语义<b>不易被上文预期整合</b>(如"我喝了一杯<b>沙子</b>"),<b>中央顶区(略偏右)</b>在 ~300–500 ms(峰 ~400 ms)诱发负波;幅度随<b>语境合适度 / 完形概率(cloze)</b>降低而增大,并不限于"错误"句。',
+   bound:'标定的是<b>语义整合难度</b>,不是"对 / 错"判断;受词频、重复、可预期性调制,别当成真值检测器。',
    bci:'语言/语义加工的电生理指标。用于<b>隐性语义判断、测谎、概念识别</b>等研究型 BCI，也是评估语义解码的探针。'},
-  {id:'errp',name:'ErrP',sym:'错误相关电位',color:'#E24B4A',regions:['frontal','central'],
+  {id:'errp',name:'ErrP',sym:'错误相关电位',color:'#E24B4A',sub:'transient',zander:'passive',regions:['frontal','central'],
    electrodes:['FCz','Cz','Fz','FC1','FC2'],
-   meta:'额中央 · ERN+Pe',wave:'erp',waveCap:'出错后额中央负波(ERN ~80 ms)+ 随后 Pe（正向朝上）',
+   meta:'额中央 FCz · ERN~50–100 / Pe~200–400 ms',wave:'erp',waveCap:'出错后额中央负波(ERN ~80 ms)+ 随后 Pe（正向朝上）',
    shape:(t)=>-1.0*g(t,0.11,0.028)+0.75*g(t,0.30,0.075),
    markers:[[0.11,'ERN'],[0.30,'Pe']],
-   desc:'当系统或自己<b>出错</b>时，<b>额中央（FCz/Cz）</b>出现错误相关负波（ERN，~80 ms）+ 随后的 Pe 正波。源定位指向<b>前扣带回（ACC）</b>。',
+   desc:'出错时,<b>额中央(FCz/Cz)</b>先出 <b>ERN/Ne</b>(反应错误后 ~50–100 ms 负波),再出 <b>Pe</b>(~200–400 ms 正波,与错误觉察相关);外部反馈致错则为 <b>FRN</b>(反馈后 ~250 ms)。源指向<b>前扣带回 / 内侧额叶</b>。含反应型 rErrP 与观察型 iErrP(看机器出错)。无需主动配合,属被动监测信号。',
+   bound:'不是"知道正确答案",而是"觉察到与预期不符";ERN 也见于<b>正确但高冲突</b>试次,别当成纯错误开关。',
    bci:'可作 BCI 的<b>"撤销键 / 在线纠错"</b>：检测到 ErrP 就回滚上一个解码动作，显著提升拼写器与控制类 BCI 的准确率。'},
-  {id:'rsvp',name:'RSVP',sym:'快速串行呈现',color:'#378ADD',regions:['parietal','occipital'],
-   electrodes:['Pz','CPz','Oz','PO7','PO8','O1','O2'],
-   meta:'枕→顶 · P300 触发',wave:'erp',waveCap:'高速串流中目标出现 → 枕区视觉响应 + 顶区 P300',
+  // ── 稳态诱发响应 ──
+  {id:'ssvep',name:'SSVEP',sym:'稳态视觉诱发',color:'#1D9E75',sub:'steady',zander:'reactive',regions:['occipital'],
+   electrodes:['Oz','O1','O2','POz','PO3','PO4','PO7','PO8','Pz'],
+   meta:'枕区 · 频率标记 · 相位锁定',wave:'scroll',cycles:12,dur:1.0,waveCap:'盯住 12 Hz 闪烁 → 枕区同频稳态响应（示意）',
+   desc:'盯住以固定频率(常 6–30 Hz)闪烁的目标,<b>枕区(Oz/POz)</b>出现<b>基频及其谐波</b>的稳态响应,与刺激持续锁相。中频(~10–15 Hz)响应最强、信噪比高、几乎免训练;CCA / FBCCA 是标准解码。',
+   bound:'依赖<b>注视</b>(隐性注意增益有限),不是免眼动;低频闪烁有<b>光敏性癫痫</b>风险;相邻频率 + 谐波会串扰,别任选频率。',
+   bci:'<b>高速拼写器</b>的主力范式：屏幕上多个不同频率的方块，看哪个就解码哪个。是目前 ITR（信息传输率）最高的范式之一。'},
+  {id:'assr',name:'ASSR',sym:'听觉稳态',color:'#378ADD',sub:'steady',zander:'reactive',regions:['temporal','central'],
+   electrodes:['Cz','Fz','FCz','T7','T8'],
+   meta:'颞/顶点 · ~40 Hz 标记',wave:'scroll',cycles:16,dur:0.8,waveCap:'~40 Hz 调制声 → 听皮层同频稳态响应(示意)',
+   desc:'用<b>~40 Hz 周期(调幅 / 调频)</b>的声音驱动<b>听皮层</b>同频锁相稳态响应,40 Hz 处共振最强(丘脑-皮层环路)。可客观测听阈、评估听通路,清醒 > 睡眠 / 麻醉。',
+   bound:'40 Hz 幅度受<b>觉醒 / 睡眠 / 麻醉</b>强烈压制——既是麻醉深度指标,也意味着别把幅度当纯外周听力读数。',
+   bci:'听觉版 SSVEP:免视觉的<b>听觉 BCI</b>与客观听力/意识评估;40 Hz ASSR 也用于麻醉深度监测。'},
+  {id:'sssep',name:'SSSEP',sym:'体感稳态',color:'#534AB7',sub:'steady',zander:'reactive',regions:['central'],
+   electrodes:['C3','C4','Cz','CP3','CP4'],
+   meta:'对侧 S1 · ~20–26 Hz',wave:'scroll',cycles:10,dur:0.9,waveCap:'指端周期性振动(~20–26 Hz)→ 对侧 S1 同频稳态响应(示意)',
+   desc:'对指端施加<b>周期性触觉振动(个体共振频 ~20–26 Hz)</b>,<b>对侧体感区</b>产生同频锁相稳态响应;把注意投向被刺激手指会调制其幅度。已成独立 BCI 路线,尤其适合<b>视觉 / 听觉受限</b>用户。',
+   bound:'共振频<b>因人、因部位而异</b>,须先标定;注意调制幅度有限、个体差异大,别指望像 SSVEP 那样的高 ITR。',
+   bci:'触觉版稳态 BCI:把注意投向被刺激的手指会调制 SSSEP 幅度,用于免视觉选择。'},
+  // ── 编码锁定 ──
+  {id:'cvep',name:'c-VEP',sym:'编码视觉诱发',color:'#1D9E75',sub:'code',zander:'reactive',regions:['occipital','parietal'],
+   electrodes:['Oz','O1','O2','POz','PO7','PO8'],
+   meta:'枕区 · m 序列编码 · 模板解码',wave:'scroll',cycles:22,dur:0.5,waveCap:'伪随机码(m 序列)闪烁 → 枕区码锁定响应,模板/CCA 解码(示意)',
+   desc:'目标以<b>伪随机码(m 序列、金码等)</b>而非单一频率闪烁,各目标用同一码的<b>循环移位</b>区分;枕区产生与码<b>锁定的宽带响应</b>,靠模板匹配 / CCA 解码。机制上仍是相位锁定视觉诱发,但编码 + 解码路线独立。',
+   bound:'需<b>短时个人校准</b>取模板,不是完全免训练;仍依赖注视;"高速"依赖精确的<b>刺激-记录时间对齐(帧同步)</b>,别忽略延迟抖动。',
+   bci:'当前<b>非侵入最高速</b>的视觉 BCI 之一:一段短校准码即可拿到模板,几十上百目标高 ITR 拼写;不应完全并入 SSVEP。'},
+  // ── 诱导频谱变化 ──
+  {id:'erders',name:'感觉运动 ERD/ERS',sym:'去同步 / 反弹',color:'#D85A30',sub:'induced',zander:'active',regions:['central'],
+   electrodes:['C3','Cz','C4','C1','C2','FC3','FC4','CP3','CP4'],
+   meta:'carrier: mu/beta · 对侧化 · 非相位锁定',wave:'envelope',waveCap:'想象动作 → mu/beta 功率下降(ERD) → 结束后反弹(ERS / beta rebound)',
+   desc:'实际或想象运动时,<b>对侧感觉运动区(C3/C4)</b>承载节律功率下降(<b>ERD</b>,动作前 ~2 s 起、执行时最深),结束后 beta 反弹(<b>ERS / PMBR</b>)。carrier: <b>mu 8–13 / beta 13–30 Hz</b>。关键是<b>试次间功率变化、不锁相</b>——须用时频 / 功率(非叠加平均)提取,并非"诱发电位"。左手→右脑 C4,右手→左脑 C3。(↔ 见「脑节律」Mu)',
+   bound:'<b>叠加平均会把它抵消</b>(非锁相)——要看功率谱;单靠 C3/C4 功率<b>难稳定区分想象 / 实际 / 被动运动</b>;PMBR 反弹受任务与反馈影响,不是通用"成功"标签。',
+   bci:'<b>主动运动想象 BCI 的核心</b>：CSP / Riemannian 提取 C3/C4 的对侧化功率差，驱动轮椅、假肢、卒中康复外骨骼。'},
+  // ── 慢电位 ──
+  {id:'mrcp',name:'MRCP',sym:'运动相关皮层电位',color:'#D85A30',sub:'slow',zander:'active',regions:['central','frontal'],
+   electrodes:['Cz','C3','C4','FCz','C1','C2'],
+   meta:'中央 · <3 Hz 慢电位 · 动作前 1.5–2 s',wave:'morph',repeat:1,waveCap:'动作前 1.5–2 s 缓慢负走(BP/准备电位)→ 运动电位 → 反馈后回正',
+   shape:(t)=> t<0.8 ? -(t/0.8) : (-1 + 1.25*((t-0.8)/0.2)),
+   desc:'自主(或想象)运动<b>前 1.5–2 s</b>,中央区出现 <3 Hz 缓慢负走,分层展开:<b>early BP/BP1</b>(−2~−0.5 s · 双侧 · SMA/pre-SMA)→ <b>late BP/NS′</b>(−0.5 s~动作 · 更陡 · 对侧 M1/运动前区)→ <b>Motor Potential</b>(EMG 起始附近 · 局灶)→ 运动后电位(再传入 / 感觉反馈)。<b>内源运动意图</b>信号,不需外部刺激。',
+   bound:'不是"意识决定的精确瞬间"(可能是准备 / 累积 / 波动过程);<b>通道少 ≠ 单试次容易</b>——单试次在线需 DC 耦合或高通 ≤0.05–0.1 Hz + 空间滤波 + 个人校准,0.5–1 Hz 高通会削掉 early BP;运动后电位别冒充运动前意图。',
+   bci:'<b>卒中康复 BCI 的关键控制信号</b>:动作前数百 ms 即可探到运动意图,和 ERD/ERS 搭成<b>意图 → 反馈</b>闭环,触发功能性电刺激 / 外骨骼——正是 HS Stroke 这类运动想象数据集的用武之地。'},
+  {id:'cnv',name:'CNV',sym:'关联性负变',color:'#534AB7',sub:'slow',zander:'active',regions:['frontal','central'],
+   electrodes:['Cz','FCz','Fz','C3','C4'],
+   meta:'额中央 · S1→S2 期待负走',wave:'morph',repeat:1,waveCap:'警告刺激 S1 与指令刺激 S2 之间的持续负走(期待/准备)',
+   shape:(t)=> t<0.2 ? -(t/0.2)*0.8 : (t<0.85 ? -0.8 : -0.8*(1-(t-0.85)/0.15)),
+   desc:'在<b>警告刺激 S1</b> 与<b>指令刺激 S2</b> 之间(通常 1–2 s),额中央持续<b>负走</b>:<b>早 CNV</b>(偏额 · 定向 / 警觉)与<b>晚 CNV</b>(偏中央 · 运动准备,近似 S2 前的 BP);S2、反应后消退。反映<b>期待与准备</b>。',
+   bound:'幅度混杂注意、觉醒、时间估计与运动准备多种成分,不是单一"专注度"读数;须固定 S1–S2 间隔,受<b>慢漂移 / EOG</b>污染大。',
+   bci:'期待 / 准备的内源指标,用于<b>注意与准备状态监测</b>、警觉度评估,也是慢电位路线的一员。'},
+  {id:'scp',name:'SCP',sym:'慢皮层电位',color:'#5F5E5A',sub:'slow',zander:'active',regions:['frontal','central'],
+   electrodes:['Cz','FCz','Fz','C3','C4'],
+   meta:'皮层 · 秒级可自调负/正移',wave:'morph',repeat:1,waveCap:'受训后自主产生的秒级皮层电位负移 / 正移',
+   shape:(t)=> -0.8*Math.min(t/0.5,1),
+   desc:'<b>秒级的皮层电位整体偏移</b>:负移=顶树突去极化增多、皮层兴奋性↑;正移相反。经<b>数十次训练 + 反馈</b>用户可自主产生某方向偏移。Birbaumer 的 <b>SCP-BCI(Thought Translation Device)</b> 让完全锁定(LIS)患者靠二元负 / 正移拼字。',
+   bound:'训练慢(数周)、速率低(每选择数秒);强依赖<b>近 DC 采集与漂移 / 伪迹控制</b>;对完全锁定末期患者效果不稳,别当成即插即用。',
+   bci:'最早让<b>完全锁定患者</b>沟通的 BCI 之一;训练慢、速率低,但纯内源、不依赖任何刺激或残余运动。'},
+  // ── 呈现范式(非脑信号)──
+  {id:'rsvp',name:'RSVP',sym:'范式 · 非脑信号',color:'#888780',sub:'paradigm',zander:'reactive',regions:['occipital','parietal'],
+   electrodes:['Oz','O1','O2','PO7','PO8','Pz','CPz'],
+   meta:'呈现范式 → 诱发 VEP+N2pc+P300',wave:'erp',waveCap:'高速串流中目标出现 → 枕区 VEP + 顶区 P300（叠加 N2pc）',
    shape:(t)=>-0.3*g(t,0.12,0.04)+1.0*g(t,0.42,0.08),
    markers:[[0.42,'P300']],
-   desc:'图像/字符以约 10 Hz <b>高速串行闪现</b>，目标出现时触发 P300，并叠加<b>枕区视觉响应</b>。让人当"探测器"。',
-   bci:'<b>脑控图像检索 / brain-triage</b>：让分析员快速扫过大量图像，靠脑电 P300 自动标出"刚才那张有目标"，比手动点选快得多。'}
+   desc:'⚠ <b>这是"刺激呈现范式",不是一种脑信号。</b>图像 / 字符以 ~5–20 Hz 高速串行闪现,目标出现时<b>依次诱发 早期 VEP → N2pc → P300</b>。它复用前面那些成分、把人当"探测器",而非独立生理机制。',
+   bound:'本身不产生新波形,读的是被它诱发的 VEP/N2pc/P300;高呈现率会让相邻项响应<b>时间重叠</b>,须去卷积 / xDAWN,别当成干净单试次。',
+   bci:'<b>脑控图像检索 / brain-triage</b>：让人当"探测器"，靠 P300 自动标出"刚才那张有目标"，比手动点选快得多。'}
 ];
 
 // ============ 解码模型 / 典型分析 + 标准数据集 ============
@@ -707,6 +813,22 @@ let state = {sys:'10-10', mode:'rhythm', sel:'alpha'};
 let modelView = 'classic';  // 'classic' | 'deep'（仅范式有两套）
 const GROUPS = {rhythm:RHYTHMS, paradigm:PARADIGMS, clinical:CLINICAL, abnormal:ABNORMAL, seizure:SEIZURE, artifact:ARTIFACT};
 const items = () => GROUPS[state.mode] || RHYTHMS;
+// 机制主轴分组小标题 + Zander 功能标签
+const SUBGROUPS = {
+  transient:{zh:'瞬态相位锁定 · Transient ERP / EP',en:'Transient · phase-locked ERP / EP'},
+  steady:{zh:'稳态诱发 · Steady-state',en:'Steady-state responses'},
+  code:{zh:'编码锁定 · Code-modulated',en:'Code-modulated'},
+  induced:{zh:'诱导频谱变化 · Induced',en:'Induced spectral change'},
+  slow:{zh:'慢电位 · Slow potentials',en:'Slow potentials'},
+  paradigm:{zh:'呈现范式(非脑信号)· Paradigm',en:'Presentation paradigm (not a brain signal)'}
+};
+const ZANDER = {
+  active:{zh:'主动',en:'Active'},
+  reactive:{zh:'反应',en:'Reactive'},
+  passive:{zh:'被动',en:'Passive'}
+};
+const tSub = k => SUBGROUPS[k] ? SUBGROUPS[k][lang] : k;
+const tZander = k => ZANDER[k] ? ZANDER[k][lang] : k;
 const cur = () => items().find(i=>i.id===state.sel) || items()[0];
 const visible = id => state.sys==='10-10' ? true : (TIER && E.find(e=>e[0]===id) && E.find(e=>e[0]===id)[3]!=='added');
 
@@ -771,16 +893,23 @@ function renderList(){
   const list = items();
   document.getElementById('listTitle').textContent = u('lt_'+state.mode);
   document.getElementById('listCnt').textContent = lang==='en' ? `${list.length} items · click` : `${list.length} 项 · 点击切换`;
+  const selId = cur().id;   // 已解析的选中项(切换维度后回退到首项也对)
   let html='';
+  let lastSub=null;
   list.forEach(it=>{
+    if(it.sub && it.sub!==lastSub){ lastSub=it.sub; html += `<div class="subhead">${tSub(it.sub)}</div>`; }
     const v = L(it);
     const sub = v.desc.replace(/<[^>]+>/g,'').slice(0, lang==='en'?42:28)+'…';
     const badge = state.mode==='rhythm' ? it.freq : v.meta;
-    html += `<div class="icard ${it.id===state.sel?'sel':''}" onclick="select('${it.id}')">`
+    const zp = it.zander ? `<span class="zpill z-${it.zander}">${tZander(it.zander)}</span>` : '';
+    const on = it.id===selId;
+    html += `<div class="icard ${on?'sel':''}" onclick="select('${it.id}')">`
       + `<span class="dot" style="background:${it.color}"></span>`
-      + `<span class="ic-main"><div class="ic-name">${v.name}<small>${v.sym}</small></div>`
+      + `<span class="ic-main"><div class="ic-name">${v.name}<small>${v.sym}</small>${zp}</div>`
       + `<div class="ic-sub">${sub}</div></span>`
       + `<span class="ic-badge" style="background:${it.color}">${badge}</span></div>`;
+    // 选中项:详情就地在这张卡片下方内联展开
+    if(on) html += `<div class="detail" id="detail">${detailBody()}</div>`;
   });
   document.getElementById('cards').innerHTML = html;
 }
@@ -845,7 +974,8 @@ function buildWave(it){
 }
 
 // ============ 渲染详情 ============
-function renderDetail(){
+// 详情就地内联在选中卡片下方展开(手风琴),不再单独渲染到列表底部
+function detailBody(){
   const it=L(cur());
   const meta = state.mode==='rhythm' ? it.freq : it.meta;
   // electrode chips
@@ -879,20 +1009,22 @@ function renderDetail(){
   const ds = it.datasets ? `<div class="d-row"><span class="rk">${u('rkDataset')}</span>`
     + it.datasets.map(d=>d.u?`<a class="chip ds" href="${d.u}" target="_blank" rel="noopener">${tDs(d.n)}</a>`:`<span class="chip">${tDs(d.n)}</span>`).join('')
     + `</div>` : '';
-  document.getElementById('detail').innerHTML =
-    `<div class="d-top"><h3>${it.name}<span class="sym">${it.sym}</span></h3>`
+  return `<div class="d-top"><h3>${it.name}<span class="sym">${it.sym}</span></h3>`
     + `<span class="d-meta" style="background:${it.color}">${meta}</span></div>`
     + `<div class="wave-box">${buildWave(it)}<div class="wave-cap">${it.waveCap}</div></div>`
     + `<p class="d-desc">${it.desc}</p>`
+    + (it.bound ? `<div class="bound-note"><b>${u('boundNote')}</b>${it.bound}</div>` : '')
     + `<div class="d-row"><span class="rk">${u('rkRegion')}</span>${regs}</div>`
     + `<div class="d-row"><span class="rk">${u('rkElec')}</span>${chips}</div>`
     + pipe + ds
     + `<div class="bci-note"><b>${u('bciNote')}</b>${it.bci||it.desc}</div>`;
 }
+// 详情已内联进列表 → renderDetail 只需重渲列表
+function renderDetail(){ renderList(); }
 
 // ============ 交互 ============
-function select(id){ state.sel=id; renderElectrodes(); renderList(); renderDetail(); }
-function setModelView(v){ modelView=v; renderDetail(); }
+function select(id){ state.sel=id; renderElectrodes(); renderList(); }
+function setModelView(v){ modelView=v; renderList(); }
 function pipeIO(el){
   document.querySelectorAll('#detail .pstage').forEach(s=>s.classList.remove('act'));
   el.classList.add('act');
@@ -921,14 +1053,14 @@ const UIT = {
   navBrand:{zh:'BCI · EEG 交互图谱 · 节律 / 范式 ↔ 电极 / 脑区',en:'BCI · EEG Interactive Atlas · rhythms / paradigms ↔ electrodes / regions'},
   navRef:{zh:'参考 <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 10-20/10-10 · 2026.06.12',en:'ref. <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 10-20/10-10 · 2026.06.12'},
   eyebrow:{zh:'BCI 调研 · 交互版 · 2026.06.12',en:'BCI research · interactive · 2026.06.12'},
-  h1:{zh:'EEG 节律与刺激范式 · 电极与脑区对应交互图',en:'EEG rhythms & paradigms · electrode–region interactive atlas'},
+  h1:{zh:'EEG 节律与任务相关信号 · 电极与脑区对应交互图',en:'EEG rhythms & task-related signals · electrode–region interactive atlas'},
   lede:{zh:'选一个波形，它对应的电极、脑区会在头皮图上点亮并播放示意波。右上角切 <b>10-20 / 10-10</b> 命名；下方六组维度自由切换。',en:'Pick a waveform — its electrodes and brain regions light up on the scalp map and a schematic wave plays. Switch <b>10-20 / 10-10</b> naming top-right; six dimensions below.'},
   ctrlSys:{zh:'电极系统',en:'Electrode system'},
   ctrlMode:{zh:'查看维度',en:'Dimension'},
   sys2020:{zh:'10-20 · 临床 19 导',en:'10-20 · clinical 19ch'},
   sys1010:{zh:'10-10 · 研究 61 导',en:'10-10 · research 61ch'},
   mode_rhythm:{zh:'脑节律 · Oscillations',en:'Oscillations'},
-  mode_paradigm:{zh:'刺激范式 · Evoked',en:'Evoked'},
+  mode_paradigm:{zh:'任务相关 · Task-related',en:'Task-related'},
   mode_clinical:{zh:'临床/睡眠 · States',en:'Clinical / Sleep'},
   mode_abnormal:{zh:'异常/变异 · Abnormal',en:'Abnormal'},
   mode_seizure:{zh:'发作 · Seizures',en:'Seizures'},
@@ -949,7 +1081,7 @@ const UIT = {
   viewBack:{zh:'‹ 返回图谱',en:'‹ Back to atlas'},
   footer:{zh:'EEG 交互图谱 · 电极坐标承接 BCI-03（10-20 vs 10-10）· 波形为示意非真实录制 · 参考 <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 2026-06-12',en:'EEG Interactive Atlas · electrode coords from BCI-03 (10-20 vs 10-10) · waveforms are schematic, not real recordings · ref. <a href="https://www.learningeeg.com/" target="_blank">learningeeg.com</a> · 2026-06-12'},
   lt_rhythm:{zh:'脑节律 · 自发振荡',en:'Oscillations · spontaneous rhythms'},
-  lt_paradigm:{zh:'刺激范式 · 诱发电位',en:'Evoked · event-related potentials'},
+  lt_paradigm:{zh:'任务相关信号 · 按机制',en:'Task-related signals · by mechanism'},
   lt_clinical:{zh:'临床波形 · 清醒 / 睡眠',en:'Clinical · awake / asleep'},
   lt_abnormal:{zh:'异常 / 变异 · 良性变异 / 非癫痫 / 癫痫样',en:'Abnormal · variants / non-epileptiform / epileptiform'},
   lt_seizure:{zh:'发作 · 时间演变',en:'Seizures · time evolution'},
@@ -958,6 +1090,7 @@ const UIT = {
   rkElec:{zh:'电极',en:'Electrodes'},
   rkDataset:{zh:'数据集',en:'Datasets'},
   bciNote:{zh:'BCI 含义 · ',en:'BCI meaning · '},
+  boundNote:{zh:'别当成 · ',en:'Not · '},
   mClassic:{zh:'经典 ML',en:'Classic ML'},
   mDeep:{zh:'深度学习',en:'Deep learning'},
   pipeHint:{zh:'点击任一阶段 → 查看该步的输入 → 输出维度（C=通道, T=时间采样）',en:'Click any stage → see its input → output dims (C=channels, T=time samples)'},
@@ -992,18 +1125,29 @@ const EN = {
     ]
   },
   item:{
-    delta:{name:'Delta',waveCap:'slow, large, sparse deep-sleep waves (illustrative)',desc:'Dominant wave of deep N3 sleep and infancy. In an <b>awake adult</b>, if it persists focally it usually signals an underlying cortical/subcortical lesion (focal slowing). Lowest frequency, highest amplitude.',bci:'In BCI mainly a <b>sleep-staging</b> feature, or low-frequency drift to remove.'},
-    theta:{name:'Theta',waveCap:'mid-band waves of drowsiness / cognitive load (illustrative)',desc:'Linked to drowsiness and memory encoding. <b>Frontal-midline theta (Fz/FCz)</b> rises with working memory and cognitive load — one of the few rhythms that grows the more you think.',bci:'Frontal-midline theta indexes <b>workload / focus</b> and is used in neurofeedback.'},
-    alpha:{name:'Alpha',waveCap:'posterior dominant rhythm with eyes closed (illustrative)',desc:'The landmark EEG rhythm — the <b>posterior dominant rhythm (PDR)</b>. Strongest over occiput with eyes closed and relaxed; <b>suppressed the instant eyes open</b> (alpha block / Berger effect). The yardstick for a normal wakeful baseline.',bci:'Eyes-open/closed alpha is a common <b>switch / calibration</b> signal; alpha asymmetry relates to emotion/attention research.'},
-    mu:{name:'Mu',waveCap:'arch-shaped sensorimotor rhythm; blocked by (intended) movement, not eye opening (illustrative)',desc:'Same band as alpha but over <b>sensorimotor cortex (C3/C4)</b>, arch-shaped. Key property: <b>moving — or even just imagining moving — suppresses it</b>.',bci:'The <b>physical basis of motor-imagery BCI</b>. Imagining left/right hand suppresses contralateral C3/C4 mu — see ERD/ERS under Evoked.'},
-    beta:{name:'Beta',waveCap:'fast waves of alert focus / motor control (illustrative)',desc:'Mainly frontocentral; active focus, vigilance and motor control. <b>After</b> a movement the sensorimotor cortex shows a <b>beta rebound (ERS)</b>.',bci:'With mu, forms the dual-band feature for MI decoding; beta rebound reliably marks "movement done".'},
-    gamma:{name:'Gamma',waveCap:'local, high-frequency, broadly distributed (illustrative)',desc:'Tied to local feature binding, cross-area coordination and higher cognition. <b>Small amplitude, easily contaminated by EMG</b> — scalp gamma must be read with caution.',bci:'Tempting information but poor SNR; mostly research on <b>cognitive binding/attention</b>, rarely deployed.'},
-    ssvep:{name:'SSVEP',sym:'steady-state visual',meta:'occipital · freq-tagged',waveCap:'stare at a 12 Hz flicker → same-frequency steady-state over occiput (illustrative)',desc:'Stare at a target flickering at a fixed frequency (e.g. 12 Hz) and the <b>occiput (Oz/POz)</b> shows a steady-state response at the <b>same frequency and its harmonics</b>. Very high SNR, near training-free.',bci:'Workhorse of <b>high-speed spellers</b>: many boxes flickering at different frequencies, decode whichever you look at. Among the highest-ITR paradigms.'},
-    erders:{name:'ERD / ERS',sym:'desync / rebound',meta:'sensorimotor · lateralized',waveCap:'motor imagery → mu/beta power drops (ERD) → rebounds after (ERS)',desc:'Real or imagined movement drops mu/beta power over the <b>contralateral sensorimotor cortex</b> (<b>ERD</b>); after movement the power rebounds (<b>ERS</b>). Left hand → right brain C4, right hand → left brain C3.',bci:'<b>Core feature of motor-imagery BCI</b>. CSP / Riemannian methods extract the lateralized C3/C4 power difference for wheelchair, prosthesis and rehab control.'},
-    p300:{name:'P300',sym:'oddball positivity',meta:'parietal · ~300 ms',waveCap:'large parietal positivity ~300 ms after a rare target (positive-up)',desc:'In an oddball task, a <b>rare/task-relevant</b> target evokes a large positivity over the <b>parietal region (Pz/CPz)</b> at ~300 ms. P3a (frontal · novelty) vs P3b (parietal · task-relevant).',bci:'Basis of the <b>P300 speller</b>: rows/columns of a character matrix flash; the target evokes P300, locating the gazed letter. Robust and cross-subject stable.'},
-    n400:{name:'N400',sym:'semantic mismatch',meta:'centro-parietal · ~400 ms',waveCap:'centro-parietal negativity ~400 ms after a semantic mismatch (positive-up)',desc:'A semantic violation (e.g. "I drank a glass of <b>sand</b>") evokes a negativity over the <b>centro-parietal region</b> at ~400 ms, scaling with the degree of mismatch.',bci:'An electrophysiological index of language/semantic processing — used for <b>covert semantic judgment, lie detection, concept ID</b> and as a probe for semantic decoding.'},
-    errp:{name:'ErrP',sym:'error-related potential',meta:'frontocentral · ERN+Pe',waveCap:'frontocentral negativity after an error (ERN ~80 ms) + later Pe (positive-up)',desc:'When the system or you make an <b>error</b>, the <b>frontocentral region (FCz/Cz)</b> shows an error-related negativity (ERN, ~80 ms) plus a later Pe positivity. Source: the <b>anterior cingulate (ACC)</b>.',bci:'A BCI <b>"undo / online correction"</b>: detect an ErrP and roll back the last decoded action, markedly improving speller and control accuracy.'},
-    rsvp:{name:'RSVP',sym:'rapid serial visual',meta:'occ→par · P300-triggered',waveCap:'a target in the fast stream → occipital visual response + parietal P300',desc:'Images/characters flash in a <b>rapid serial stream</b> at ~10 Hz; a target triggers a P300 plus an <b>occipital visual response</b>. It turns a person into a detector.',bci:'<b>Brain-controlled image retrieval / brain-triage</b>: scan many images fast and flag "that one had a target" via P300 — far faster than manual clicking.'},
+    delta:{name:'Delta',waveCap:'slow, large, sparse deep-sleep waves (illustrative)',desc:'Dominant wave of deep N3 sleep and infancy — <b>lowest frequency (0.5–4 Hz), highest amplitude</b>, frontally maximal. In an <b>awake adult</b>, persistent focal delta suggests an underlying cortical/subcortical lesion (focal slowing); diffuse slowing points to toxic–metabolic–hypoxic encephalopathy.',bound:'Much awake scalp "delta" is <b>eye / sweat / movement artifact</b> — rule those out before calling it pathology; the low-frequency edge overlaps amplifier drift, so do not mistake drift for delta.',bci:'In BCI mainly a <b>sleep-staging</b> feature, or low-frequency drift to remove.'},
+    theta:{name:'Theta',waveCap:'mid-band waves of drowsiness / cognitive load (illustrative)',desc:'4–8 Hz. Linked to drowsiness and memory encoding; <b>frontal-midline theta (Fz/FCz)</b> rises with working-memory load and cognitive control — one of the few rhythms that grows the more you think (prefrontal–hippocampal circuit).',bound:'Cognitive frontal-midline theta and drowsy / pathological temporal theta have <b>different sources</b> — do not conflate them; load-related but not a specific "workload gauge", strongly shaped by individual, task and drowsiness.',bci:'Frontal-midline theta indexes <b>workload / focus</b> and is used in neurofeedback.'},
+    alpha:{name:'Alpha',waveCap:'posterior dominant rhythm with eyes closed (illustrative)',desc:'The landmark EEG rhythm — the <b>posterior dominant rhythm (PDR)</b>, 8–13 Hz. Strongest over occiput with eyes closed; <b>suppressed the instant eyes open / attend</b> (alpha block / Berger effect). Parieto-occipital alpha <b>lateralizes</b> with spatial attention (lower on the attended side, higher on the other).',bound:'Alpha is an 8–13 Hz <b>rhythm</b>, not a slow potential (MRCP/SCP are the <3 Hz ones); occipital alpha and central mu are <b>same band, different sources</b> — separate them by topography and reactivity, not the band name.',bci:'Eyes-open/closed alpha is a common <b>switch / calibration</b> signal; alpha asymmetry relates to emotion/attention research.'},
+    mu:{name:'Mu',waveCap:'arch-shaped sensorimotor rhythm; blocked by (intended) movement, not eye opening (illustrative)',desc:'Same band as alpha (8–13 Hz, often with a beta harmonic) but over <b>sensorimotor cortex (C3/C4)</b>, arch-shaped. Key property: <b>actual, observed or even imagined movement suppresses it</b> (mirror-neuron link); <b>eye opening does not</b>, distinguishing it from occipital alpha.',bound:'Do not call it alpha by band alone — identify it by <b>central topography + reactivity to movement (not eye-opening)</b>; mu suppression alone cannot separate imagined / actual / observed movement.',bci:'The <b>physical basis of motor-imagery BCI</b>. Imagining left/right hand suppresses contralateral C3/C4 mu — see Sensorimotor ERD/ERS under Task-related.'},
+    beta:{name:'Beta',waveCap:'fast waves of alert focus / motor control (illustrative)',desc:'13–30 Hz, mainly frontocentral; active focus, vigilance and <b>maintaining the current motor state (status quo)</b>. <b>After</b> a movement the sensorimotor cortex shows a <b>beta rebound (PMBR / ERS)</b> ~0.5–1 s post-completion.',bound:'The <b>beta rebound is not a generic "success / done" label</b> — it is modulated by task, feedback and sensory input; the high end of scalp beta easily mixes with <b>EMG</b>.',bci:'With mu, forms the dual-band feature for MI decoding; beta rebound reliably marks "movement done".'},
+    gamma:{name:'Gamma',waveCap:'local, high-frequency, broadly distributed (illustrative)',desc:'>30 Hz, tied to local feature binding, cross-area coordination and higher cognition. <b>Very small amplitude, easily contaminated by EMG and micro-saccadic spikes</b> — scalp gamma must be read with great caution.',bound:'Much scalp "gamma" is actually <b>muscle / micro-saccade artifact</b>, not a cortical rhythm; strictly remove EMG before reporting scalp gamma, and do not treat it as direct evidence of cognitive binding.',bci:'Tempting information but poor SNR; mostly research on <b>cognitive binding/attention</b>, rarely deployed.'},
+    ssvep:{name:'SSVEP',sym:'steady-state visual',meta:'occipital · freq-tagged',waveCap:'stare at a 12 Hz flicker → same-frequency steady-state over occiput (illustrative)',desc:'Stare at a target flickering at a fixed frequency (typically 6–30 Hz) and the <b>occiput (Oz/POz)</b> shows a steady-state response at the <b>fundamental and its harmonics</b>, continuously phase-locked. Mid frequencies (~10–15 Hz) are strongest; very high SNR, near training-free; CCA / FBCCA are standard decoders.',bound:'Depends on <b>gaze</b> (covert-attention gain is limited), so it is not eye-movement-free; low-frequency flicker carries a <b>photosensitive-epilepsy</b> risk; neighbouring frequencies and harmonics cross-talk, so frequencies cannot be chosen freely.',bci:'Workhorse of <b>high-speed spellers</b>: many boxes flickering at different frequencies, decode whichever you look at. Among the highest-ITR paradigms.'},
+    erders:{name:'Sensorimotor ERD/ERS',sym:'desync / rebound',meta:'carrier: mu/beta · lateralized · non-phase-locked',waveCap:'motor imagery → mu/beta power drops (ERD) → rebounds after (ERS / beta rebound)',desc:'Real or imagined movement drops <b>power</b> in carrier rhythms (<b>mu 8–13 / beta 13–30 Hz</b>) over the <b>contralateral sensorimotor cortex</b> (<b>ERD</b>); it rebounds afterwards (<b>ERS / beta rebound</b>). The key is a <b>power change that is NOT phase-locked across trials</b> — so it is not an "evoked potential". Left hand → right brain C4, right hand → left brain C3. (↔ see Mu under Oscillations.)',bound:'<b>Trial averaging cancels it</b> (non-phase-locked) — read the power spectrum instead; C3/C4 power alone <b>cannot reliably separate imagined / actual / passive movement</b>; the PMBR rebound is modulated by task and feedback, not a generic "success" label.',bci:'<b>Core feature of motor-imagery BCI</b>. CSP / Riemannian methods extract the lateralized C3/C4 power difference for wheelchair, prosthesis and rehab control.'},
+    p300:{name:'P300',sym:'oddball positivity',meta:'parietal Pz · ~300–500 ms · P3a/P3b',waveCap:'large parietal positivity ~300 ms after a rare target (positive-up)',desc:'In an oddball task, a <b>rare / task-relevant</b> target evokes a large positivity over the <b>parietal region (Pz/CPz)</b> at ~300–500 ms: <b>P3a</b> (frontocentral · automatic novelty capture) vs <b>P3b</b> (parietal · task-relevant, context updating). Latency lengthens with task difficulty; amplitude grows as target probability falls.',bound:'Not a readout of "recognised content" but a <b>context-updating / resource-allocation</b> signal; latency depends on task difficulty, so do not fix it at 300 ms.',bci:'Basis of the <b>P300 speller</b>: rows/columns of a character matrix flash; the target evokes P300, locating the gazed letter. Robust and cross-subject stable.'},
+    n400:{name:'N400',sym:'semantic mismatch',meta:'centro-parietal · peak ~400 ms (300–500)',waveCap:'centro-parietal negativity ~400 ms after a semantic mismatch (positive-up)',desc:'When meaning is <b>hard to integrate with the prior context</b> (e.g. "I drank a glass of <b>sand</b>"), the <b>centro-parietal region (slightly right)</b> shows a negativity at ~300–500 ms (peak ~400 ms); amplitude grows as <b>contextual fit / cloze probability</b> falls, not limited to "wrong" sentences.',bound:'It indexes <b>semantic integration difficulty</b>, not a true / false judgment; modulated by word frequency, repetition and predictability, so it is not a truth detector.',bci:'An electrophysiological index of language/semantic processing — used for <b>covert semantic judgment, lie detection, concept ID</b> and as a probe for semantic decoding.'},
+    errp:{name:'ErrP',sym:'error-related potential',meta:'frontocentral FCz · ERN~50–100 / Pe~200–400 ms',waveCap:'frontocentral negativity after an error (ERN ~80 ms) + later Pe (positive-up)',desc:'On an error the <b>frontocentral region (FCz/Cz)</b> first shows the <b>ERN/Ne</b> (~50–100 ms after the erroneous response) then the <b>Pe</b> (~200–400 ms positivity, tied to error awareness); an externally-signalled error gives an <b>FRN</b> (~250 ms after feedback). Source: the <b>anterior cingulate / medial frontal cortex</b>. Includes response (rErrP) and interaction (iErrP, watching a machine err) variants.',bound:'Not "knowing the correct answer" but "detecting a mismatch with expectation"; the ERN also appears on <b>correct but high-conflict</b> trials, so it is not a pure error switch.',bci:'A BCI <b>"undo / online correction"</b>: detect an ErrP and roll back the last decoded action, markedly improving speller and control accuracy.'},
+    rsvp:{name:'RSVP',sym:'paradigm · not a signal',meta:'presentation paradigm → elicits VEP+N2pc+P300',waveCap:'a target in the fast stream → occipital VEP + parietal P300 (with N2pc)',desc:'⚠ <b>This is a stimulus-presentation paradigm, not a brain signal.</b> Images/characters flash in a <b>rapid serial stream</b> at ~10 Hz; a target successively elicits an <b>early VEP → N2pc → P300</b>. It reuses the components above rather than being a distinct mechanism.',bound:'It produces no new waveform of its own — you read the VEP/N2pc/P300 it evokes; a high presentation rate makes adjacent responses <b>overlap in time</b>, needing deconvolution / xDAWN, so it is not clean single-trial.',bci:'<b>Brain-controlled image retrieval / brain-triage</b>: turn a person into a detector and flag "that one had a target" via P300 — far faster than manual clicking.'},
+    vep:{name:'VEP',sym:'visual evoked',meta:'occipital · P1/N1/P2 · phase-locked',waveCap:'flash / pattern-reversal → occipital P1(~100)–N1(~135)–P2(~200 ms) (positive-up)',desc:'A visual stimulus (flash / pattern-reversal / image) phase-locks a train of components over the <b>occiput (Oz/POz)</b>: <b>P1(~100 ms)–N1(~135)–P2(~200 ms)</b> (pattern-reversal also gives a stable <b>P100</b>). <b>Latency is more reliable than amplitude</b> and stable within-subject; the building block under every visual paradigm (SSVEP/c-VEP/RSVP).',bound:'Not "seeing" itself — it reflects the stimulus physics (contrast / spatial frequency / luminance), not perceptual content; clinically read the <b>P100 latency</b>, not the absolute amplitude.',bci:'A sensory-channel parent response. Clinically probes visual-pathway integrity; in BCI it is the physiological basis of visual paradigms, rarely a control signal on its own.'},
+    aep:{name:'AEP',sym:'auditory evoked',meta:'temporal+vertex · P50/N1/P2 · phase-locked',waveCap:'a click → vertex P50–N1(~100)–P2(~180 ms) (positive-up)',desc:'A sound generates a response in <b>temporal auditory cortex (Heschl)</b>, recorded via a tangential dipole maximally at the <b>vertex (Cz)</b>: mid-latency <b>P50–N1(~100)–P2(~180 ms)</b>; earlier still is the brainstem ABR (<10 ms). <b>P50 sensory gating</b> (paired-click S2/S1 ratio) is a common schizophrenia-research index.',bound:'Vertex-maximal ≠ source at the vertex — the source is temporal, a tangential-dipole projection; N1 is strongly modulated by <b>attention and stimulus interval (SOA)</b>, so it is not a pure passive sensory measure.',bci:'A sensory-channel parent response; needs no gaze, so it suits <b>vision-free / eyes-closed BCI</b> and consciousness assessment — the transient counterpart of ASSR and MMN.'},
+    sep:{name:'SEP',sym:'somatosensory evoked',meta:'contralateral S1 · N20/P27 · short-latency',waveCap:'median-nerve stimulation → contralateral S1 short-latency N20–P27 (ms-scale, positive-up)',desc:'Electrical stimulation of a peripheral nerve (e.g. median at the wrist) phase-locks, via the thalamo-cortical pathway, a <b>short-latency N20 / P27</b> over <b>contralateral primary somatosensory cortex (post-central, C3′/C4′)</b> (compressed on the 800 ms axis here). N20 is the earliest cortical component and the gold standard for intra-operative spinal / cortical pathway monitoring.',bound:'The timescale is <b>milliseconds</b>, not the hundreds of ms of an ERP; scalp SEP amplitude is small and needs heavy averaging; a missing N20 means a broken pathway, not "did not feel it".',bci:'A sensory-channel parent response; clinically monitors the somatosensory pathway — the transient counterpart of SSSEP.'},
+    n2pc:{name:'N2pc',sym:'spatial-attention negativity',meta:'contralateral posterior · ~200–300 ms',waveCap:'attention to one side → contralateral posterior (PO7/PO8) negativity (positive-up)',desc:'When spatial attention <b>selects a lateralized target</b>, the <b>contralateral posterior sites (PO7/PO8)</b> go relatively negative (contra minus ipsi) at ~200–300 ms. It marks the <b>spatial selection / allocation</b> of attention, preceding and partly predicting the later P300.',bound:'It is a <b>relative</b> (contra − ipsi) difference, not an absolute potential; it marks which side attention went to, not "which object it is".',bci:'Explains why an RSVP target is "selected": N2pc attentional locking precedes the P300. Used in attention / target-selection BCI.'},
+    mmn:{name:'MMN',sym:'mismatch negativity',meta:'frontocentral · ~150–250 ms · pre-attentive',waveCap:'a deviant in the stream → automatic frontocentral mismatch negativity (positive-up)',desc:'A <b>deviant stimulus</b> in a regular stream elicits an automatic frontocentral (Fz/FCz) negativity at ~150–250 ms (deviant minus standard), often reversing polarity at the mastoids, <b>even without attention</b>. It reflects the auditory cortex\'s <b>automatic prediction and deviance detection (predictive coding)</b>; sources include superior temporal and inferior frontal gyri.',bound:'It is a <b>difference wave</b> (deviant minus standard); "pre-attentive" does not mean fully attention-independent; single-subject single-trial amplitude is small, so it cannot be read reliably per trial.',bci:'<b>Pre-attentive, needs no active cooperation</b> — a cornerstone of <b>passive BCI</b> and <b>bedside disorders-of-consciousness (DoC) assessment</b> (MMN present ↔ better prognosis).'},
+    assr:{name:'ASSR',sym:'auditory steady-state',meta:'temporal/vertex · ~40 Hz tag',waveCap:'~40 Hz amplitude-modulated sound → same-frequency steady-state over auditory cortex (illustrative)',desc:'A sound modulated at <b>~40 Hz</b> (AM / FM) drives a same-frequency phase-locked steady-state in <b>auditory cortex</b>, resonating maximally at 40 Hz (thalamo-cortical loop). It supports objective audiometry and auditory-pathway assessment; awake > sleep / anesthesia.',bound:'The 40 Hz amplitude is strongly suppressed by <b>arousal / sleep / anesthesia</b> — which makes it an anesthesia-depth index, and also means its amplitude is not a pure peripheral-hearing readout.',bci:'The auditory SSVEP: a <b>vision-free auditory BCI</b> and objective hearing / consciousness measure; 40 Hz ASSR also indexes anesthesia depth.'},
+    sssep:{name:'SSSEP',sym:'somatosensory steady-state',meta:'contralateral S1 · ~20–26 Hz',waveCap:'periodic fingertip vibration (~20–26 Hz) → contralateral S1 same-frequency steady-state (illustrative)',desc:'Periodic tactile vibration (subject-specific resonance ~20–26 Hz) at the fingertip drives a same-frequency phase-locked steady-state over <b>contralateral somatosensory cortex</b>; attending to the stimulated finger modulates its amplitude. An independent BCI route, useful for <b>vision / hearing-impaired</b> users.',bound:'The resonant frequency <b>varies by person and body site</b> and must be calibrated; attentional modulation is small with large individual variance, so do not expect SSVEP-level ITR.',bci:'A tactile steady-state BCI: attending to the stimulated finger modulates SSSEP amplitude, enabling vision-free selection.'},
+    cvep:{name:'c-VEP',sym:'code-modulated visual',meta:'occipital · m-sequence code · template decoding',waveCap:'pseudo-random (m-sequence) flicker → code-locked occipital response, template/CCA decoding (illustrative)',desc:'The target flickers with a <b>pseudo-random code (m-sequence, Gold code)</b> instead of a single frequency; targets are distinguished by <b>circular shifts</b> of the same code. The occiput produces a <b>code-locked broadband response</b> decoded by template / CCA matching. Mechanistically still phase-locked visual evoked, but the coding + decoding is its own route.',bound:'It needs a <b>short per-subject calibration</b> for the template, so it is not fully training-free; it still depends on gaze; the "high speed" relies on precise <b>stimulus-to-record timing (frame sync)</b>, so do not ignore latency jitter.',bci:'One of the <b>fastest non-invasive</b> visual BCIs: a short calibration code yields a template for high-ITR spelling over tens–hundreds of targets — should not be fully merged into SSVEP.'},
+    mrcp:{name:'MRCP',sym:'movement-related cortical potential',meta:'central · <3 Hz slow potential · 1.5–2 s pre-move',waveCap:'slow negativity 1–2 s before movement (BP/readiness potential) → motor potential → post-movement return',desc:'Before a voluntary (or imagined) movement the central region shows a <3 Hz slow negativity building <b>1.5–2 s beforehand</b>, in layers: <b>early BP/BP1</b> (−2 to −0.5 s · bilateral · SMA/pre-SMA) → <b>late BP/NS′</b> (−0.5 s to move · steeper · contralateral M1/premotor) → <b>Motor Potential</b> (near EMG onset · focal) → post-movement potential (re-afference / sensory feedback). An <b>endogenous motor-intention</b> signal, no external stimulus needed.',bound:'Not "the precise instant of conscious decision" (it may be preparation / accumulation / fluctuation); <b>few channels ≠ easy single-trial</b> — online single-trial needs DC-coupling or a high-pass ≤0.05–0.1 Hz + spatial filtering + individual calibration; a 0.5–1 Hz high-pass strips the early BP; the post-movement potential must not masquerade as pre-movement intent.',bci:'A <b>key control signal for stroke-rehab BCI</b>: movement intention is detectable hundreds of ms before onset, pairing with ERD/ERS into an <b>intention → feedback</b> loop that triggers FES / an exoskeleton — exactly where motor-imagery datasets like HS Stroke apply.'},
+    cnv:{name:'CNV',sym:'contingent negative variation',meta:'frontocentral · S1→S2 expectancy',waveCap:'sustained negativity between a warning stimulus (S1) and an imperative stimulus (S2)',desc:'Between a <b>warning stimulus S1</b> and an <b>imperative stimulus S2</b> (usually 1–2 s apart), the frontocentral region sustains a <b>negativity</b>: an <b>early CNV</b> (more frontal · orienting / arousal) and a <b>late CNV</b> (more central · motor preparation, close to a pre-S2 BP); it resolves after S2 and the response. Reflects <b>expectancy and preparation</b>.',bound:'Its amplitude mixes attention, arousal, time estimation and motor preparation — not a single "focus" readout; it needs a fixed S1–S2 interval and is heavily affected by <b>slow drift / EOG</b>.',bci:'An endogenous index of expectancy / preparation, used for <b>attention and readiness-state monitoring</b> and vigilance assessment — a member of the slow-potential route.'},
+    scp:{name:'SCP',sym:'slow cortical potential',meta:'cortical · seconds-scale self-regulated shift',waveCap:'trained voluntary negative / positive shift of the cortical potential over seconds',desc:'A <b>seconds-scale overall shift of the cortical potential</b>: a negative shift = more apical-dendritic depolarization / raised cortical excitability; a positive shift the reverse. After <b>dozens of feedback-training runs</b> users can voluntarily produce a shift in a chosen direction. Birbaumer\'s <b>SCP-BCI (Thought Translation Device)</b> let locked-in (LIS) patients spell by binary negative / positive shifts.',bound:'Slow to train (weeks) and low-rate (seconds per selection); strongly dependent on <b>near-DC acquisition and drift / artifact control</b>; unstable for end-stage completely-locked-in patients, so it is not plug-and-play.',bci:'One of the first BCIs to give <b>completely locked-in patients</b> communication; slow to train and low-rate, but purely endogenous — independent of any stimulus or residual movement.'},
     pdr:{name:'PDR (posterior rhythm)',sym:'α·awake',meta:'occipital · 8–13 Hz',waveCap:'occiput-dominant with eyes closed; suppressed on eye opening (reactivity)',desc:'The first thing you read clinically: the <b>posterior dominant rhythm (PDR)</b>. Normal adult eyes-closed 8–13 Hz, strongest over occiput, <b>attenuating immediately on eye opening / attention</b>. Its frequency, symmetry and reactivity define a normal baseline.',bci:'<b>Awake / alert baseline</b>. A slowed or asymmetric PDR → diffuse encephalopathy or a focal lesion.'},
     mu_c:{name:'Mu rhythm',sym:'μ·awake',meta:'central · arciform',waveCap:'central arciform rhythm; not blocked by eye opening, only by (intended) movement',desc:'An 8–13 Hz arciform rhythm over sensorimotor cortex. Unlike PDR, <b>eye opening does not block it</b> — only (imagining) moving the contralateral hand does. Do not mistake it for occipital alpha.',bci:'The mu of MI-BCI; on a read it marks "not currently moving the hand".'},
     lambda:{name:'Lambda waves',sym:'λ·awake',meta:'occipital · saccade-evoked',waveCap:'occipital positive saw-tooth sharp waves while scanning a textured scene, eyes open',desc:'Positive sharp transients over occiput while <b>scanning with eyes open</b> (a textured image). Physiological — <b>do not mistake for occipital spikes</b>. Same shape as sleep POSTS but in the awake eyes-open state.',bci:'A visual/eye-movement physiological transient; identify and separate it during visual-paradigm preprocessing.'},
