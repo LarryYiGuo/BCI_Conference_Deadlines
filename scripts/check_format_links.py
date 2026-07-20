@@ -50,6 +50,13 @@ def is_dead(url: str) -> tuple[bool, str]:
             return True, f"HTTP {code}"
         except requests.exceptions.SSLError:
             return False, "SSL cert issue (assumed alive)"  # cert ≠ gone
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            # connection reset/refused/timeout: many venue sites (e.g. bcisociety.org)
+            # drop non-browser clients at the socket level, which is a "wall", not a 404.
+            # Don't cry wolf — only a genuine HTTP 4xx (that isn't a known wall) is "dead".
+            if method == "get":
+                return False, f"{type(e).__name__} (assumed alive)"
+            continue
         except requests.RequestException as e:
             if method == "get":
                 return True, type(e).__name__
