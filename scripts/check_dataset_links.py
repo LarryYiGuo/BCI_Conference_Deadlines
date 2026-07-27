@@ -42,14 +42,21 @@ def is_dead(url: str) -> tuple[bool, str]:
                 r.close()
             if code < 400:
                 return False, f"{code}"
-            if code in (403, 405, 406, 418) and method == "head":
+            if code in (403, 405, 406, 415, 418) and method == "head":
                 continue  # some hosts block HEAD / bots — retry with GET
-            if code in (401, 403, 406, 418, 429) or 500 <= code <= 599:
-                # bot/rate-limit walls + transient gateway errors (502/503/504) aren't "dead"
+            if code in (401, 403, 406, 415, 418, 429) or 500 <= code <= 599:
+                # bot/rate-limit/WAF walls (415 = content-negotiation reject on GET) +
+                # transient gateway errors (502/503/504) aren't "dead"
                 return False, f"{code} (wall, assumed alive)"
             return True, f"HTTP {code}"
         except requests.exceptions.SSLError:
             return False, "SSL cert issue (assumed alive)"  # cert ≠ gone
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            # connection reset/refused/timeout: some hosts drop non-browser clients at
+            # the socket level, which is a wall, not a 404. Don't cry wolf.
+            if method == "get":
+                return False, f"{type(e).__name__} (assumed alive)"
+            continue
         except requests.RequestException as e:
             if method == "get":
                 return True, type(e).__name__
