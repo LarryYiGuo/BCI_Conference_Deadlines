@@ -814,13 +814,13 @@
   title: EMBC
   year: 2027
   full_name: International Conference of the IEEE Engineering in Medicine and Biology Society
-  link: 'https://embc.embs.org/'
+  link: 'https://embc.embs.org/2027/'
   deadline: TBD
   abstract_deadline:
   tz: '-05:00'
   tz_label: EST
-  date: Jul 2027
-  place: TBD
+  date: Jul 11–15, 2027
+  place: Singapore
   format: 'https://www.ieee.org/conferences/publishing/templates.html'
   format_type: IEEE 会议模板
   format_type_en: IEEE conf template
@@ -830,7 +830,7 @@
   h5: 47
   ccfddl:
   track:
-  estimated: true
+  estimated: false
   note: EMBC 2026 (Toronto, Jul) 各轮截稿已过;2027 届(第 49 届)预计 2026 年 11 月截稿
   note_en: EMBC 2026 (Toronto, Jul) rounds closed; 2027 (49th) deadline expected ~November 2026
 
