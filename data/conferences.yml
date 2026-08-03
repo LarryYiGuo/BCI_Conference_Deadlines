@@ -59,8 +59,8 @@
   year: 2027
   full_name: AAAI Conference on Artificial Intelligence
   link: 'https://aaai.org/conference/aaai/aaai-27/'
-  deadline: '2026-07-28 23:59'
-  abstract_deadline: '2026-07-21 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: UTC-12
   date: February 16-23, 2027
@@ -74,7 +74,7 @@
   h5: 232
   ccfddl: aaai
   track:
-  estimated: false
+  estimated: true
   note: 官方已公布(第 41 届)
   note_en: Officially announced (41st edition)
 
@@ -82,13 +82,13 @@
   title: ICLR
   year: 2027
   full_name: International Conference on Learning Representations
-  link: 'https://iclr.cc/'
-  deadline: '2026-09-23 23:59'
+  link: 'https://iclr.cc/Conferences/2027'
+  deadline: '2026-09-25 23:59'
   abstract_deadline: '2026-09-18 23:59'
   tz: '-12:00'
   tz_label: AoE
-  date: Late Apr 2027
-  place: West Coast North America (TBD)
+  date: April 26-30, 2027
+  place: San Francisco, CA, USA
   format: 'https://github.com/ICLR/Master-Template'
   format_type: ICLR LaTeX 模板 (style files)
   format_type_en: ICLR LaTeX template
@@ -98,7 +98,7 @@
   h5: 362
   ccfddl: iclr
   track:
-  estimated: true
+  estimated: false
   note: 官方确认北美西海岸举办;截稿按 2026 届规律推测
   note_en: Officially confirmed for West Coast North America; deadline estimated from the ICLR 2026 pattern
 
@@ -229,8 +229,8 @@
   year: 2027
   full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining
   link: 'https://kdd2027.kdd.org/'
-  deadline: '2026-07-26 23:59'
-  abstract_deadline: '2026-07-19 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: August 2027 (exact dates TBD)
@@ -243,8 +243,8 @@
   core: A*
   h5: 124
   ccfddl: sigkdd
-  track: 1st round of 2 total rounds
-  estimated: false
+  track:
+  estimated: true
   note: 每年两个 cycle(8 月 / 次年 2 月);按 KDD 2026 Cycle 1 规律推测
   note_en: Two cycles per year (Aug / following Feb); estimated from the KDD 2026 Cycle 1 pattern
 
