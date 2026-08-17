@@ -569,7 +569,7 @@
   year: 2026
   full_name: ACM Multimedia Asia
   link: 'https://www.mmasia2026.org/'
-  deadline: 2026-08-14 23:59
+  deadline: 2026-08-21 23:59
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
@@ -583,7 +583,7 @@
   core: C
   h5: 14
   ccfddl: mmasia
-  track: Regular Paper / Special Session Submission
+  track: Special Session Paper
   estimated: false
   note: 2026 届官网未上线;据指导委员会文件投稿截止目标定在 2026 年 7 月中旬
   note_en: 2026 site not yet online; steering documents target a mid-July 2026 deadline
