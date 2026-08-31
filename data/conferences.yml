@@ -473,8 +473,8 @@
   year: 2027
   full_name: IEEE/CVF Winter Conference on Applications of Computer Vision
   link: 'https://wacv.thecvf.com/'
-  deadline: '2026-08-28 23:59'
-  abstract_deadline: '2026-08-21 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: Jan 5 - 9, 2027
@@ -487,8 +487,8 @@
   core: A
   h5: 131
   ccfddl: wacv
-  track: Second round
-  estimated: false
+  track:
+  estimated: true
   note: 两轮投稿——Round 1 注册 6/19 / 提交 6/26;Round 2 注册 8/21 / 提交 8/28
   note_en: Two rounds — R1 register Jun 19 / submit Jun 26; R2 register Aug 21 / submit Aug 28
 
