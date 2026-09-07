@@ -106,13 +106,13 @@
   title: AISTATS
   year: 2027
   full_name: International Conference on Artificial Intelligence and Statistics
-  link: 'https://aistats.org/'
-  deadline: '2026-10-01 23:59'
-  abstract_deadline: '2026-09-24 23:59'
+  link: 'https://virtual.aistats.org/Conferences/2027'
+  deadline: '2026-10-06 23:59'
+  abstract_deadline: '2026-09-29 23:59'
   tz: '-12:00'
-  tz_label: AoE
-  date: Spring 2027
-  place: TBD
+  tz_label: UTC-12
+  date: May 3, 2027
+  place: Montréal, Canada
   format: 'https://aistats.org/'
   format_type: AISTATS LaTeX 模板 (PaperPack)
   format_type_en: AISTATS template
@@ -122,7 +122,7 @@
   h5: 101
   ccfddl: aistats
   track:
-  estimated: true
+  estimated: false
   note: 按 2026 届规律推测
   note_en: Estimated from the 2026 cycle
 
@@ -496,13 +496,13 @@
   title: CVPR
   year: 2027
   full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
-  link: 'https://cvpr.thecvf.com/'
-  deadline: '2026-11-12 23:59'
-  abstract_deadline: '2026-11-06 23:59'
+  link: 'https://cvpr.thecvf.com/Conferences/2027'
+  deadline: '2026-11-16 23:59'
+  abstract_deadline: '2026-11-10 23:59'
   tz: '-12:00'
-  tz_label: AoE
-  date: Jun 20-24, 2027
-  place: Seattle, WA, USA
+  tz_label: UTC-12
+  date: June 20-24, 2027
+  place: Seattle, WA, United States
   format: 'https://github.com/cvpr-org/author-kit'
   format_type: CVF author kit (LaTeX)
   format_type_en: CVF author kit
@@ -512,7 +512,7 @@
   h5: 450
   ccfddl: cvpr
   track:
-  estimated: true
+  estimated: false
   note: 地点 Seattle 已由 CVF 确认;截稿按 2026 届规律推测
   note_en: Seattle confirmed by CVF; deadline estimated from the 2026 cycle
 
@@ -569,7 +569,7 @@
   year: 2026
   full_name: ACM Multimedia Asia
   link: 'https://www.mmasia2026.org/'
-  deadline: 2026-09-01 23:59
+  deadline: TBD
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
@@ -583,8 +583,8 @@
   core: C
   h5: 14
   ccfddl: mmasia
-  track: Demo / Industry Submission
-  estimated: false
+  track:
+  estimated: true
   note: 2026 届官网未上线;据指导委员会文件投稿截止目标定在 2026 年 7 月中旬
   note_en: 2026 site not yet online; steering documents target a mid-July 2026 deadline
 
