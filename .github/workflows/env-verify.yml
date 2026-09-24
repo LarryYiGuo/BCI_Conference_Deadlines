@@ -1,0 +1,86 @@
+name: Verify BCI starter environment
+
+# 每周在 macOS / Windows / Linux 上从 ci/spec.yml 建一次最新环境并跑冒烟测试。
+# 三个平台全部通过,才更新 verified.json 里的「已验证版本」和锁定的 environment.yml;
+# 有平台失败时保留上次通过的版本,只记录这次的失败,网页上会标出来。
+on:
+  schedule:
+    - cron: '30 5 * * 1'   # 每周一 05:30 UTC,和 06:00 的截稿同步错开
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'BCI_Basic_Development_Environment_Setup/ci/**'
+      - 'BCI_Basic_Development_Environment_Setup/smoke_test.py'
+      - '.github/workflows/env-verify.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: env-verify
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: smoke (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: conda-incubator/setup-miniconda@v4
+        with:
+          miniforge-version: latest
+          environment-file: BCI_Basic_Development_Environment_Setup/ci/spec.yml
+          activate-environment: bci
+          conda-remove-defaults: true
+          auto-activate-base: false
+
+      - name: Smoke test
+        run: python BCI_Basic_Development_Environment_Setup/smoke_test.py --json "result-${{ runner.os }}.json"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: result-${{ runner.os }}
+          path: result-${{ runner.os }}.json
+          if-no-files-found: warn
+
+  publish:
+    needs: smoke
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: result-*
+          merge-multiple: true
+          path: results
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Aggregate results
+        run: >
+          python BCI_Basic_Development_Environment_Setup/ci/aggregate.py results
+          --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add BCI_Basic_Development_Environment_Setup/verified.json BCI_Basic_Development_Environment_Setup/environment.yml
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "chore(env): 3-platform smoke test $(date -u +%F)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1

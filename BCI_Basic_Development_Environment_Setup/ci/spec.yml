@@ -1,0 +1,33 @@
+# 松散规格,只给 CI 用。入门者请用上一级的 environment.yml(已锁定到验证过的版本)。
+# CI 每周用这份在 macOS / Windows / Linux 各建一次最新环境,三平台冒烟测试全部通过,
+# 才把解出来的版本写回 ../environment.yml。
+#
+# 两条硬规矩(都是踩出来的):
+# 1. 需要编译的包(torch 家族、numpy、scipy、pandas、h5py、mne)一律走 conda-forge。
+#    braindecode 依赖 torchaudio;如果 conda 这边不装,pip 会从 PyPI 另拉一份,
+#    它的 C 扩展是按 PyPI 版 torch 编译的,跟 conda-forge 的 torch 混在一起是隐患,
+#    而且 pip check 查不出来。
+# 2. 用 mne-base,不用 mne。conda-forge 的 mne 是带 3D 可视化的完整版,在 Linux / Windows
+#    上会因为依赖冲突被悄悄解成 2022 年的 1.2.3。mne-base 三平台都能解到最新版。
+name: bci
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - numpy
+  - scipy
+  - pandas
+  - h5py
+  - scikit-learn
+  - matplotlib
+  - mne-base
+  - pyriemann
+  - pytorch
+  - torchaudio
+  - jupyterlab
+  - ipykernel
+  - pip
+  - pip:
+      - braindecode
+      - moabb

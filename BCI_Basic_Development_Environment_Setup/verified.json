@@ -1,0 +1,59 @@
+{
+  "last_run": {
+    "date": "2026-09-24",
+    "run_url": null,
+    "passed": true,
+    "os": {
+      "macOS": {
+        "passed": true,
+        "device": "mps",
+        "python": "3.11.16",
+        "elapsed": 113.7,
+        "failed": []
+      }
+    }
+  },
+  "verified": {
+    "date": "2026-09-24",
+    "run_url": null,
+    "platforms": [
+      "macOS"
+    ],
+    "devices": {
+      "macOS": "mps"
+    },
+    "versions": {
+      "braindecode": "1.8.1",
+      "h5py": "3.16.0",
+      "ipykernel": "7.3.0",
+      "jupyterlab": "4.6.4",
+      "matplotlib": "3.11.2",
+      "mne": "1.13.2",
+      "moabb": "1.7.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyriemann": "0.12",
+      "python": "3.11.16",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.17.1",
+      "torch": "2.13.0",
+      "torchaudio": "2.11.0"
+    }
+  },
+  "history": [
+    {
+      "date": "2026-09-24",
+      "passed": true,
+      "run_url": null,
+      "os": {
+        "macOS": true
+      },
+      "key": {
+        "mne": "1.13.2",
+        "braindecode": "1.8.1",
+        "moabb": "1.7.2",
+        "torch": "2.13.0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="both">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCI Starter Environment · BCI 入门环境</title>
+<meta name="description" content="Set up a Python environment for EEG/BCI work, re-tested weekly on macOS, Windows and Linux. 从零搭一个能跑脑电分析和深度学习的 Python 环境,每周三平台自动验证。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%B0%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf8; --bg2:#f0f0ee;
+  --ink:#2C2C2A; --ink-dim:#5F5E5A; --ink-muted:#8a8a84; --hair:#e8e6df; --line-soft:#d6d5cf;
+  --orange:#D85A30; --red:#C0473F; --green:#1D9E75; --grey:#8a8a84;
+  --serif:'Noto Serif SC',Georgia,serif;
+  --sans:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:128px}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+code{font-family:var(--mono);font-size:.86em;background:rgba(0,0,0,.04);padding:.05rem .3rem;border-radius:2px;color:var(--ink)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 2.4rem}
+
+/* ── 中英对照 ── */
+html[data-lang="zh"] .en{display:none}
+html[data-lang="en"] .zh{display:none}
+html[data-lang="both"] .b>.en{display:block;color:var(--ink-muted);font-size:.9em;margin-top:.1rem}
+html[data-lang="both"] .i>.en::before{content:" · ";color:var(--line-soft)}
+html[data-lang="both"] .i>.en{color:var(--ink-muted)}
+
+/* ── nav ── */
+.nav{position:sticky;top:0;z-index:50;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:1000px;margin:0 auto;padding:.7rem 2.4rem}
+.nav-row1{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:500;white-space:nowrap}
+.brand em{font-style:normal;color:var(--orange)}
+.modetabs{display:inline-flex;border:1px solid var(--hair)}
+.mtab{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);background:none;border:none;padding:.3rem .7rem;cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
+.mtab+.mtab{border-left:1px solid var(--hair)}
+.mtab:hover{color:var(--ink)}
+.mtab.on{background:var(--orange);color:#fff}
+html[data-lang="both"] .mtab.on.i>.en{color:rgba(255,255,255,.82)}
+html[data-lang="both"] .mtab.on.i>.en::before{color:rgba(255,255,255,.55)}
+.spacer{flex:1}
+.tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--ink-dim);text-decoration:none;background:none;border:1px solid var(--hair);padding:.3rem .65rem;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tool:hover{border-color:var(--ink-muted);color:var(--ink)}
+.nav-row2{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.nav-row2 .lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-right:.3rem}
+.fbtn{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.02em;color:var(--ink-dim);background:none;border:1px solid var(--hair);padding:.24rem .55rem .24rem .35rem;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap}
+.fbtn:hover{border-color:var(--ink-muted);color:var(--ink)}
+.fbtn.cur{box-shadow:inset 0 -2px 0 var(--c);color:var(--ink)}
+.fic{width:16px;height:16px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;background:var(--c,var(--ink-muted));border-radius:3px}
+.fic svg{width:11px;height:11px;fill:#fff}
+html[data-lang="both"] .fbtn .en{display:none}
+
+/* ── hero ── */
+.hero{padding:4.6rem 0 2.2rem}
+.kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:1.8rem}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.3rem,6vw,4.1rem);line-height:1.1;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+html[data-lang="both"] .hero h1 .en{font-size:.46em;font-weight:700;letter-spacing:-.01em;margin-top:.7rem;color:var(--ink-muted)}
+.lede{font-size:1rem;color:var(--ink-dim);max-width:60ch;margin-top:1.8rem}
+.lede p+p{margin-top:.7rem}
+.stats{display:flex;flex-wrap:wrap;gap:3.2rem;padding:2.4rem 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);margin-top:2.4rem}
+.stat .n{font-family:var(--serif);font-weight:900;font-size:2.8rem;line-height:1;letter-spacing:-.02em;color:var(--orange);font-variant-numeric:tabular-nums}
+.stat .n.sm{font-size:1.9rem;padding-top:.45rem}
+.stat .l{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-top:.6rem}
+.stat .l .en::before{content:" / "}
+html[data-lang="both"] .stat .l .en::before{content:" / "}
+
+/* ── 分区 ── */
+.sec{padding-top:1rem}
+.group-head{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin:3.4rem 0 .5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.group-head .ic{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;background:var(--c);border-radius:3px;flex:0 0 auto}
+.group-head .ic svg{width:14px;height:14px;fill:#fff}
+.group-head .nm{color:var(--ink)}
+.group-head .cnt{color:var(--orange)}
+.gh-desc{font-size:.9rem;color:var(--ink-dim);max-width:66ch;margin-bottom:.6rem}
+
+/* 两列条目行 */
+.row{display:grid;grid-template-columns:148px minmax(0,1fr);gap:1.6rem;padding:1.5rem 0;border-top:1px solid var(--hair);align-items:start}
+.row-left{font-family:var(--mono);min-width:0}
+.tag{display:flex;align-items:center;gap:.45rem;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+.tag .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-muted));flex:0 0 auto}
+.big{font-family:var(--serif);font-weight:900;font-size:1.8rem;line-height:1;letter-spacing:-.02em;color:var(--c,var(--ink));margin-top:.8rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.big.step{font-size:2.6rem}
+.small{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-top:.45rem}
+.row-right{min-width:0}
+.ttl{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
+.ent-ic{width:25px;height:25px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;background:var(--c,var(--ink));border-radius:3px}
+.ent-ic svg{width:15px;height:15px;fill:#fff}
+.ttl .nm{font-family:var(--serif);font-weight:700;font-size:1.22rem;letter-spacing:-.01em;line-height:1.25}
+html[data-lang="both"] .ttl .nm.b>.en{font-size:.72em;font-weight:600;margin-top:.05rem}
+.badge{font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;padding:.06rem .38rem;border-radius:2px;border:1px solid var(--hair);color:var(--ink-muted);white-space:nowrap}
+.badge.conda{color:#0F766E;border-color:rgba(15,118,110,.45)}
+.badge.pip{color:#2563EB;border-color:rgba(37,99,235,.45)}
+.role{font-size:.86rem;font-weight:500;color:var(--ink);margin-top:.5rem}
+.role+.desc{margin-top:.15rem}
+.desc{font-size:.9rem;color:var(--ink-dim);margin-top:.45rem;max-width:66ch}
+.desc p+p{margin-top:.55rem}
+.meta{font-family:var(--mono);font-size:.64rem;letter-spacing:.02em;color:var(--ink-muted);margin-top:.6rem;display:flex;gap:.9rem;flex-wrap:wrap;align-items:center}
+.meta a{text-decoration:none;border-bottom:1px solid var(--hair)}
+.meta a:hover{color:var(--c,var(--orange));border-color:currentColor}
+.st{display:inline-flex;align-items:center;gap:.35rem}
+.st::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--grey)}
+.st.ok::before{background:var(--green)} .st.ok{color:var(--green)}
+.st.new::before{background:#7C3AED} .st.new{color:#7C3AED}
+.st.bad::before{background:var(--red)} .st.bad{color:var(--red)}
+
+/* 系统切换 + 命令块 */
+.ostabs{display:inline-flex;border:1px solid var(--hair);margin:.9rem 0 .2rem}
+.ostabs button{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);background:none;border:none;padding:.3rem .8rem;cursor:pointer}
+.ostabs button+button{border-left:1px solid var(--hair)}
+.ostabs button.on{background:var(--ink);color:var(--bg)}
+.substep{margin-top:.9rem}
+.substep .k{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.25rem}
+.code{position:relative;margin-top:.5rem;border:1px solid var(--hair);background:#f4f3ef;border-radius:3px}
+.code pre{font-family:var(--mono);font-size:.76rem;line-height:1.75;color:var(--ink);padding:2rem .85rem .75rem .85rem;overflow-x:auto;white-space:pre}
+.code .cp{position:absolute;top:.45rem;right:.45rem;font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);background:var(--bg);border:1px solid var(--hair);padding:.12rem .45rem;cursor:pointer;border-radius:2px}
+.code .cp:hover{color:var(--ink);border-color:var(--ink-muted)}
+.code .cp.done{color:var(--green);border-color:var(--green)}
+pre.out{font-family:var(--mono);font-size:.7rem;line-height:1.65;color:var(--ink-dim);background:none;border:1px dashed var(--line-soft);border-radius:3px;padding:.8rem .9rem;margin-top:.6rem;overflow-x:auto;white-space:pre}
+pre.out .p{color:var(--green)} pre.out .w{color:#CA8A04}
+details.file{margin-top:.8rem}
+details.file summary{font-family:var(--mono);font-size:.64rem;letter-spacing:.04em;color:var(--ink-dim);cursor:pointer;list-style:none;display:inline-flex;gap:.4rem;align-items:center}
+details.file summary::-webkit-details-marker{display:none}
+details.file summary::before{content:'+';font-weight:500;color:var(--orange)}
+details.file[open] summary::before{content:'−'}
+.dl{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.02em;color:var(--ink-dim);border:1px solid var(--line-soft);padding:.14rem .5rem;border-radius:3px;text-decoration:none;transition:all .15s;margin-right:.35rem}
+.dl:hover{border-color:var(--ink);color:var(--ink)}
+.dl svg{width:12px;height:12px;fill:currentColor}
+
+/* 辅助包 */
+.support{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.1rem 1.4rem;font-family:var(--mono);font-size:.7rem;margin-top:.7rem}
+.support div{display:flex;justify-content:space-between;gap:.6rem;border-bottom:1px dashed var(--hair);padding:.3rem 0;color:var(--ink-dim)}
+.support b{font-weight:500;color:var(--ink)}
+.sub-head{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);border-top:1px dashed var(--line-soft);padding-top:1rem;margin-top:1.2rem}
+
+/* 验证记录 */
+.runs{margin-top:.7rem;border-top:1px solid var(--hair)}
+.run{display:grid;grid-template-columns:110px 90px minmax(0,1fr);gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--hair);font-family:var(--mono);font-size:.7rem;align-items:baseline}
+.run .os{font-family:var(--serif);font-weight:700;font-size:1rem;color:var(--ink)}
+.run .info{color:var(--ink-muted);overflow-wrap:anywhere}
+.run .info .fail{color:var(--red)}
+.note{font-size:.84rem;color:var(--ink-dim);border-left:2px solid var(--c,var(--orange));padding:.15rem 0 .15rem .85rem;margin-top:.9rem;max-width:66ch}
+table.hist{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.66rem;margin-top:.7rem;font-variant-numeric:tabular-nums}
+table.hist th{font-weight:500;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);text-align:left;padding:.35rem .5rem .35rem 0;border-bottom:1px solid var(--hair)}
+table.hist td{padding:.4rem .5rem .4rem 0;border-bottom:1px solid var(--hair);color:var(--ink-dim);white-space:nowrap}
+table.hist td a{text-decoration:none;border-bottom:1px solid var(--hair)}
+.dots{display:inline-flex;gap:.25rem}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--hair);display:inline-block}
+.dots i.ok{background:var(--green)} .dots i.bad{background:var(--red)}
+.histwrap{overflow-x:auto}
+
+footer{padding:3.2rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.6rem}
+.fnote{font-family:var(--mono);font-size:.64rem;letter-spacing:.03em;color:var(--ink-muted);line-height:2}
+.fnote a{color:var(--ink-dim)}
+#toTop{position:fixed;right:1.4rem;bottom:1.4rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;background:var(--bg);color:var(--ink-dim);border:1px solid var(--hair);padding:.4rem .6rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
+#toTop.show{opacity:1;pointer-events:auto}
+
+@media(max-width:900px){.run{grid-template-columns:90px 80px minmax(0,1fr)}}
+@media(max-width:680px){
+  .wrap,.nav-in{padding-left:1.1rem;padding-right:1.1rem}
+  html{scroll-padding-top:200px}
+  .nav-row2{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:.15rem}
+  .nav-row2::-webkit-scrollbar{display:none}
+  .nav-row2 .lbl{display:none}
+  .fbtn{flex:0 0 auto}
+  .row{grid-template-columns:1fr;gap:.6rem}
+  .big{margin-top:.4rem}
+  .stats{gap:1.8rem}
+  .run{grid-template-columns:1fr;gap:.15rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <div class="nav-row1">
+    <a class="brand" href="../">🧠 BCI<em>·</em>Deadlines</a>
+    <div class="modetabs">
+      <a class="mtab i" href="../"><span class="zh">截稿日历</span><span class="en">Deadlines</span></a>
+      <a class="mtab on i" href="./"><span class="zh">入门环境</span><span class="en">Starter env</span></a>
+    </div>
+    <span class="spacer"></span>
+    <div class="modetabs" id="langTabs" aria-label="language">
+      <button class="mtab" data-lang="both">对照 · Both</button>
+      <button class="mtab" data-lang="zh">中文</button>
+      <button class="mtab" data-lang="en">EN</button>
+    </div>
+    <a class="tool" href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/tree/main/BCI_Basic_Development_Environment_Setup" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <div class="nav-row2" id="chips"><span class="lbl i"><span class="zh">目录</span><span class="en">Contents</span></span></div>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kicker">BCI · Starter Environment</div>
+    <h1 class="b"><span class="zh">BCI 入门<em>开发环境</em></span><span class="en">BCI starter <em>environment</em></span></h1>
+    <div class="lede">
+      <p class="b"><span class="zh">这一页带你在自己的电脑上装好一个 Python 环境，用来做脑电分析和深度学习。一共四步，大约半小时。</span><span class="en">This page walks you through installing a Python environment for EEG analysis and deep learning on your own computer. Four steps, about half an hour.</span></p>
+      <p class="b"><span class="zh">页面上的版本每周都会在 macOS、Windows、Linux 上各测一遍。三个系统都通过，版本才会更新。</span><span class="en">The versions on this page are re-tested every week on macOS, Windows and Linux. They only change when all three pass.</span></p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <main>
+
+  <!-- 开始之前 -->
+  <section class="sec" id="before" style="--c:#78716C" data-chip="开始之前|Before you start" data-icon="bulb">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">开始之前</span><span class="en">Before you start</span></span></div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Need</div></div>
+      <div class="row-right">
+        <div class="ttl"><span class="nm b"><span class="zh">你需要什么</span><span class="en">What you need</span></span></div>
+        <div class="desc b"><span class="zh">一台电脑，Windows、macOS、Linux 都可以。大约 5 GB 空闲空间，以及能访问 GitHub 和 conda-forge 的网络。</span><span class="en">A computer running Windows, macOS or Linux, about 5 GB of free disk space, and a network that can reach GitHub and conda-forge.</span></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Why</div></div>
+      <div class="row-right">
+        <div class="ttl"><span class="nm b"><span class="zh">为什么用 Miniforge</span><span class="en">Why Miniforge</span></span></div>
+        <div class="desc">
+          <p class="b"><span class="zh">Miniforge 是 conda 的社区发行版，默认从 conda-forge 装包，体积小，免费。</span><span class="en">Miniforge is the community distribution of conda. It installs packages from conda-forge by default, and it is small and free.</span></p>
+          <p class="b"><span class="zh">已经装了 Anaconda 或 Miniconda 也可以直接用，跳过第一步。环境文件里写明了只用 conda-forge，不会走 Anaconda 的默认源。</span><span class="en">If you already have Anaconda or Miniconda, you can use it and skip step 1. The environment file only uses conda-forge, never Anaconda's default channel.</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Env</div></div>
+      <div class="row-right">
+        <div class="ttl"><span class="nm b"><span class="zh">为什么要单独建一个环境</span><span class="en">Why a separate environment</span></span></div>
+        <div class="desc b"><span class="zh">不同项目需要的包版本不一样，全装在一起迟早会冲突。单独的环境坏了可以删掉重建，不影响电脑上的其他东西。</span><span class="en">Different projects need different package versions, and putting everything in one place eventually breaks something. A separate environment can be deleted and rebuilt without touching anything else.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第一步 -->
+  <section class="sec" id="step1" style="--c:#2563EB" data-chip="1 安装 Miniforge|1 Install Miniforge" data-icon="wrench">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">第一步 · 安装 Miniforge</span><span class="en">Step 1 · Install Miniforge</span></span></div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Step</div><div class="big step">01</div><div class="small">~5 min</div></div>
+      <div class="row-right">
+        <div class="desc b"><span class="zh">先选你的系统。已经装过 Anaconda 或 Miniconda 的，直接跳到第二步。</span><span class="en">Pick your system first. If you already have Anaconda or Miniconda, go straight to step 2.</span></div>
+        <div class="ostabs" data-ostabs></div>
+
+        <div data-os="win">
+          <div class="substep"><div class="k i"><span class="zh">下载</span><span class="en">Download</span></div>
+            <a class="dl" href="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe"><svg viewBox="0 0 24 24"><path d="M11 3h2v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4 3.6 3.6V3zM4 19h16v2H4z"/></svg>Miniforge3-Windows-x86_64.exe</a></div>
+          <div class="substep"><div class="k i"><span class="zh">安装</span><span class="en">Install</span></div>
+            <div class="desc b"><span class="zh">双击安装包，选项全部保持默认。</span><span class="en">Run the installer and keep all the default options.</span></div></div>
+          <div class="substep"><div class="k i"><span class="zh">打开</span><span class="en">Open</span></div>
+            <div class="desc b"><span class="zh">从开始菜单打开 <code>Miniforge Prompt</code>。后面所有命令都在这个窗口里输入。</span><span class="en">Open <code>Miniforge Prompt</code> from the Start menu. Type every command below in that window.</span></div></div>
+        </div>
+
+        <div data-os="mac">
+          <div class="substep"><div class="k i"><span class="zh">装了 Homebrew 的话</span><span class="en">With Homebrew</span></div>
+            <div class="code"><pre>brew install --cask miniforge
+conda init zsh</pre></div></div>
+          <div class="substep"><div class="k i"><span class="zh">没有 Homebrew 的话</span><span class="en">Without Homebrew</span></div>
+            <div class="code"><pre>curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh</pre></div>
+            <div class="desc b"><span class="zh">安装过程中问是否初始化（initialize）时，输入 <code>yes</code>。</span><span class="en">When the installer asks whether to initialize, answer <code>yes</code>.</span></div></div>
+          <div class="substep"><div class="desc b"><span class="zh">装完把终端关掉，重新打开一个。</span><span class="en">Close the terminal and open a new one.</span></div></div>
+        </div>
+
+        <div data-os="linux">
+          <div class="substep"><div class="code"><pre>curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh</pre></div>
+            <div class="desc b"><span class="zh">问是否初始化（initialize）时输入 <code>yes</code>。装完关掉终端，重新打开一个。</span><span class="en">Answer <code>yes</code> when asked whether to initialize. Then close the terminal and open a new one.</span></div></div>
+        </div>
+
+        <div class="substep"><div class="k i"><span class="zh">检查</span><span class="en">Check</span></div>
+          <div class="code"><pre>conda --version</pre></div>
+          <div class="desc b"><span class="zh">能打印出版本号，就说明装好了。</span><span class="en">If it prints a version number, you are done.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第二步 -->
+  <section class="sec" id="step2" style="--c:#D85A30" data-chip="2 建环境|2 Create env" data-icon="layers">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">第二步 · 建环境</span><span class="en">Step 2 · Create the environment</span></span></div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Step</div><div class="big step">02</div><div class="small">5–15 min</div></div>
+      <div class="row-right">
+        <div class="code"><pre>curl -O https://larryyiguo.github.io/BCI_Conference_Deadlines/BCI_Basic_Development_Environment_Setup/environment.yml
+conda env create -f environment.yml
+conda activate bci</pre></div>
+        <div class="desc">
+          <p class="b"><span class="zh">第一行下载环境文件。第二行按文件装好所有包，大约要下载 0.5 到 1 GB。第三行进入这个环境。</span><span class="en">The first line downloads the environment file. The second installs everything in it, roughly a 0.5–1 GB download. The third enters the environment.</span></p>
+          <p class="b"><span class="zh">以后每次打开终端，都要先运行 <code>conda activate bci</code>。命令行开头出现 <code>(bci)</code>，就说明进来了。</span><span class="en">Every time you open a new terminal, run <code>conda activate bci</code> first. You are in when the prompt starts with <code>(bci)</code>.</span></p>
+        </div>
+        <div class="meta" style="margin-top:.9rem">
+          <a class="dl" href="environment.yml" download><svg viewBox="0 0 24 24"><path d="M11 3h2v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4 3.6 3.6V3zM4 19h16v2H4z"/></svg>environment.yml</a>
+        </div>
+        <details class="file" id="envFile"><summary><span class="i"><span class="zh">看文件内容</span><span class="en">View the file</span></span></summary><div class="code"><pre id="envText">…</pre></div></details>
+        <div class="note b"><span class="zh">之前按旧版本装过？下载新的 environment.yml 后运行 <code>conda env update -f environment.yml --prune</code>，就会同步到本页最新验证过的版本。</span><span class="en">Installed an older version before? Download the new environment.yml and run <code>conda env update -f environment.yml --prune</code> to move to the latest verified versions.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第三步 -->
+  <section class="sec" id="step3" style="--c:#0F766E" data-chip="3 数据目录|3 Data folder" data-icon="folder">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">第三步 · 设数据目录</span><span class="en">Step 3 · Set the data folder</span></span></div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Step</div><div class="big step">03</div><div class="small">1 min</div></div>
+      <div class="row-right">
+        <div class="desc">
+          <p class="b"><span class="zh">MOABB 下载的公开数据集，一个就可能有好几 GB，默认放在用户目录下的 <code>mne_data</code>。想放到空间更大的盘，就设置 <code>MNE_DATA</code>。</span><span class="en">A single public dataset downloaded by MOABB can be several GB. By default it goes to <code>mne_data</code> in your home folder. To put it on a bigger disk, set <code>MNE_DATA</code>.</span></p>
+          <p class="b"><span class="zh">不要选 iCloud、OneDrive、坚果云这类会同步的文件夹，否则几个 GB 的数据会被反复上传。</span><span class="en">Do not pick a synced folder such as iCloud, OneDrive or Dropbox, or gigabytes of data will keep uploading.</span></p>
+        </div>
+        <div class="ostabs" data-ostabs></div>
+        <div data-os="mac linux"><div class="code"><pre>conda env config vars set -n bci MNE_DATA=$HOME/mne_data
+conda deactivate
+conda activate bci</pre></div></div>
+        <div data-os="win"><div class="code"><pre>conda env config vars set -n bci MNE_DATA=%USERPROFILE%\mne_data
+conda deactivate
+conda activate bci</pre></div></div>
+        <div class="desc b"><span class="zh">把路径换成你想放数据的位置。设置要重新进入环境后才生效，所以后两行不能省。</span><span class="en">Replace the path with wherever you want the data. The setting only takes effect after re-entering the environment, so keep the last two lines.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四步 -->
+  <section class="sec" id="step4" style="--c:#0E7490" data-chip="4 验证|4 Verify" data-icon="check">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">第四步 · 验证</span><span class="en">Step 4 · Verify</span></span></div>
+    <div class="row">
+      <div class="row-left"><div class="tag"><span class="dot"></span>Step</div><div class="big step">04</div><div class="small">1–2 min</div></div>
+      <div class="row-right">
+        <div class="code"><pre>curl -O https://larryyiguo.github.io/BCI_Conference_Deadlines/BCI_Basic_Development_Environment_Setup/smoke_test.py
+python smoke_test.py</pre></div>
+        <div class="desc">
+          <p class="b"><span class="zh">这个脚本不下载任何数据。它逐个导入核心包，检查编译型的包是不是都来自 conda，再用合成脑电跑一遍 CSP、黎曼分类器和一个小神经网络。</span><span class="en">The script downloads no data. It imports each core package, checks that compiled packages all came from conda, then runs CSP, a Riemannian classifier and a small neural network on synthetic EEG.</span></p>
+          <p class="b"><span class="zh">最后一行是 <code>RESULT: ALL PASSED</code> 就可以开始学了。第一次运行要一两分钟，之后十几秒。出现 FAIL，先看是哪一行，再对照下面的「常见坑」。</span><span class="en">If the last line reads <code>RESULT: ALL PASSED</code>, you are ready. The first run takes a minute or two; later runs take about ten seconds. If something says FAIL, find that line and check the pitfalls below.</span></p>
+        </div>
+        <div class="meta"><a class="dl" href="smoke_test.py" download><svg viewBox="0 0 24 24"><path d="M11 3h2v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4 3.6 3.6V3zM4 19h16v2H4z"/></svg>smoke_test.py</a></div>
+        <details class="file" open><summary><span class="i"><span class="zh">正常的输出长这样</span><span class="en">What a good run looks like</span></span></summary>
+<pre class="out">[1] Import / 导入
+  <span class="p">PASS</span>  import mne  1.13.2  (conda)
+  <span class="p">PASS</span>  import braindecode  1.8.1  (pip)
+  …
+[2] Where packages came from / 包的来源
+  <span class="p">PASS</span>  compiled packages from conda / 编译型包来自 conda
+[4] Mini pipelines on synthetic EEG / 合成 EEG 上的最小流程
+  <span class="p">PASS</span>  CSP + LDA  acc 1.00
+  <span class="p">PASS</span>  Riemann MDM / 黎曼分类器  acc 1.00
+  <span class="p">PASS</span>  braindecode ShallowFBCSPNet  forward on cpu -> (4, 2)
+  <span class="p">PASS</span>  MOABB dataset metadata / 数据集元信息  BNCI2014_001: 9 subjects, no download
+[5] Data folder / 数据目录
+  <span class="p">PASS</span>  MNE_DATA is set / 已设置  ~/mne_data
+
+RESULT: ALL PASSED / 全部通过</pre></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 包清单 -->
+  <section class="sec" id="packages" style="--c:#7C3AED" data-chip="包清单|Packages" data-icon="cube">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">装了什么</span><span class="en">What's inside</span></span><span class="cnt" id="pkgCount"></span></div>
+    <div class="gh-desc">
+      <p class="b"><span class="zh">大数字是本页验证过的版本，每行最后一栏实时显示 PyPI 上的最新版。</span><span class="en">The large number is the verified version. The last item in each row shows the latest version on PyPI, fetched live.</span></p>
+      <p class="b"><span class="zh">PyPI 上有更新，不代表你该升级。新版本要在三个系统上都通过测试，才会出现在大数字的位置。</span><span class="en">A newer version on PyPI is not a reason to upgrade. It only becomes the large number after passing on all three systems.</span></p>
+    </div>
+    <div id="pkgList"></div>
+    <div class="sub-head i"><span class="zh">配套的包</span><span class="en">Supporting packages</span></div>
+    <div class="support" id="supportList"></div>
+  </section>
+
+  <!-- 查看已装 -->
+  <section class="sec" id="inspect" style="--c:#DB2777" data-chip="看清装了什么|See what's installed" data-icon="eye">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">看清自己装了什么</span><span class="en">See what you installed</span></span></div>
+    <div class="gh-desc b"><span class="zh">用惯了 Anaconda Navigator 的话，下面这几条命令能看到同样的信息。都要先 <code>conda activate bci</code>。</span><span class="en">If you are used to Anaconda Navigator, these commands show the same information. Run <code>conda activate bci</code> first.</span></div>
+    <div id="inspectList"></div>
+  </section>
+
+  <!-- 常见坑 -->
+  <section class="sec" id="pitfalls" style="--c:#C0473F" data-chip="常见坑|Pitfalls" data-icon="warn">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">常见坑</span><span class="en">Common pitfalls</span></span><span class="cnt" id="pitCount"></span></div>
+    <div id="pitList"></div>
+  </section>
+
+  <!-- 如何更新 -->
+  <section class="sec" id="updates" style="--c:#1D9E75" data-chip="如何保持更新|How it stays current" data-icon="cal">
+    <div class="group-head"><span class="ic"></span><span class="nm i"><span class="zh">这一页怎么保持更新</span><span class="en">How this page stays current</span></span></div>
+    <div class="gh-desc">
+      <p class="b"><span class="zh">每周一，GitHub Actions 会在 macOS、Windows、Linux 的虚拟机上各从零建一次环境，装当时能装到的最新版本，再跑同一个 smoke_test.py。</span><span class="en">Every Monday, GitHub Actions builds the environment from scratch on macOS, Windows and Linux virtual machines with the newest versions available, then runs the same smoke_test.py.</span></p>
+      <p class="b"><span class="zh">三个系统都通过，本页的版本和 environment.yml 才会更新。有一个失败，就保留上一次通过的版本，并在下面标出是哪个系统失败了。</span><span class="en">Only when all three pass do the versions on this page and environment.yml change. If one fails, the last passing versions stay, and the failing system is marked below.</span></p>
+    </div>
+    <div class="sub-head i"><span class="zh">最近一次检查</span><span class="en">Latest check</span></div>
+    <div id="lastRun"></div>
+    <div class="sub-head i"><span class="zh">历史记录</span><span class="en">History</span></div>
+    <div class="histwrap"><table class="hist" id="hist"></table></div>
+    <div class="meta" style="margin-top:1rem">
+      <a href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/blob/main/BCI_Basic_Development_Environment_Setup/ci/spec.yml" target="_blank" rel="noopener">ci/spec.yml</a>
+      <a href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/blob/main/.github/workflows/env-verify.yml" target="_blank" rel="noopener">env-verify.yml</a>
+      <a href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/workflows/env-verify.yml" target="_blank" rel="noopener">GitHub Actions</a>
+      <a href="verified.json" target="_blank">verified.json</a>
+    </div>
+  </section>
+
+  </main>
+
+  <footer><div class="fnote" id="foot"></div></footer>
+</div>
+<button id="toTop" aria-label="back to top">↑ Top</button>
+
+<script>
+(function(){
+'use strict';
+const BASE='https://larryyiguo.github.io/BCI_Conference_Deadlines/BCI_Basic_Development_Environment_Setup/';
+const ICON={
+  bulb:'<path fill-rule="evenodd" d="M12 2.2a7.6 7.6 0 00-4.3 13.9v2.1c0 .7.6 1.3 1.3 1.3h6c.7 0 1.3-.6 1.3-1.3v-2.1A7.6 7.6 0 0012 2.2zM9.6 21h4.8v.8H9.6z"/>',
+  wrench:'<path d="M17.6 2a5.4 5.4 0 00-5 7.5L2.8 19.3l1.9 1.9 9.8-9.8A5.4 5.4 0 0021.4 4l-3 3-2.4-2.4 3-3A5.4 5.4 0 0017.6 2z"/>',
+  layers:'<path d="M12 2l9.5 4.8L12 11.6 2.5 6.8 12 2zM4.9 10.4l7.1 3.6 7.1-3.6 2.4 1.2L12 16.4 2.5 11.6l2.4-1.2zm0 4.7l7.1 3.6 7.1-3.6 2.4 1.2L12 21.1 2.5 16.3l2.4-1.2z"/>',
+  folder:'<path d="M2.4 5.4a2 2 0 012-2h4.1l2 2.4h9.1a2 2 0 012 2v10.8a2 2 0 01-2 2h-15.2a2 2 0 01-2-2V5.4z"/>',
+  check:'<path d="M9.2 16.6L4.9 12.3l-1.6 1.6 5.9 5.9L20.7 8.3l-1.6-1.6z"/>',
+  cube:'<path fill-rule="evenodd" d="M12 2l9 4.3v11.4L12 22l-9-4.3V6.3L12 2zm0 2.4L5.9 7.2 12 10l6.1-2.8L12 4.4zM5 9.1v7.3l6 2.8v-7.3L5 9.1zm8 10.1l6-2.8V9.1l-6 2.8v7.3z"/>',
+  eye:'<path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7zm0 11a4 4 0 110-8 4 4 0 010 8z"/>',
+  warn:'<path fill-rule="evenodd" d="M12 2.5L1.5 21h21L12 2.5zM11 9.5h2v5.5h-2V9.5zm0 7.3h2v2h-2v-2z"/>',
+  cal:'<path fill-rule="evenodd" d="M7 2h2.2v2H15V2h2.2v2h1.3A2.5 2.5 0 0121 6.5v13a2.5 2.5 0 01-2.5 2.5h-13A2.5 2.5 0 013 19.5v-13A2.5 2.5 0 015.5 4H7V2zM5.2 9.4v10.1c0 .2.1.3.3.3h13c.2 0 .3-.1.3-.3V9.4H5.2zm2.3 1.9h2.2v2.2H7.5v-2.2zm4.4 0h2.2v2.2h-2.2v-2.2zm4.4 0h2.2v2.2h-2.2v-2.2zM7.5 15.7h2.2v2.2H7.5v-2.2zm4.4 0h2.2v2.2h-2.2v-2.2z"/>',
+  brain:'<path d="M9.5 3A3.5 3.5 0 006 6.5c-1.8.4-3 2-3 3.9 0 1.2.5 2.3 1.4 3A4 4 0 008 20.5h1.2A2.8 2.8 0 0012 17.7V5.8A2.8 2.8 0 009.5 3zm5 0A2.8 2.8 0 0012 5.8v11.9a2.8 2.8 0 002.8 2.8H16a4 4 0 003.6-7.1c.9-.7 1.4-1.8 1.4-3 0-1.9-1.2-3.5-3-3.9A3.5 3.5 0 0014.5 3z"/>',
+  db:'<path d="M12 2.5c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3zM4 8.3c1.5 1.1 4.4 1.7 8 1.7s6.5-.6 8-1.7v3.4c0 1.7-3.6 3-8 3s-8-1.3-8-3V8.3zm0 5.9c1.5 1.1 4.4 1.7 8 1.7s6.5-.6 8-1.7v3.3c0 1.7-3.6 3-8 3s-8-1.3-8-3v-3.3z"/>',
+  graph:'<circle cx="12" cy="4.6" r="2.9"/><circle cx="4.8" cy="18.4" r="2.9"/><circle cx="19.2" cy="18.4" r="2.9"/><path d="M11.1 7.9l-4.7 7.2 1.7 1.1 4.7-7.2zm1.8 0l-1.7 1.1 4.7 7.2 1.7-1.1zM8 17.4h8v2H8z"/>',
+  robot:'<path fill-rule="evenodd" d="M10.9 2h2.2v2.2h3.1A3.8 3.8 0 0120 8v8a3.8 3.8 0 01-3.8 3.8H7.8A3.8 3.8 0 014 16V8a3.8 3.8 0 013.8-3.8h3.1V2zM9.2 9.6a1.7 1.7 0 100 3.4 1.7 1.7 0 000-3.4zm5.6 0a1.7 1.7 0 100 3.4 1.7 1.7 0 000-3.4z"/>',
+  wave:'<path d="M3 10h2v4H3zM7 6h2v12H7zM11 2h2v20h-2zM15 6h2v12h-2zM19 10h2v4h-2z"/>',
+  trend:'<path d="M3 3h2.2v15.8H21V21H3V3zm4.4 11.4l4-4.6 3.1 2.7 4.3-5.3 1.7 1.4-5.7 7-3.2-2.8-2.6 3z"/>'
+};
+const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]||''}</svg>`;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const bi=(zh,en,cls='b')=>`<span class="${cls}"><span class="zh">${zh}</span><span class="en">${en}</span></span>`;
+
+// 核心包:角色和说明写死在这里,版本号从 verified.json 读
+const PKGS=[
+ {d:'mne',pypi:'mne',conda:'mne-base',src:'conda',c:'#D85A30',ic:'brain',tag:'EEG',
+  role:['EEG 信号处理','EEG processing'],
+  desc:['读取、滤波、分段、画图。几乎所有脑电代码都从它开始。conda 里装的是只含核心功能的 mne-base。','Reading, filtering, epoching and plotting EEG. Almost every EEG script starts here. On conda this is mne-base, the core-only build.'],
+  doc:'https://mne.tools/stable/'},
+ {d:'moabb',pypi:'moabb',src:'pip',c:'#0F766E',ic:'db',tag:'Data',
+  role:['公开数据集','Open datasets'],
+  desc:['一行代码下载公开的 BCI 数据集，并用统一的方式评测算法。','Downloads public BCI datasets in one line and benchmarks algorithms the same way every time.'],
+  doc:'https://moabb.neurotechx.com/docs/'},
+ {d:'pyriemann',pypi:'pyriemann',src:'conda',c:'#7C3AED',ic:'graph',tag:'Riemann',
+  role:['黎曼几何','Riemannian geometry'],
+  desc:['把每段脑电变成协方差矩阵再分类，是运动想象任务里常用的强基线。','Turns each EEG segment into a covariance matrix and classifies it. A common strong baseline for motor imagery.'],
+  doc:'https://pyriemann.readthedocs.io/'},
+ {d:'braindecode',pypi:'braindecode',src:'pip',c:'#2563EB',ic:'robot',tag:'Deep',
+  role:['脑电深度学习','EEG deep learning'],
+  desc:['现成的脑电神经网络（EEGNet、ShallowFBCSPNet 等），直接在 PyTorch 上用。','Ready-made EEG networks such as EEGNet and ShallowFBCSPNet, running on PyTorch.'],
+  doc:'https://braindecode.org/stable/'},
+ {d:'torch',pypi:'torch',conda:'pytorch',src:'conda',c:'#2563EB',ic:'layers',tag:'Deep',
+  role:['深度学习框架','Deep-learning framework'],
+  desc:['Apple 芯片会自动用 MPS 加速。其他电脑入门阶段用 CPU 就够。','Uses MPS acceleration on Apple silicon automatically. Elsewhere, the CPU is enough to get started.'],
+  doc:'https://pytorch.org/docs/stable/'},
+ {d:'torchaudio',pypi:'torchaudio',src:'conda',c:'#2563EB',ic:'wave',tag:'Deep',
+  role:['信号工具','Signal tools'],
+  desc:['braindecode 用它做重采样等处理。它必须和 torch 用同一种方式安装，这里两个都走 conda。','braindecode uses it for resampling and similar steps. It must be installed the same way as torch; here both come from conda.'],
+  doc:'https://pytorch.org/audio/stable/'},
+ {d:'scikit-learn',pypi:'scikit-learn',src:'conda',c:'#0E7490',ic:'trend',tag:'ML',
+  role:['传统机器学习','Classical ML'],
+  desc:['LDA、SVM、交叉验证都在这里。CSP 后面接的分类器通常就来自它。','LDA, SVM and cross-validation live here. The classifier after CSP usually comes from it.'],
+  doc:'https://scikit-learn.org/stable/'},
+ {d:'numpy',pypi:'numpy',src:'conda',c:'#78716C',ic:'cube',tag:'Core',
+  role:['数值计算','Numerics'],
+  desc:['所有数组运算的底座。脑电数据读进内存，就是一个 numpy 数组。','The foundation for array maths. Once loaded into memory, EEG data is a numpy array.'],
+  doc:'https://numpy.org/doc/stable/'},
+ {d:'scipy',pypi:'scipy',src:'conda',c:'#78716C',ic:'cube',tag:'Core',
+  role:['科学计算','Scientific computing'],
+  desc:['滤波器设计、频谱估计等信号处理算法。','Signal-processing algorithms such as filter design and spectral estimation.'],
+  doc:'https://docs.scipy.org/doc/scipy/'}
+];
+const SUPPORT=['python','matplotlib','pandas','h5py','jupyterlab','ipykernel'];
+
+const INSPECT=[
+ {cmd:{all:'conda env list'},zh:'列出所有环境。前面带 <code>*</code> 的，是你现在所在的环境。',en:'Lists all environments. The one marked <code>*</code> is the one you are in.'},
+ {cmd:{all:'conda list'},zh:'当前环境里的全部包。最后一列是来源：<code>conda-forge</code> 表示用 conda 装的，<code>pypi</code> 表示用 pip 装的。',en:'Every package in the current environment. The last column is the source: <code>conda-forge</code> means installed by conda, <code>pypi</code> means installed by pip.'},
+ {cmd:{unix:'conda list | grep pypi',win:'conda list | findstr pypi'},zh:'只看用 pip 装的包。',en:'Only the packages installed by pip.'},
+ {cmd:{all:'conda env export --from-history'},zh:'只列出你亲手用 conda 装过的包，不包含被依赖带进来的。',en:'Only the packages you asked conda for, without the dependencies they pulled in.'},
+ {cmd:{all:'python smoke_test.py'},zh:'核心包的版本和来源，一次看完。',en:'Versions and sources of the core packages at a glance.'},
+ {cmd:{all:'conda env export > my-env.yml'},zh:'把当前环境完整导出成一个文件。换电脑或者出问题想回退时，用它重建。',en:'Exports the whole environment to a file. Use it to rebuild on a new computer, or to roll back after something breaks.'}
+];
+
+const PITS=[
+ {zh:['别往 base 里装包','base 是 conda 自己运行用的环境，装乱了连 conda 都可能出问题。所有包都装进 bci。'],
+  en:['Do not install into base','base is the environment conda itself runs in. If it gets messy, conda can break too. Install everything into bci.']},
+ {zh:['需要编译的包只用 conda 装','torch、torchaudio、numpy、scipy 这类包里有编译好的二进制。同一个家族一半来自 conda、一半来自 pip，版本号对得上也可能不兼容，而且 <code>pip check</code> 查不出来。本页的环境文件已经处理好：只有 braindecode 和 moabb 走 pip，因为 conda-forge 上没有它们；它们依赖的 torchaudio 提前用 conda 装好，pip 就不会再拉一份。'],
+  en:['Install compiled packages with conda only','Packages such as torch, torchaudio, numpy and scipy ship compiled binaries. If one family comes half from conda and half from pip, it can be incompatible even when the version numbers match, and <code>pip check</code> will not notice. The environment file already handles this: only braindecode and moabb come from pip, because conda-forge does not have them, and torchaudio, which they need, is installed by conda first so pip does not pull another copy.']},
+ {zh:['用 conda 装 MNE 时，选 mne-base','conda-forge 上的 <code>mne</code> 是带 3D 可视化的完整版。在 Windows 和 Linux 上，它会因为依赖冲突被悄悄装成 2022 年的旧版 1.2.3，不报错。<code>mne-base</code> 只含核心功能，三个系统都能装到最新版。以后需要 3D 画图，再按 MNE 文档补装。'],
+  en:['On conda, install MNE as mne-base','The <code>mne</code> package on conda-forge is the full build with 3D visualisation. On Windows and Linux its dependencies conflict, and it silently resolves to the 2022 release 1.2.3 with no error. <code>mne-base</code> is the core-only build and gets the latest version on all three systems. Add the 3D extras later from the MNE docs if you need them.']},
+ {zh:['数据不要放在同步文件夹里','公开数据集动辄几 GB，放进 iCloud、OneDrive、坚果云会被反复上传。用第三步的 <code>MNE_DATA</code> 指到普通文件夹。'],
+  en:['Keep data out of synced folders','Public datasets are often several GB. In iCloud, OneDrive or Dropbox they will keep uploading. Use <code>MNE_DATA</code> from step 3 to point at an ordinary folder.']},
+ {zh:['Windows 上用 Miniforge Prompt','普通的命令提示符或 PowerShell 可能找不到 <code>conda</code> 命令。遇到「不是内部或外部命令」，先换到 Miniforge Prompt。'],
+  en:['On Windows, use Miniforge Prompt','A plain Command Prompt or PowerShell may not find the <code>conda</code> command. If you see “is not recognized as a command”, switch to Miniforge Prompt.']},
+ {zh:['PyPI 出了新版，不等于该升级','单独 <code>pip install -U</code> 某个包，最容易把环境弄乱。想跟上新版本，就等本页更新后，重新下载 environment.yml，再运行 <code>conda env update -f environment.yml --prune</code>。'],
+  en:['A new release on PyPI is not a reason to upgrade','Running <code>pip install -U</code> on a single package is the easiest way to break the environment. To move to newer versions, wait for this page to update, download environment.yml again and run <code>conda env update -f environment.yml --prune</code>.']},
+ {zh:['显卡','Apple 芯片会自动用 MPS。有 NVIDIA 显卡的话，入门阶段先用 CPU。需要 CUDA 时参考 PyTorch 官方说明，并记住第二条：torch 和 torchaudio 要整体用同一种方式装。本页只验证 CPU 和 MPS。'],
+  en:['GPUs','Apple silicon uses MPS automatically. With an NVIDIA card, start on the CPU. When you need CUDA, follow the official PyTorch instructions and remember pitfall 2: install torch and torchaudio together, the same way. This page only verifies the CPU and MPS.']}
+];
+
+// ── 语言 ────────────────────────────────────────────────────────────────
+function getLang(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q==='zh'||q==='en'||q==='both') return q;
+  try{const s=localStorage.getItem('bci-env-lang'); if(s) return s;}catch(e){}
+  return 'both';
+}
+function setLang(l,save){
+  document.documentElement.dataset.lang=l;
+  document.documentElement.lang=l==='en'?'en':'zh-CN';
+  document.querySelectorAll('#langTabs .mtab').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+  if(save){try{localStorage.setItem('bci-env-lang',l)}catch(e){}
+    const u=new URL(location.href); if(l==='both') u.searchParams.delete('lang'); else u.searchParams.set('lang',l); history.replaceState(null,'',u);}
+}
+setLang(getLang(),false);
+document.querySelectorAll('#langTabs .mtab').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang,true)));
+
+// ── 系统切换 ────────────────────────────────────────────────────────────
+function guessOS(){
+  const p=(navigator.userAgentData&&navigator.userAgentData.platform||navigator.platform||navigator.userAgent||'').toLowerCase();
+  if(p.includes('win')) return 'win'; if(p.includes('mac')) return 'mac'; if(p.includes('linux')||p.includes('x11')) return 'linux'; return 'win';
+}
+let OS; try{OS=localStorage.getItem('bci-env-os')}catch(e){}
+OS=OS||guessOS();
+function setOS(o,save){
+  OS=o;
+  document.querySelectorAll('[data-os]').forEach(el=>{el.hidden=!el.dataset.os.split(' ').includes(o)});
+  document.querySelectorAll('[data-ostabs] button').forEach(b=>b.classList.toggle('on',b.dataset.o===o));
+  if(save){try{localStorage.setItem('bci-env-os',o)}catch(e){}}
+}
+document.querySelectorAll('[data-ostabs]').forEach(box=>{
+  box.innerHTML=[['win','Windows'],['mac','macOS'],['linux','Linux']].map(([k,l])=>`<button data-o="${k}">${l}</button>`).join('');
+  box.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) setOS(b.dataset.o,true)});
+});
+
+// ── 分区图标 + 目录芯片 ─────────────────────────────────────────────────
+const secs=[...document.querySelectorAll('section.sec')];
+const chips=document.getElementById('chips');
+secs.forEach(s=>{
+  s.querySelector('.group-head .ic').innerHTML=svg(s.dataset.icon);
+  const [zh,en]=s.dataset.chip.split('|');
+  const a=document.createElement('a'); a.className='fbtn'; a.href='#'+s.id; a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));
+  a.innerHTML=`<span class="fic">${svg(s.dataset.icon)}</span><span class="zh">${zh}</span><span class="en">${en}</span>`;
+  chips.appendChild(a); s._chip=a;
+});
+
+// ── 静态列表 ───────────────────────────────────────────────────────────
+document.getElementById('inspectList').innerHTML=INSPECT.map((it,i)=>{
+  const code = it.cmd.all ? `<div class="code"><pre>${esc(it.cmd.all)}</pre></div>`
+    : `<div data-os="mac linux"><div class="code"><pre>${esc(it.cmd.unix)}</pre></div></div><div data-os="win"><div class="code"><pre>${esc(it.cmd.win)}</pre></div></div>`;
+  return `<div class="row"><div class="row-left"><div class="tag"><span class="dot"></span>${String(i+1).padStart(2,'0')}</div></div>
+    <div class="row-right">${code}<div class="desc">${bi(it.zh,it.en)}</div></div></div>`;
+}).join('');
+document.getElementById('pitList').innerHTML=PITS.map((p,i)=>`<div class="row"><div class="row-left"><div class="tag"><span class="dot"></span>Pitfall</div><div class="big">${String(i+1).padStart(2,'0')}</div></div>
+  <div class="row-right"><div class="ttl"><span class="nm b"><span class="zh">${p.zh[0]}</span><span class="en">${p.en[0]}</span></span></div>
+  <div class="desc">${bi(p.zh[1],p.en[1])}</div></div></div>`).join('');
+document.getElementById('pitCount').textContent=PITS.length;
+
+// ── 复制按钮 ────────────────────────────────────────────────────────────
+function addCopy(root){
+  root.querySelectorAll('.code').forEach(box=>{
+    if(box.querySelector('.cp')||box.closest('details.file')) return;
+    const b=document.createElement('button'); b.className='cp'; b.textContent='Copy';
+    b.addEventListener('click',()=>{
+      const t=box.querySelector('pre').innerText;
+      const done=()=>{b.textContent='Copied';b.classList.add('done');setTimeout(()=>{b.textContent='Copy';b.classList.remove('done')},1400)};
+      if(navigator.clipboard) navigator.clipboard.writeText(t).then(done,()=>{}); else done();
+    });
+    box.appendChild(b);
+  });
+}
+
+// ── 版本比较 ────────────────────────────────────────────────────────────
+function cmp(a,b){const x=String(a).split(/[^0-9]+/).filter(Boolean).map(Number),y=String(b).split(/[^0-9]+/).filter(Boolean).map(Number);
+  for(let i=0;i<Math.max(x.length,y.length);i++){const d=(x[i]||0)-(y[i]||0); if(d) return d>0?1:-1;} return 0;}
+const vOf=(ver,k)=>{const v=ver&&ver[k]; if(!v) return null; if(typeof v==='string') return v; const vals=[...new Set(Object.values(v))]; return vals.join(' / ');};
+
+// ── 渲染数据 ────────────────────────────────────────────────────────────
+const OS_ORDER=['Linux','macOS','Windows'];
+function render(data){
+  const ver=data&&data.verified||{}; const V=ver.versions||{};
+  const plats=ver.platforms||[]; const lr=data&&data.last_run;
+
+  document.getElementById('stats').innerHTML=[
+    [ (V.python||'3.11').split('.').slice(0,2).join('.'), 'Python','Python',''],
+    [ PKGS.length, '核心包','Core packages',''],
+    [ `${plats.length}/3`, '已验证系统','Systems verified',''],
+    [ ver.date||'—', '最近验证','Last verified','sm']
+  ].map(([n,zh,en,c])=>`<div class="stat"><div class="n ${c}">${esc(n)}</div><div class="l i">${zh===en?zh:`<span class="zh">${zh}</span><span class="en">${en}</span>`}</div></div>`).join('');
+
+  document.getElementById('pkgCount').textContent=PKGS.length;
+  document.getElementById('pkgList').innerHTML=PKGS.map(p=>{
+    const v=vOf(V,p.d);
+    const alias=p.conda?`<span class="badge">conda: ${p.conda}</span>`:'';
+    return `<div class="row" style="--c:${p.c}" data-pkg="${p.d}">
+      <div class="row-left"><div class="tag"><span class="dot"></span>${p.tag}</div><div class="big">${esc(v||'—')}</div><div class="small i"><span class="zh">已验证</span><span class="en">verified</span></div></div>
+      <div class="row-right">
+        <div class="ttl"><span class="ent-ic">${svg(p.ic)}</span><span class="nm">${p.d}</span>
+          <span class="badge ${p.src==='pip'?'pip':'conda'}">${p.src==='pip'?'pip':'conda-forge'}</span>${alias}</div>
+        <div class="role i"><span class="zh">${p.role[0]}</span><span class="en">${p.role[1]}</span></div><div class="desc">${bi(p.desc[0],p.desc[1])}</div>
+        <div class="meta"><span class="st" data-live="${p.pypi}" data-v="${esc(v||'')}">PyPI …</span><a href="${p.doc}" target="_blank" rel="noopener">${bi('文档','Docs','i')}</a><a href="https://pypi.org/project/${p.pypi}/" target="_blank" rel="noopener">PyPI</a></div>
+      </div></div>`;
+  }).join('');
+  document.getElementById('supportList').innerHTML=SUPPORT.map(k=>`<div><span>${k}</span><b>${esc(vOf(V,k)||'—')}</b></div>`).join('');
+
+  // 最近一次检查
+  const lrBox=document.getElementById('lastRun');
+  if(!lr){ lrBox.innerHTML=`<div class="note">${bi('还没有检查记录。','No checks yet.')}</div>`; }
+  else{
+    const rows=OS_ORDER.map(o=>{
+      const r=lr.os&&lr.os[o];
+      if(!r) return `<div class="run"><span class="os">${o}</span><span class="st">${bi('待运行','pending','i')}</span><span class="info">${bi('等待第一次三平台 CI','Waiting for the first 3-platform CI run','i')}</span></div>`;
+      if(r.missing) return `<div class="run"><span class="os">${o}</span><span class="st bad">${bi('无结果','no result','i')}</span><span class="info">${bi('这个系统没有产出测试结果','This system produced no result','i')}</span></div>`;
+      const info=r.passed?`python ${esc(r.python)} · ${esc(r.device)} · ${esc(r.elapsed)} s`
+        :`<span class="fail">${esc((r.failed||[]).join('; '))}</span>`;
+      return `<div class="run"><span class="os">${o}</span><span class="st ${r.passed?'ok':'bad'}">${r.passed?'PASS':'FAIL'}</span><span class="info">${info}</span></div>`;
+    }).join('');
+    const src=lr.run_url?`<a href="${esc(lr.run_url)}" target="_blank" rel="noopener">${bi('查看这次运行','View this run','i')}</a>`:bi('本地运行','local run','i');
+    let note='';
+    if(plats.length<3) note=`<div class="note">${bi('目前只在 macOS 上本地验证过。三平台自动验证第一次跑完后，这里和上面的版本会自动更新。','So far this has only been verified locally on macOS. After the first 3-platform CI run, this section and the versions above update automatically.')}</div>`;
+    else if(!lr.passed) note=`<div class="note" style="--c:var(--red)">${bi('这次检查没有全部通过，所以页面上仍然显示上一次通过的版本：'+esc(ver.date),'This check did not fully pass, so the page still shows the last passing versions from '+esc(ver.date)+'.')}</div>`;
+    lrBox.innerHTML=`<div class="meta">${esc(lr.date)} · ${src}</div><div class="runs">${rows}</div>${note}`;
+  }
+
+  // 历史
+  const H=(data&&data.history)||[];
+  document.getElementById('hist').innerHTML=`<tr><th>${bi('日期','Date','i')}</th><th>Linux · macOS · Win</th><th>mne</th><th>torch</th><th>braindecode</th><th>moabb</th><th></th></tr>`+
+    H.slice(0,10).map(h=>`<tr><td>${esc(h.date)}</td>
+      <td><span class="dots">${OS_ORDER.map(o=>`<i class="${h.os&&o in h.os?(h.os[o]?'ok':'bad'):''}" title="${o}"></i>`).join('')}</span></td>
+      <td>${esc(h.key&&h.key.mne||'—')}</td><td>${esc(h.key&&h.key.torch||'—')}</td><td>${esc(h.key&&h.key.braindecode||'—')}</td><td>${esc(h.key&&h.key.moabb||'—')}</td>
+      <td>${h.run_url?`<a href="${esc(h.run_url)}" target="_blank" rel="noopener">run</a>`:'local'}</td></tr>`).join('');
+
+  document.getElementById('foot').innerHTML=
+    `${bi('版本数据','Version data','i')}: <a href="verified.json">verified.json</a> · ${bi('最近一次检查','latest check','i')}: ${esc(lr?lr.date:'—')}<br>`+
+    `<a href="../">BCI Conference Deadlines</a> · <a href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines" target="_blank" rel="noopener">GitHub</a>`;
+
+  setOS(OS,false); addCopy(document);
+  livePyPI();
+}
+
+// 浏览器里实时查 PyPI 最新版(只作参考,不改变「已验证」)
+function livePyPI(){
+  document.querySelectorAll('[data-live]').forEach(el=>{
+    fetch(`https://pypi.org/pypi/${el.dataset.live}/json`).then(r=>r.ok?r.json():Promise.reject()).then(j=>{
+      const latest=j.info.version, mine=el.dataset.v.split(' / ')[0];
+      if(!mine){el.innerHTML=`PyPI ${esc(latest)}`;return;}
+      const c=cmp(latest,mine);
+      if(c<=0){el.className='st ok';el.innerHTML=bi('PyPI 最新','latest on PyPI','i');}
+      else{el.className='st new';el.innerHTML=bi(`PyPI 已有 ${esc(latest)}`,`${esc(latest)} on PyPI`,'i');}
+    }).catch(()=>{el.innerHTML='PyPI —'});
+  });
+}
+
+fetch('verified.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null).then(d=>{
+  render(d);
+  if(!d) document.getElementById('lastRun').innerHTML=`<div class="note" style="--c:var(--red)">${bi('读不到 verified.json。如果你是直接双击打开的本地文件，请改用网页地址访问。','Could not load verified.json. If you opened this file directly from disk, use the web address instead.')}</div>`;
+});
+fetch('environment.yml',{cache:'no-store'}).then(r=>r.ok?r.text():Promise.reject()).then(t=>{document.getElementById('envText').textContent=t}).catch(()=>{document.getElementById('envText').textContent='(environment.yml)'});
+
+// ── 滚动侦测 + 回到顶部 ────────────────────────────────────────────────
+let ticking=false;
+function onScroll(){
+  if(ticking) return; ticking=true;
+  requestAnimationFrame(()=>{
+    const y=window.scrollY+160; let cur=null;
+    secs.forEach(s=>{if(s.offsetTop<=y) cur=s;});
+    secs.forEach(s=>s._chip.classList.toggle('cur',s===cur));
+    document.getElementById('toTop').classList.toggle('show',window.scrollY>640);
+    ticking=false;
+  });
+}
+window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+document.getElementById('toTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+setOS(OS,false); addCopy(document);
+})();
+</script>
+</body>
+</html>

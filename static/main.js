@@ -194,6 +194,7 @@
     mtabDataset: document.getElementById('mtabDataset'),
     mtabAtlas: document.getElementById('mtabAtlas'),
     papersBtn: document.getElementById('papersBtn'),
+    envBtn: document.getElementById('envBtn'),
   };
 
   let confs = [];
@@ -304,6 +305,8 @@
     els.search.placeholder = mode === 'journal' ? t().jSearchPh : mode === 'dataset' ? t().dSearchPh : t().searchPh;
     els.footer.innerHTML = mode === 'journal' ? t().jFooter : mode === 'dataset' ? t().dFooter : t().footer;
     els.langBtn.textContent = t().langBtn;
+    els.envBtn.textContent = lang === 'en' ? 'Setup' : '入门环境';
+    els.envBtn.href = 'BCI_Basic_Development_Environment_Setup/' + (lang === 'en' ? '?lang=en' : '');
     els.papersBtn.textContent = lang === 'en' ? '📄 Papers' : '📄 论文';
     els.papersBtn.setAttribute('data-tip', t().papersTip);
     els.papersBtn.style.display = mode === 'dataset' ? 'none' : '';

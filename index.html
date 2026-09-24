@@ -27,8 +27,8 @@ a{color:inherit}
 /* ── nav ── */
 .nav{position:sticky;top:0;z-index:50;background:rgba(250,250,248,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
 .nav-in{max-width:1000px;margin:0 auto;padding:.7rem 2.4rem}
-.nav-row1{display:flex;gap:1.2rem;align-items:center}
-.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:500}
+.nav-row1{display:flex;gap:.6rem .8rem;align-items:center;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:500;white-space:nowrap}
 .brand em{font-style:normal;color:var(--orange)}
 .modetabs{display:inline-flex;border:1px solid var(--hair);margin-left:.4rem}
 .mtab{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);background:none;border:none;padding:.3rem .7rem;cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
@@ -36,10 +36,10 @@ a{color:inherit}
 .mtab:hover{color:var(--ink)}
 .mtab.on{background:var(--orange);color:#fff}
 .nav .spacer{flex:1}
-.search{font-family:var(--mono);font-size:.7rem;width:min(220px,32vw);background:var(--bg);border:1px solid var(--hair);padding:.32rem .6rem;color:var(--ink);outline:none;transition:border .15s}
+.search{font-family:var(--mono);font-size:.7rem;width:min(170px,32vw);background:var(--bg);border:1px solid var(--hair);padding:.32rem .6rem;color:var(--ink);outline:none;transition:border .15s}
 .search:focus{border-color:var(--ink-muted)}
 .search::placeholder{color:var(--ink-muted)}
-.tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--ink-dim);text-decoration:none;background:none;border:1px solid var(--hair);padding:.3rem .65rem;cursor:pointer;transition:all .15s}
+.tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--ink-dim);text-decoration:none;background:none;border:1px solid var(--hair);padding:.3rem .65rem;cursor:pointer;transition:all .15s;white-space:nowrap}
 .tool:hover{border-color:var(--ink-muted);color:var(--ink)}
 .tool.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
@@ -228,6 +228,7 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
     <span class="spacer"></span>
     <input class="search" id="search" type="search" placeholder="">
     <button class="tool" id="papersBtn">📄 论文</button>
+    <a class="tool" id="envBtn" href="BCI_Basic_Development_Environment_Setup/">入门环境</a>
     <button class="tool" id="langBtn">EN</button>
     <a class="tool" href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines" target="_blank" rel="noopener">GitHub</a>
   </div>
@@ -250,6 +251,6 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-<script src="static/main.js?v=20260612-18"></script>
+<script src="static/main.js?v=20260612-19"></script>
 </body>
 </html>
