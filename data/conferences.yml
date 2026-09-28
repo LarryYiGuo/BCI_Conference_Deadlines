@@ -83,8 +83,8 @@
   year: 2027
   full_name: International Conference on Learning Representations
   link: 'https://iclr.cc/Conferences/2027'
-  deadline: '2026-09-25 23:59'
-  abstract_deadline: '2026-09-18 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: April 26-30, 2027
@@ -98,7 +98,7 @@
   h5: 362
   ccfddl: iclr
   track:
-  estimated: false
+  estimated: true
   note: 官方确认北美西海岸举办;截稿按 2026 届规律推测
   note_en: Officially confirmed for West Coast North America; deadline estimated from the ICLR 2026 pattern
 
@@ -300,13 +300,13 @@
   title: PAKDD
   year: 2027
   full_name: Pacific-Asia Conference on Knowledge Discovery and Data Mining
-  link: 'https://pakdd.org/'
-  deadline: '2026-11-15 23:59'
+  link: 'https://www.pakdd2027.org/'
+  deadline: '2026-11-20 23:59'
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: May/Jun 2027
-  place: TBD
+  date: June 29-July 2, 2027
+  place: Wellington, New Zealand
   format: 'https://www.pakdd2026.org/authors-kit'
   format_type: Springer LNCS/LNAI 模板
   format_type_en: Springer LNCS/LNAI template
@@ -316,7 +316,7 @@
   h5:
   ccfddl: pakdd
   track:
-  estimated: true
+  estimated: false
   note: 按 PAKDD 2026 规律推测(2026 届在香港举办)
   note_en: Estimated from the PAKDD 2026 pattern (2026 edition held in Hong Kong)
 
@@ -324,13 +324,13 @@
   title: SIGIR
   year: 2027
   full_name: International ACM SIGIR Conference on Research and Development in Information Retrieval
-  link: 'https://sigir.org/'
-  deadline: '2027-01-22 23:59'
-  abstract_deadline: '2027-01-15 23:59'
+  link: 'https://sigir2027.org/'
+  deadline: '2027-01-21 23:59'
+  abstract_deadline: '2027-01-14 23:59'
   tz: '-12:00'
   tz_label: AoE
-  date: Jul 2027
-  place: Silicon Valley, USA
+  date: July 18-24, 2027
+  place: San Jose, California, USA
   format: 'https://www.acm.org/publications/proceedings-template'
   format_type: ACM sigconf 模板
   format_type_en: ACM sigconf template
@@ -340,7 +340,7 @@
   h5: 123
   ccfddl: sigir
   track:
-  estimated: true
+  estimated: false
   note: 50 周年届,举办地已官宣;截稿按 2026 届规律推测
   note_en: 50th-anniversary edition, venue announced; deadline estimated from the 2026 cycle
 
@@ -741,7 +741,7 @@
   year: 2027
   full_name: IEEE International Conference on Acoustics, Speech and Signal Processing
   link: 'https://2027.ieeeicassp.org/'
-  deadline: '2026-09-23 23:59'
+  deadline: 'TBD'
   abstract_deadline:
   tz: '-12:00'
   tz_label: UTC-12
@@ -756,7 +756,7 @@
   h5: 137
   ccfddl: icassp
   track:
-  estimated: false
+  estimated: true
   note: 官方 CFP 已公布
   note_en: Official CFP published
 
@@ -765,11 +765,11 @@
   year: 2027
   full_name: European Signal Processing Conference
   link: 'https://eusipco2027.de/'
-  deadline: TBD
+  deadline: 2027-02-06 23:59
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: Aug 30 – Sep 3, 2027
+  date: August 30 - September 3, 2027
   place: Darmstadt, Germany
   format: 'https://www.ieee.org/conferences/publishing/templates.html'
   format_type: IEEE 会议模板
@@ -780,7 +780,7 @@
   h5: 35
   ccfddl: eusipco
   track:
-  estimated: true
+  estimated: false
   note: 2026 届 (Bruges) 截稿已过;2027 届截稿未公布,历年在 2 月上中旬
   note_en: 2026 edition (Bruges) deadline passed; 2027 deadline TBA, historically early/mid-February
 
