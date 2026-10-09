@@ -50,7 +50,19 @@ per-venue **recent-paper index**. Editorial style inspired by
   schematic waveform; 10-20/10-10 naming toggle and step-by-step electrode placement
 - **Schematic illustrations for teaching, not real recordings**; bilingual EN/中文
 
+## Artifact Simulator
+
+- [`EEG_Artifact_Simulator/`](EEG_Artifact_Simulator/) (Chinese) synthesizes 8-channel background EEG at 250 Hz
+  plus twelve common artifacts and states in real time; switch between raw, 0.5–50 Hz and 5–50 Hz
+  (the OpenBCI default) to see each one in the waveform, spectrum and band-power map
+- Four tabs: **simulator** · **removal** (what filtering can and cannot remove, and what to do with the
+  rest) · **real recordings** (four annotated 32-channel screenshots, boxes linked to the artifact list) ·
+  **notes & sources**
+- **The simulator is synthetic, not real data**; the real-recording annotations are read from screenshots
+
 ## Shared
+
+- The home page opens with a **tools grid** (three columns) linking every view and sub-page
 
 - **EN / 中文** toggle, first-visit language auto-picked by IP (CN → 中文, else English)
 - **China-specific ranks are Chinese-only** — CCF and CAS quartile show in Chinese mode
@@ -123,7 +135,17 @@ MIT
   支持 10-20/10-10 命名切换与电极放置分步画法
 - **波形为教学示意图,非真实记录**;中英双语
 
+## 伪迹模拟器
+
+- [`EEG_Artifact_Simulator/`](EEG_Artifact_Simulator/)(中文)用 8 个电极、250 Hz 实时合成背景脑电和十二种常见伪迹与状态,
+  在原始 / 0.5–50 Hz / 5–50 Hz(OpenBCI 默认)三种滤波之间切换,看它们在波形、频谱和频段功率上的样子
+- 分四页:**模拟器** · **去伪迹**(哪些能靠滤波去掉、其余怎么处理) · **实图分析**(四张 32 导截图逐个标注,
+  标注框与伪迹清单互相跳转) · **其他**(电极选择、幅度校准、来源)
+- **模拟器是合成信号,不是真实数据**;实图分析的标注是读截图得出的
+
 ## 通用
+
+- 首页开头是**功能九宫格**(三列),每个视图和子页都能从这里进
 
 - **中英文切换**,首次访问按 IP 自动选语言(中国 → 中文,其他 → 英文)
 - **中国特有评级仅中文显示** —— CCF 与中科院分区只在中文模式出现;英文模式只留国际指标

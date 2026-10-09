@@ -107,6 +107,24 @@ a{color:inherit}
 .group-head{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin:3.4rem 0 .4rem;display:flex;align-items:baseline;gap:.7rem}
 .group-head .cnt{color:var(--orange)}
 
+/* ── hub · 功能九宫格 ── */
+.hub{margin-top:2.8rem}
+.hub .group-head{margin:0 0 .9rem}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--hair);border-left:1px solid var(--hair)}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:.3rem;min-width:0;padding:1.2rem 1.3rem 1.1rem;border:0;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair);background:none;color:var(--ink);font:inherit;text-align:left;text-decoration:none;cursor:pointer;transition:background .15s,box-shadow .15s}
+.tile-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.tile-ic{width:27px;height:27px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;background:var(--c);border-radius:3px}
+.tile-ic svg{width:16px;height:16px;fill:#fff}
+.tile-no{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;color:var(--c);font-variant-numeric:tabular-nums}
+.tile-nm{font-family:var(--serif);font-weight:700;font-size:1.16rem;line-height:1.3;letter-spacing:-.01em;transition:color .15s}
+.tile-sub{font-size:.8rem;color:var(--ink-muted);line-height:1.55}
+.tile-k{margin-top:auto;padding-top:.6rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted)}
+.tile:hover{background:color-mix(in srgb,var(--c) 5%,transparent)}
+.tile:hover .tile-nm{color:var(--c)}
+.tile.on{background:color-mix(in srgb,var(--c) 6%,transparent);box-shadow:inset 0 2px 0 var(--c)}
+.tile.on .tile-k{color:var(--c)}
+.tile:focus-visible{outline:2px solid var(--c);outline-offset:-2px}
+
 /* ── conference rows ── */
 .evt{display:grid;grid-template-columns:158px 1fr;gap:1.8rem;padding:1.7rem 0;border-bottom:1px solid var(--hair);align-items:start}
 .evt.past{opacity:.5}
@@ -211,6 +229,10 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
   .evt{grid-template-columns:1fr;gap:.7rem}
   .stats{gap:1.8rem}
   .cd{font-size:1.3rem}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tile{padding:1rem .9rem .95rem}
+  .tile-nm{font-size:1.02rem}
+  .tile-sub{font-size:.74rem}
 }
 </style>
 </head>
@@ -243,6 +265,8 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
     <div class="stats" id="stats"></div>
   </header>
 
+  <section class="hub" id="hub" aria-label="功能 · Tools"></section>
+
   <main id="list"></main>
 
   <footer>
@@ -251,6 +275,6 @@ footer{padding:3.4rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.4rem}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-<script src="static/main.js?v=20260612-19"></script>
+<script src="static/main.js?v=20261009-2"></script>
 </body>
 </html>
