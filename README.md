@@ -2,8 +2,9 @@
 
 **Live site:** https://larryyiguo.github.io/BCI_Conference_Deadlines/
 
-A publishing & research tracker for **BCI / EEG / brain-signal** researchers. Three views,
-switchable from the top nav — **Conferences · Journals · Datasets** — plus an optional
+A publishing & research tracker for **BCI / EEG / brain-signal** researchers. The home page is a
+**tools grid** with a site-wide search; the list page ([`deadlines.html`](deadlines.html)) has three
+views, switchable from its top nav — **Conferences · Journals · Datasets** — plus an optional
 per-venue **recent-paper index**. Editorial style inspired by
 [hci-deadlines](https://hci-deadlines.github.io/) and [ccfddl](https://ccfddl.com/).
 
@@ -62,12 +63,15 @@ per-venue **recent-paper index**. Editorial style inspired by
 
 ## Shared
 
-- The home page opens with a **tools grid** (three columns) linking every view and sub-page
+- **Home page** = tools grid (three columns, each tile shows a live count) + **site-wide search**
+  (`/` or ⌘K) over conferences, journals and datasets; a result opens the list page at that item
+- List page URLs: `deadlines.html?mode=journal|dataset&q=…`; old root links with `?sub=` / `?mode=` / `?q=`
+  redirect there
 
 - **EN / 中文** toggle, first-visit language auto-picked by IP (CN → 中文, else English)
 - **China-specific ranks are Chinese-only** — CCF and CAS quartile show in Chinese mode
   only; English mode keeps international metrics (conferences: CORE + h5; journals: JCR + IF)
-- Color themes shaded by rank/quartile; shareable filter URLs (`?sub=ML,CV&lang=en`)
+- Color themes shaded by rank/quartile; shareable filter URLs (`deadlines.html?sub=ML,CV&lang=en`)
 - **Auto-maintenance** — a weekly GitHub Action syncs deadlines and health-checks the
   conference deadline links, format/template links and dataset source links, opening an
   issue when any breaks
@@ -95,8 +99,8 @@ MIT
 
 **在线访问:** https://larryyiguo.github.io/BCI_Conference_Deadlines/
 
-面向 **BCI / EEG / 脑信号** 研究者的投稿与科研追踪。顶部导航三个视图——**会议 · 期刊 · 数据集**,
-另有可开关的**各 venue 近年论文索引**。风格参考
+面向 **BCI / EEG / 脑信号** 研究者的投稿与科研追踪。首页是**功能九宫格**加全站搜索;列表页
+([`deadlines.html`](deadlines.html))顶部导航三个视图——**会议 · 期刊 · 数据集**,另有可开关的**各 venue 近年论文索引**。风格参考
 [hci-deadlines](https://hci-deadlines.github.io/) 与 [ccfddl](https://ccfddl.com/)。
 
 ## 会议
@@ -145,12 +149,14 @@ MIT
 
 ## 通用
 
-- 首页开头是**功能九宫格**(三列),每个视图和子页都能从这里进
+- **首页** = 功能九宫格(三列,每格带实时计数)+ **全站搜索**(`/` 或 ⌘K),搜会议、期刊、数据集;
+  点结果直接打开列表页并定位到那一条
+- 列表页地址:`deadlines.html?mode=journal|dataset&q=…`;根目录带 `?sub=` / `?mode=` / `?q=` 的旧链接会自动转过去
 
 - **中英文切换**,首次访问按 IP 自动选语言(中国 → 中文,其他 → 英文)
 - **中国特有评级仅中文显示** —— CCF 与中科院分区只在中文模式出现;英文模式只留国际指标
   (会议:CORE + h5;期刊:JCR + IF)
-- 颜色按等级/分区深浅;过滤条件可分享(`?sub=ML,CV&lang=en`)
+- 颜色按等级/分区深浅;过滤条件可分享(`deadlines.html?sub=ML,CV&lang=en`)
 - **自动维护** —— GitHub Action 每周同步截稿日期,并对会议官网、format 模板链接、数据集源链接
   做健康检查,失效自动开 Issue
 

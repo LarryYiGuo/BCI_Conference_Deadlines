@@ -50,21 +50,6 @@
     BME: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3z"/>',
     BCI: '<path d="M9.5 3A3.5 3.5 0 006 6.5c-1.8.4-3 2-3 3.9 0 1.2.5 2.3 1.4 3A4 4 0 008 20.5h1.2A2.8 2.8 0 0012 17.7V5.8A2.8 2.8 0 009.5 3zm5 0A2.8 2.8 0 0012 5.8v11.9a2.8 2.8 0 002.8 2.8H16a4 4 0 003.6-7.1c.9-.7 1.4-1.8 1.4-3 0-1.9-1.2-3.5-3-3.9A3.5 3.5 0 0014.5 3z"/>',
   };
-  // ── hub: 功能九宫格(3 列;现有 6 项占前两行,第三行留给以后) ──
-  const HUB_ICON = {
-    cal: '<path fill-rule="evenodd" d="M7 2h2.2v2H15V2h2.2v2h1.3A2.5 2.5 0 0121 6.5v13a2.5 2.5 0 01-2.5 2.5h-13A2.5 2.5 0 013 19.5v-13A2.5 2.5 0 015.5 4H7V2zM5.2 9.4v10.1c0 .2.1.3.3.3h13c.2 0 .3-.1.3-.3V9.4H5.2zm2.3 1.9h2.2v2.2H7.5v-2.2zm4.4 0h2.2v2.2h-2.2v-2.2zm4.4 0h2.2v2.2h-2.2v-2.2zM7.5 15.7h2.2v2.2H7.5v-2.2zm4.4 0h2.2v2.2h-2.2v-2.2z"/>',
-    book: '<path fill-rule="evenodd" d="M2.5 3.5h6.3A3.2 3.2 0 0112 6.7v14.1a3.2 3.2 0 00-3.2-3.2H2.5V3.5zm19 0h-6.3A3.2 3.2 0 0012 6.7v14.1a3.2 3.2 0 013.2-3.2h6.3V3.5z"/>',
-    wrench: '<path d="M17.6 2a5.4 5.4 0 00-5 7.5L2.8 19.3l1.9 1.9 9.8-9.8A5.4 5.4 0 0021.4 4l-3 3-2.4-2.4 3-3A5.4 5.4 0 0017.6 2z"/>',
-  };
-  const HUB = [
-    { mode: 'conf',    c: '#D85A30', ic: HUB_ICON.cal,    zh: ['会议截稿', '报名与截稿倒计时 · 一键加日历'],      en: ['Conferences', 'Registration & submission countdowns · add to calendar'] },
-    { mode: 'journal', c: '#2563EB', ic: HUB_ICON.book,   zh: ['期刊', '滚动投稿 · 影响因子与分区'],               en: ['Journals', 'Rolling submission · impact factor & quartile'] },
-    { mode: 'dataset', c: '#0F766E', ic: DB_ICON,         zh: ['数据集', '公开脑电数据集 · 按范式筛选'],           en: ['Datasets', 'Public EEG datasets, filtered by paradigm'] },
-    { href: 'atlas.html',                                c: '#7C3AED', ic: ICONS.BCI, zh: ['EEG 波形', '节律、任务信号与电极脑区对照'], en: ['EEG Atlas', 'Rhythms & task signals ↔ electrodes & regions'] },
-    { href: 'BCI_Basic_Development_Environment_Setup/', c: '#0E7490', ic: HUB_ICON.wrench, enQ: '?lang=en', zh: ['入门环境', '三平台每周实测的安装清单'], en: ['Starter env', 'Setup verified weekly on three platforms'] },
-    { href: 'EEG_Artifact_Simulator/',                  c: '#DB2777', ic: ICONS.SP,  zh: ['伪迹模拟器', '实时合成 12 种伪迹 · 怎么认、怎么去掉'], en: ['Artifact simulator', '12 EEG artifacts, live · spot & remove them (中文)'] },
-  ];
-
   const icon = (sub, color) => `<span class="evt-ic" style="background:${color}"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${ICONS[sub] || ''}</svg></span>`;
 
   // ── i18n ──
@@ -210,7 +195,6 @@
     mtabAtlas: document.getElementById('mtabAtlas'),
     papersBtn: document.getElementById('papersBtn'),
     envBtn: document.getElementById('envBtn'),
-    hub: document.getElementById('hub'),
   };
 
   let confs = [];
@@ -283,7 +267,14 @@
   // ── state ──
   function loadState() {
     const params = new URLSearchParams(location.search);
-    const src = params.get('sub') != null ? params.get('sub') : localStorage.getItem('bci-ddl-subs');
+    const pm = params.get('mode');
+    if (pm === 'journal' || pm === 'dataset') mode = pm;
+    const pq = (params.get('q') || '').trim();
+    if (pq) query = pq;
+    // 带 ?q= 从首页搜索点进来时,不恢复上次存的主题筛选,免得要找的那条被藏掉;
+    // 数据集视图的筛选维度是范式,存的主题键对它无效
+    const src = params.get('sub') != null ? params.get('sub')
+      : (pq || mode === 'dataset') ? null : localStorage.getItem('bci-ddl-subs');
     if (src) src.split(',').map(s => s.trim().toUpperCase()).filter(s => THEME_OF[s]).forEach(s => active.add(s));
     const pl = params.get('lang') || localStorage.getItem('bci-ddl-lang');
     if (pl === 'en' || pl === 'zh') { lang = pl; langExplicit = true; }
@@ -334,22 +325,6 @@
     els.mtabConf.classList.toggle('on', mode === 'conf');
     els.mtabJournal.classList.toggle('on', mode === 'journal');
     els.mtabDataset.classList.toggle('on', mode === 'dataset');
-    renderHub();
-  }
-  function renderHub() {
-    if (!els.hub) return;
-    const en = lang === 'en';
-    const tiles = HUB.map((h, i) => {
-      const [nm, sub] = en ? h.en : h.zh;
-      const on = h.mode && h.mode === mode;
-      const kind = h.mode ? (on ? (en ? 'Current view' : '当前视图') : (en ? 'Switch view' : '本页切换')) : (en ? 'Open page →' : '打开页面 →');
-      const inner = `<span class="tile-top"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${h.ic}</svg></span><span class="tile-no">${String(i + 1).padStart(2, '0')}</span></span>`
-        + `<span class="tile-nm">${esc(nm)}</span><span class="tile-sub">${esc(sub)}</span><span class="tile-k">${kind}</span>`;
-      return h.mode
-        ? `<button class="tile${on ? ' on' : ''}" type="button" data-mode="${h.mode}" style="--c:${h.c}"${on ? ' aria-current="true"' : ''}>${inner}</button>`
-        : `<a class="tile" href="${h.href}${en && h.enQ ? h.enQ : ''}" style="--c:${h.c}">${inner}</a>`;
-    }).join('');
-    els.hub.innerHTML = `<div class="group-head"><span>${en ? 'Tools' : '功能'}</span><span class="cnt">${HUB.length}</span></div><div class="tiles">${tiles}</div>`;
   }
   function renderFilters() {
     const isDs = mode === 'dataset';
@@ -639,21 +614,9 @@
       <div class="stat"><div class="n">${clinical}</div><div class="l">${t().dStatClinical}</div></div>
       <div class="stat"><div class="n">${mm}</div><div class="l">${t().dStatMM}</div></div>`;
   }
-  // 点功能格切模式后要滚到列表开头。期刊/数据集首次进入是异步拉数据的,点下那一刻列表为空、
-  // 页面不够高,当场滚会被截在顶部 —— 所以记下请求,等列表真正渲染完再滚(8 秒内有效,拉取失败就作废)
-  let pendingListScroll = 0;
-  function scrollToList() {
-    const navH = document.querySelector('.nav').offsetHeight;   // 顶栏随宽度折成 2–3 行
-    window.scrollTo({ top: els.list.getBoundingClientRect().top + window.scrollY - navH - 16, behavior: 'smooth' });
-  }
   function render() {
-    renderList();
-    if (pendingListScroll && Date.now() - pendingListScroll < 8000) scrollToList();
-    pendingListScroll = 0;
-  }
-  function renderList() {
-    if (mode === 'journal') return renderJournals();
-    if (mode === 'dataset') return renderDatasets();
+    if (mode === 'journal') return journals ? renderJournals() : undefined;
+    if (mode === 'dataset') return datasets ? renderDatasets() : undefined;
     const now = Date.now();
     const rows = visible();
     const upcoming = [], tbd = [], past = [];
@@ -704,7 +667,13 @@
   loadState();
   renderChrome();
   renderFilters();
-  els.search.addEventListener('input', () => { query = els.search.value.trim(); render(); });
+  els.search.value = query;
+  els.search.addEventListener('input', () => {
+    query = els.search.value.trim(); render();
+    const url = new URL(location);
+    if (query) url.searchParams.set('q', query); else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+  });
   els.langBtn.addEventListener('click', () => {
     lang = lang === 'zh' ? 'en' : 'zh';
     langExplicit = true;
@@ -724,6 +693,10 @@
     mode = m;
     active.clear();           // paradigm and sub filters aren't interchangeable
     query = ''; els.search.value = '';
+    const url = new URL(location);
+    if (mode === 'conf') url.searchParams.delete('mode'); else url.searchParams.set('mode', mode);
+    url.searchParams.delete('q'); url.searchParams.delete('sub');
+    history.replaceState(null, '', url);
     window.scrollTo(0, 0);
     renderChrome();
     renderFilters();
@@ -734,13 +707,6 @@
   els.mtabConf.addEventListener('click', () => setMode('conf'));
   els.mtabJournal.addEventListener('click', () => setMode('journal'));
   els.mtabDataset.addEventListener('click', () => setMode('dataset'));
-  if (els.hub) els.hub.addEventListener('click', e => {
-    const b = e.target.closest('button.tile[data-mode]');
-    if (!b) return;
-    if (b.dataset.mode === mode) return scrollToList();
-    pendingListScroll = Date.now();
-    setMode(b.dataset.mode);
-  });
 
   els.papersBtn.addEventListener('click', () => {
     showPapers = !showPapers;
@@ -760,6 +726,8 @@
   if (localStorage.getItem('bci-ddl-paperhint') !== '1' && !showPapers) els.papersBtn.classList.add('hint');
 
   detectLangByIP();
+  if (mode === 'journal') lazyLoad('data/journals.yml', v => journals = v, render);
+  else if (mode === 'dataset') lazyLoad('data/datasets.yml', v => datasets = v, render);
 
   fetch('data/conferences.yml', { cache: 'no-cache' })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
