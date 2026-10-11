@@ -32,6 +32,7 @@ a{color:inherit;text-decoration:none}
 .nav-row1{display:flex;gap:.55rem;align-items:center}
 .brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;font-weight:500;white-space:nowrap}
 .brand em{font-style:normal;color:var(--orange)}
+.beta{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);border:1px solid rgba(216,90,48,.45);padding:.1rem .38rem;border-radius:2px;white-space:nowrap;margin-right:.35rem;flex:0 0 auto}
 .tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;color:var(--ink-dim);background:none;border:1px solid var(--hair);padding:.32rem .62rem;cursor:pointer;white-space:nowrap;transition:all .15s}
 .tool:hover{border-color:var(--ink-muted);color:var(--ink)}
 .tool.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -141,6 +142,8 @@ canvas{display:block;width:100%}
 
 footer{padding:3rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.2rem}
 .fnote{font-family:var(--mono);font-size:.64rem;letter-spacing:.03em;color:var(--ink-muted);line-height:2}
+.fnote a{border-bottom:1px dashed currentColor}
+.fnote a:hover{color:var(--orange)}
 .totop{position:fixed;right:1.4rem;bottom:1.4rem;z-index:60;width:38px;height:38px;border:1px solid var(--hair);background:rgba(250,250,248,.94);backdrop-filter:blur(8px);color:var(--ink-dim);font-size:1rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
 .totop.on{opacity:1;pointer-events:auto}
 .totop:hover{border-color:var(--ink);color:var(--ink)}
@@ -182,7 +185,7 @@ footer{padding:3rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.2rem}
     <a class="tool" href="../deadlines.html">← 截稿日历</a>
     <a class="tool gh" href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/tree/main/EEG_Artifact_Simulator" target="_blank" rel="noopener">GitHub</a>
   </div>
-  <div class="nav-row2" id="chips"><span class="lbl">目录</span></div>
+  <div class="nav-row2" id="chips"><span class="beta" title="这个工具还在测试，内容和数字可能会改">Beta · 测试中</span><span class="lbl">目录</span></div>
 </div></nav>
 
 <div class="wrap" id="top">
@@ -296,7 +299,8 @@ footer{padding:3rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.2rem}
   <footer><div class="fnote">
     模拟器部分是模拟信号，不来自真人。背景与伪迹幅度按文献范围校准，数字都是用这份代码在命令行里实测的；心电有意放大，真实的要小得多。<br>
     「实图分析」页用的是 DB Wireless EEG 的预览截图（图片在同目录 img/ 下），标注是读图判断；图 4 原截图没有通道名，电极名是按其他三张的 32 导顺序和行距推出来的。<br>
-    滤波器是按 OpenBCI 默认参数写的 4 阶 Butterworth 近似，不是 BrainFlow 原版代码。
+    滤波器是按 OpenBCI 默认参数写的 4 阶 Butterworth 近似，不是 BrainFlow 原版代码。<br>
+    去掉伪迹之后怎样一步步做到分类，见<a href="../EEG_Processing_Pipeline/">处理管线</a>。
   </div></footer>
 </div>
 <button class="totop" id="totop" aria-label="回到顶部">↑</button>

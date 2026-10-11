@@ -10,6 +10,7 @@
     brain: '<path d="M9.5 3A3.5 3.5 0 006 6.5c-1.8.4-3 2-3 3.9 0 1.2.5 2.3 1.4 3A4 4 0 008 20.5h1.2A2.8 2.8 0 0012 17.7V5.8A2.8 2.8 0 009.5 3zm5 0A2.8 2.8 0 0012 5.8v11.9a2.8 2.8 0 002.8 2.8H16a4 4 0 003.6-7.1c.9-.7 1.4-1.8 1.4-3 0-1.9-1.2-3.5-3-3.9A3.5 3.5 0 0014.5 3z"/>',
     wrench: '<path d="M17.6 2a5.4 5.4 0 00-5 7.5L2.8 19.3l1.9 1.9 9.8-9.8A5.4 5.4 0 0021.4 4l-3 3-2.4-2.4 3-3A5.4 5.4 0 0017.6 2z"/>',
     wave: '<path d="M3 10h2v4H3zM7 6h2v12H7zM11 2h2v20h-2zM15 6h2v12h-2zM19 10h2v4h-2z"/>',
+    flow: '<path d="M3 3h7v7H3zM14 14h7v7h-7zM10 5.5h5a3 3 0 013 3V14h-2V8.5a1 1 0 00-1-1h-5z"/>',
   };
 
   // ── 九宫格:一项一格,三列;第三行留给以后。kw 是额外的搜索词 ──
@@ -30,8 +31,11 @@
       zh: ['入门环境', '三平台每周实测的安装清单'], en: ['Starter env', 'Setup verified weekly on three platforms'],
       kw: 'environment setup install conda mne pytorch braindecode moabb 环境 安装 配置' },
     { key: 'sim', href: 'EEG_Artifact_Simulator/', c: '#DB2777', ic: ICON.wave,
-      zh: ['伪迹模拟器', '实时合成 12 种伪迹 · 怎么认、怎么去掉'], en: ['Artifact simulator', '12 EEG artifacts, live · spot & remove them (中文)'],
+      zh: ['伪迹模拟器', '实时合成 12 种伪迹 · 怎么认、怎么去掉'], en: ['Artifact simulator', '12 EEG artifacts, live · spot & remove them (中文)'], beta: true,
       kw: 'artifact simulator 伪迹 眨眼 眼动 肌电 心电 工频 ica 滤波 blink emg' },
+    { key: 'pipe', href: 'EEG_Processing_Pipeline/', enQ: '?lang=en', c: '#B45309', ic: ICON.flow,
+      zh: ['处理管线', '滤波、ICA、xDAWN、LDA · 交叉验证与泄漏检验'], en: ['EEG pipeline', 'Filtering, ICA, xDAWN, LDA · cross-validation & leakage checks'],
+      kw: 'pipeline 管线 处理 p300 erp pca ica xdawn lda 分类 classification 交叉验证 cross-validation 消融 ablation 收缩 shrinkage 泄漏 leakage mne pyriemann blink 眨眼 eog 去伪迹 artifact removal' },
   ];
   const TILE_OF = Object.fromEntries(TILES.map(t => [t.key, t]));
 
@@ -43,7 +47,7 @@
       empty: q => `没找到「${q}」,换个关键词试试`, loading: '数据还在加载…',
       open: '打开 →',
       k: { conf: n => `${n} 场即将截稿 →`, journal: n => `收录 ${n} 本 →`, dataset: n => `收录 ${n} 个 →`,
-           atlas: () => '交互图谱 →', env: d => d ? `三平台验证 ${d} →` : '三平台每周验证 →', sim: () => '中文 · 分 4 页 →' },
+           atlas: () => '交互图谱 →', env: d => d ? `三平台验证 ${d} →` : '三平台每周验证 →', sim: () => '中文 · 分 4 页 →', pipe: () => '中英对照 · 可交互 →' },
       due: d => `截稿 ${d}`, tba: '待公布', closed: '已截止',
       foot: '会议截稿每周从 <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl</a> 自动同步 · 期刊影响因子为最新 JCR,投稿前请复核 · 数据集与模板链接每周做健康检查',
     },
@@ -54,7 +58,7 @@
       empty: q => `Nothing for “${q}” — try another word`, loading: 'Still loading data…',
       open: 'Open →',
       k: { conf: n => `${n} upcoming →`, journal: n => `${n} journals →`, dataset: n => `${n} datasets →`,
-           atlas: () => 'Interactive →', env: d => d ? `Verified ${d} →` : 'Verified weekly →', sim: () => 'Chinese · 4 tabs →' },
+           atlas: () => 'Interactive →', env: d => d ? `Verified ${d} →` : 'Verified weekly →', sim: () => 'Chinese · 4 tabs →', pipe: () => 'Bilingual · interactive →' },
       due: d => `due ${d}`, tba: 'TBA', closed: 'closed',
       foot: 'Conference deadlines sync weekly from <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl</a> · Journal impact factors are the latest JCR — check before submitting · Dataset and template links are health-checked weekly',
     },
@@ -192,7 +196,7 @@
       const href = tl.href + (en && tl.enQ ? tl.enQ : '');
       return `<a class="tile" href="${href}" data-key="${tl.key}" style="--c:${tl.c}">`
         + `<span class="tile-top"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${tl.ic}</svg></span><span class="tile-no">${String(i + 1).padStart(2, '0')}</span></span>`
-        + `<span class="tile-nm">${esc(nm)}</span><span class="tile-sub">${esc(sub)}</span><span class="tile-k">${esc(k)}</span></a>`;
+        + `<span class="tile-nm">${esc(nm)}${tl.beta ? `<span class="tile-beta">${en ? 'Beta' : 'Beta · 测试中'}</span>` : ''}</span><span class="tile-sub">${esc(sub)}</span><span class="tile-k">${esc(k)}</span></a>`;
     }).join('');
   }
   function renderAll() {

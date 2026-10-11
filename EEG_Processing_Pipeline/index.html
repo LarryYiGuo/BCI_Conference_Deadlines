@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="both">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>脑电处理管线 · EEG Processing Pipeline</title>
+<meta name="description" content="在浏览器里合成一组带眨眼的 P300 数据，逐步走完滤波、ICA、切段、xDAWN、收缩 LDA，并用交叉验证、消融和打乱标签检验每一步。An interactive P300 example on synthetic EEG with blinks, generated in your browser: filtering, ICA, epoching, xDAWN and shrinkage LDA, with each step checked by cross-validation, ablations and a shuffled-label leakage test.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf8; --bg2:#f2f1ed; --paper:#fff;
+  --ink:#2C2C2A; --ink-dim:#5F5E5A; --ink-muted:#8a8a84;
+  --hair:#e8e6df; --line-soft:#d6d5cf;
+  --orange:#D85A30; --red:#C0473F; --green:#1D9E75; --blue:#4F7396;
+  --serif:'Noto Serif SC',Georgia,'Songti SC',serif;
+  --sans:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+  --c:#D85A30;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:118px}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-weight:300;line-height:1.7;font-size:15px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:0 2.4rem}
+.spacer{flex:1}
+
+/* 吸顶栏 */
+.nav{position:sticky;top:0;z-index:50;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.nav-in{max-width:1100px;margin:0 auto;padding:.7rem 2.4rem}
+.nav-row1{display:flex;gap:.55rem;align-items:center}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+.brand em{font-style:normal;color:var(--orange)}
+.tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;color:var(--ink-dim);background:none;border:1px solid var(--hair);padding:.32rem .62rem;cursor:pointer;white-space:nowrap;transition:all .15s}
+.tool:hover{border-color:var(--ink-muted);color:var(--ink)}
+.tool.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.nav-row2{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-top:.6rem}
+.nav-row2 .lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-right:.25rem}
+.fbtn{display:inline-flex;align-items:center;gap:.42rem;font-family:var(--mono);font-size:.66rem;color:var(--ink-dim);background:none;border:1px solid var(--hair);padding:.24rem .55rem .24rem .34rem;cursor:pointer;transition:all .15s;white-space:nowrap}
+.fbtn:hover{border-color:var(--ink-muted);color:var(--ink)}
+.fbtn.cur{color:var(--ink);border-color:color-mix(in srgb,var(--c) 55%,var(--hair));box-shadow:inset 0 -2px 0 var(--c)}
+.fic{width:16px;height:16px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;background:var(--c);border-radius:3px}
+.fic svg{width:11px;height:11px;fill:#fff}
+
+/* Hero */
+.hero{padding:3rem 0 1.2rem}
+.kicker{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:1.8rem}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(1.9rem,5vw,3.6rem);line-height:1.12;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.lede{font-size:.97rem;color:var(--ink-dim);max-width:62ch;margin-top:1.6rem}
+.lede p+p{margin-top:.6rem}
+.stats{display:flex;flex-wrap:wrap;gap:3rem;padding:1.7rem 0;margin-top:1.8rem;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.stat .n{display:block;font-family:var(--serif);font-weight:900;font-size:2.6rem;line-height:1;letter-spacing:-.02em;color:var(--orange);font-variant-numeric:tabular-nums}
+.stat .l{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-top:.6rem}
+
+/* 分页 */
+.modetabs{display:inline-flex;border:1px solid var(--hair);margin-left:.4rem}
+.mtab{display:inline-flex;align-items:baseline;gap:.38rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-dim);padding:.32rem .72rem;white-space:nowrap;transition:all .15s}
+.mtab .no{font-size:.56rem;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.mtab+.mtab{border-left:1px solid var(--hair)}
+.mtab:hover{color:var(--ink)}
+.mtab.on{background:var(--orange);color:#fff}
+.mtab.on .no{color:rgba(255,255,255,.72)}
+.phead{padding:3rem 0 .2rem}
+.phead .kicker{margin-bottom:1.1rem}
+.phead h1{font-family:var(--serif);font-weight:900;font-size:clamp(1.7rem,4vw,2.7rem);line-height:1.15;letter-spacing:-.02em}
+.phead h1 em{font-style:normal;color:var(--orange)}
+.go-sec{font-family:var(--mono);font-size:.62rem;letter-spacing:.03em;color:var(--ink-muted);border-bottom:1px dashed currentColor;margin-left:.9rem;white-space:nowrap}
+.go-sec:hover{color:var(--orange)}
+
+/* 组标题 */
+.group-head{display:flex;align-items:center;gap:.6rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin:3.2rem 0 .35rem}
+.group-head .ic{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;background:var(--c);border-radius:3px}
+.group-head .ic svg{width:14px;height:14px;fill:#fff}
+.group-head .gh-t{color:var(--ink-dim);font-weight:500}
+.group-head .cnt{color:var(--orange)}
+.gh-desc{font-size:.82rem;color:var(--ink-muted);margin:0 0 1.1rem;max-width:74ch;line-height:1.6}
+.sub-head{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin:1.4rem 0 .5rem;padding-top:.9rem;border-top:1px dashed var(--line-soft)}
+
+/* 两列条目行 */
+.ent{display:grid;grid-template-columns:148px minmax(0,1fr);gap:1.6rem;padding:1.4rem 0;border-top:1px solid var(--hair);align-items:start}
+.ent-left{font-family:var(--mono);min-width:0}
+.ent-tag{display:flex;align-items:center;gap:.42rem;font-size:.63rem;letter-spacing:.08em;color:var(--ink-dim)}
+.ent-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:0 0 auto}
+.ent-n{margin-top:.7rem;display:flex;align-items:baseline;gap:.32rem;flex-wrap:wrap}
+.ent-n .v{font-family:var(--serif);font-weight:900;font-size:1.8rem;line-height:1;letter-spacing:-.02em;color:var(--c);font-variant-numeric:tabular-nums}
+.ent-n .v.sm{font-size:1.35rem}
+.ent-n .k{font-size:.57rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.ent-right{min-width:0}
+.ent-head{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
+.ent-nm{font-family:var(--serif);font-weight:700;font-size:1.2rem;letter-spacing:-.01em;line-height:1.25}
+.kb{display:inline-flex;align-items:center;font-family:var(--mono);font-size:.58rem;color:var(--ink-muted);border:1px solid var(--hair);padding:.06rem .34rem;border-radius:2px;white-space:nowrap}
+.kb.ok{color:var(--green);border-color:rgba(29,158,117,.45)}
+.kb.no{color:var(--red);border-color:rgba(192,71,63,.4)}
+.ent-desc{font-size:.86rem;color:var(--ink-dim);margin-top:.42rem;line-height:1.65;max-width:70ch}
+.ent-desc p+p{margin-top:.35rem}
+.ent-desc b{font-weight:500;color:var(--ink)}
+.ent-desc .k{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-right:.4rem}
+
+/* 模拟器 */
+.ctl{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:.45rem 0}
+.ctl .k{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);min-width:5.2rem}
+.seg{display:inline-flex;border:1px solid var(--hair)}
+.seg button{font-family:var(--mono);font-size:.66rem;letter-spacing:.03em;color:var(--ink-dim);background:none;border:0;padding:.32rem .7rem;cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--hair)}
+.seg button.on{background:var(--orange);color:#fff}
+select.tool{appearance:auto;height:auto}
+.hint-line{font-size:.86rem;color:var(--ink-dim);border-left:2px solid var(--c);padding:.1rem 0 .1rem .8rem;margin:.9rem 0 0;min-height:1.7em;max-width:74ch}
+.hint-line b{font-weight:500;color:var(--ink)}
+.panel-cap{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin:1.3rem 0 .45rem;display:flex;gap:.8rem;flex-wrap:wrap}
+.panel-cap .hint{text-transform:none;letter-spacing:.02em}
+.panel-cap .hint b{color:var(--red);font-weight:500}
+canvas{display:block;width:100%}
+.sim2{display:grid;grid-template-columns:170px minmax(0,1fr);gap:1.6rem;align-items:start}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem .9rem;font-family:var(--mono);font-size:.62rem;color:var(--ink-dim);margin-top:.5rem}
+.legend span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:.35rem;vertical-align:0}
+
+/* 真实记录 */
+.fig{position:relative;margin:.5rem 0 0;border:1px solid var(--hair);background:#f7f7ee}
+.fig img{display:block;width:100%;height:auto}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.fig .bx{cursor:pointer;transition:opacity .15s}
+.fig .bx rect{fill:none;stroke:currentColor;stroke-width:4}
+.fig .bx circle{fill:currentColor}
+.fig .bx text{font:700 30px 'JetBrains Mono',ui-monospace,monospace;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.fig.focus .bx{opacity:.15}
+.fig.focus .bx.hi{opacity:1}
+.fig .bx.hi rect{stroke-width:8;fill:currentColor;fill-opacity:.07}
+.fcap{font-family:var(--mono);font-size:.62rem;color:var(--ink-muted);margin:.45rem 0 .2rem;line-height:1.7}
+.rf{cursor:pointer;transition:background .15s;outline:none}
+.rf.hi,.rf:focus-visible{background:color-mix(in srgb,var(--c) 7%,transparent)}
+.ent-desc a.go{color:var(--c);border-bottom:1px dashed currentColor;cursor:pointer}
+.ent-desc a.go+a.go{margin-left:.5rem}
+
+/* 来源 */
+.dl{display:flex;align-items:baseline;gap:.6rem;padding:.35rem .35rem;min-width:0;border-top:1px dashed var(--hair)}
+.dl .dn{font-size:.84rem;color:var(--ink-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl .dk{font-family:var(--mono);font-size:.58rem;color:var(--ink-muted);flex:0 0 auto}
+.dl:hover .dn{color:var(--c)}
+
+footer{padding:3rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.2rem}
+.fnote{font-family:var(--mono);font-size:.64rem;letter-spacing:.03em;color:var(--ink-muted);line-height:2}
+.totop{position:fixed;right:1.4rem;bottom:1.4rem;z-index:60;width:38px;height:38px;border:1px solid var(--hair);background:rgba(250,250,248,.94);backdrop-filter:blur(8px);color:var(--ink-dim);font-size:1rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
+.totop.on{opacity:1;pointer-events:auto}
+.totop:hover{border-color:var(--ink);color:var(--ink)}
+
+@media(max-width:900px){.wrap,.nav-in{padding-left:1.3rem;padding-right:1.3rem}}
+@media(max-width:680px){
+  html{scroll-padding-top:150px}
+  .nav-row1{flex-wrap:wrap;row-gap:.5rem}
+  .modetabs{order:10;width:100%;margin-left:0;overflow-x:auto;scrollbar-width:none}
+  .modetabs::-webkit-scrollbar{display:none}
+  .mtab{flex:1 0 auto;justify-content:center;padding:.36rem .5rem}
+  .tool.gh{display:none}
+  .phead{padding:2rem 0 0}
+  .go-sec{margin-left:0}
+  .nav-row2{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .nav-row2::-webkit-scrollbar{display:none}
+  .nav-row2 .lbl{display:none}
+  .fbtn{flex:0 0 auto}
+  .hero{padding:2.6rem 0 1.4rem}
+  .stats{gap:1.8rem;padding:1.8rem 0}
+  .stat .n{font-size:2rem}
+  .ent{grid-template-columns:1fr;gap:.55rem}
+  .ent-left{display:flex;align-items:baseline;gap:1rem}
+  .ent-n{margin-top:0}
+  .ent-n .v{font-size:1.15rem}
+  .sim2{grid-template-columns:1fr}
+  .ctl .k{min-width:100%}
+}
+/* 英文弯引号别用思源的全角字形 */
+@font-face{font-family:'LatinQuote';src:local('Helvetica Neue'),local('HelveticaNeue'),local('Arial'),local('ArialMT'),local('Roboto'),local('Segoe UI');unicode-range:U+2018-2019,U+201C-201D}
+:root{--sans:'LatinQuote','Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;--serif:'LatinQuote','Noto Serif SC',Georgia,'Songti SC',serif}
+/* ── 中英对照(与入门环境页同一套:.b 段落在对照模式下英文另起一行,.i 短语用 · 连接,.x 在对照模式下只显示中文) ── */
+html[data-lang="zh"] .en{display:none!important}
+html[data-lang="en"] .zh{display:none!important}
+html[data-lang="both"] .x>.en{display:none!important}
+html[data-lang="both"] .b>.en{display:block;color:var(--ink-muted);font-size:.92em;margin-top:.15rem}
+html[data-lang="both"] .i>.en::before{content:" · ";color:var(--line-soft)}
+html[data-lang="both"] .i>.en{color:var(--ink-muted)}
+html[data-lang="both"] .hero h1 .en{font-size:.46em;font-weight:700;letter-spacing:-.01em;margin-top:.7rem;color:var(--ink-muted)}
+html[data-lang="both"] .fbtn .en{display:none}
+html[data-lang="both"] pre.code.en{display:none}
+html[data-lang="both"] .mtab.on .i>.en,html[data-lang="both"] .step .lb.i>.en{color:inherit;opacity:.8}
+button.mtab{background:none;border:0;cursor:pointer;font-family:var(--mono)}
+.nav-row1{flex-wrap:wrap;row-gap:.5rem}
+.lede a{border-bottom:1px dashed currentColor}
+.lede a:hover{color:var(--orange)}
+/* ── 本页增补 ── */
+.prose{font-size:.9rem;color:var(--ink-dim);max-width:72ch;line-height:1.78;margin-top:.5rem}
+.prose p+p{margin-top:.65rem}
+.prose b{font-weight:500;color:var(--ink)}
+.prose code{font-family:var(--mono);font-size:.8em;background:var(--bg2);padding:.04rem .3rem}
+.fm{margin:1rem 0 .9rem;overflow-x:auto;overflow-y:hidden;color:var(--ink);-webkit-overflow-scrolling:touch}
+.fm svg{display:block;max-width:none}
+.steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:.5rem}
+.step{display:block;background:var(--bg);padding:.85rem .8rem .8rem;min-width:0;transition:background .15s}
+a.step:hover{background:var(--paper)}
+.step .no{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:var(--ink-muted)}
+.step .nm{display:inline-block;font-family:var(--serif);font-weight:700;font-size:1.05rem;line-height:1.3;margin-top:.15rem;border-bottom:2px solid var(--sc)}
+.step .wd{font-size:.76rem;color:var(--ink-dim);margin-top:.45rem;line-height:1.5}
+.step .lb{display:inline-block;font-family:var(--mono);font-size:.56rem;margin-top:.55rem;padding:.04rem .32rem;border:1px solid var(--hair);color:var(--ink-muted)}
+.step .lb.sup{color:var(--red);border-color:rgba(192,71,63,.4)}
+.step .sh{font-family:var(--mono);font-size:.6rem;color:var(--ink-muted);margin-top:.35rem;font-variant-numeric:tabular-nums}
+.step.res{background:var(--bg2)}
+.step.res .v{font-family:var(--serif);font-weight:900;font-size:2.3rem;line-height:1;color:var(--orange);margin-top:.4rem;font-variant-numeric:tabular-nums;transition:opacity .2s}
+.step.res .v2{font-family:var(--mono);font-size:.62rem;color:var(--ink-dim);margin-top:.55rem;line-height:1.6}
+body.busy{cursor:progress}
+body.busy .dep{opacity:.35;transition:opacity .2s}
+.status{font-family:var(--mono);font-size:.64rem;color:var(--ink-muted);margin-top:.7rem;min-height:1.2em}
+.status b{color:var(--orange);font-weight:500}
+.icgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:.6rem}
+.iccard{display:block;background:var(--bg);border:0;padding:.6rem .65rem .55rem;text-align:left;font:inherit;color:inherit;cursor:pointer;min-width:0;transition:background .15s}
+.iccard:hover{background:var(--paper)}
+.iccard .t{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:.66rem;color:var(--ink-dim)}
+.iccard .t b{font-weight:500;color:var(--ink)}
+.iccard .st{font-size:.56rem;padding:.02rem .32rem;border:1px solid var(--hair);color:var(--ink-muted)}
+.iccard.rm{background:color-mix(in srgb,var(--red) 6%,var(--bg))}
+.iccard.rm .st{color:#fff;background:var(--red);border-color:var(--red)}
+.iccard svg{display:block;width:100%;max-width:112px;height:auto;margin:.3rem auto 0}
+.iccard .m{font-family:var(--mono);font-size:.58rem;color:var(--ink-muted);margin-top:.15rem;line-height:1.6}
+.iccard .m b{font-weight:500;color:var(--ink)}
+.iccard canvas{margin-top:.25rem}
+.heads{display:flex;flex-wrap:wrap;gap:1.2rem 1.6rem;margin:.7rem 0 .2rem}
+.hcell{width:150px}
+.hcell svg{display:block;width:100%;height:auto}
+.hcell .c{font-family:var(--mono);font-size:.6rem;color:var(--ink-muted);margin-top:.3rem;line-height:1.6}
+.hcell .c b{font-weight:500;color:var(--ink)}
+.hkey{font-family:var(--mono);font-size:.6rem;color:var(--ink-muted);margin-top:.3rem}
+.hkey i{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin:0 .25rem 0 .7rem}
+.hkey i:first-child{margin-left:0}
+.legend span span::before{content:none;display:inline;width:auto;height:auto;margin:0;background:none;border-radius:0}
+.two{display:grid;grid-template-columns:170px minmax(0,1fr);gap:1.6rem;align-items:start}
+.abl{margin-top:.6rem;border-top:1px solid var(--hair)}
+.ab{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 3.4rem 3.6rem 3.2rem;gap:.9rem;align-items:center;padding:.62rem 0;border-bottom:1px solid var(--hair)}
+.ab.hd{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);padding:.45rem 0}
+.ab .nm b{display:block;font-family:var(--serif);font-weight:700;font-size:.95rem;color:var(--ink);line-height:1.35}
+.ab .nm .sd{display:block;font-size:.72rem;color:var(--ink-muted);line-height:1.45;margin-top:.12rem}
+.ab.base .nm b{color:var(--orange)}
+.ab .bar{position:relative;height:10px;background:var(--bg2)}
+.ab .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--c)}
+.ab .bar em{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--ink-muted)}
+.ab .v,.ab .d,.ab .ba{font-family:var(--mono);font-size:.76rem;text-align:right;font-variant-numeric:tabular-nums}
+.ab .v{color:var(--ink)}
+.ab .d,.ab .ba{color:var(--ink-dim)}
+.ab.hd .v,.ab.hd .d,.ab.hd .ba{font-size:.56rem;color:var(--ink-muted)}
+pre.code{font-family:var(--mono);font-size:.74rem;line-height:1.7;background:var(--bg2);border:1px solid var(--hair);padding:1rem 1.1rem;overflow-x:auto;margin-top:.7rem;color:var(--ink);white-space:pre;-webkit-overflow-scrolling:touch}
+pre.code .cm{color:var(--ink-muted)}
+input[type=range]{accent-color:var(--orange);width:240px;max-width:62vw;vertical-align:middle}
+.ro{font-family:var(--mono);font-size:.68rem;color:var(--ink-dim);font-variant-numeric:tabular-nums;line-height:1.9}
+.ro b{font-weight:500;color:var(--ink)}
+.toyout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:.7rem}
+.toyout div{background:var(--bg);padding:.55rem .7rem}
+.toyout .k{display:block;font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;color:var(--ink-muted)}
+.toyout .v{display:block;font-family:var(--serif);font-weight:900;font-size:1.3rem;color:var(--c);margin-top:.15rem;font-variant-numeric:tabular-nums}
+.toyout .s{display:block;font-family:var(--mono);font-size:.6rem;color:var(--ink-dim);margin-top:.1rem}
+.fnote p+p{margin-top:.55rem}
+@media(max-width:900px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .icgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two{grid-template-columns:1fr}
+  .ab{grid-template-columns:minmax(0,1fr) 3rem 3.2rem 2.8rem;gap:.6rem}
+  .ab .bar{display:none}
+  .toyout{grid-template-columns:1fr}
+  .hcell{width:calc(50% - .8rem)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <div class="nav-row1">
+    <a class="brand" href="../" title="回到首页 · Home">🧠 BCI<em>·</em>Deadlines</a>
+    <nav class="modetabs" id="tabs" aria-label="页面 · Pages"><a class="mtab x" href="../deadlines.html"><span class="zh">截稿日历</span><span class="en">Deadlines</span></a><a class="mtab x" href="../EEG_Artifact_Simulator/"><span class="zh">伪迹模拟器</span><span class="en">Artifact simulator (中文)</span></a><a class="mtab x on" href="./" aria-current="page"><span class="zh">处理管线</span><span class="en">Pipeline</span></a></nav>
+    <span class="spacer"></span>
+    <div class="modetabs" id="langTabs" aria-label="language">
+      <button class="mtab" data-lang="both">对照 · Both</button><button class="mtab" data-lang="zh">中文</button><button class="mtab" data-lang="en">EN</button>
+    </div>
+    <a class="tool gh" href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/tree/main/EEG_Processing_Pipeline" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <div class="nav-row2" id="chips"><span class="lbl i"><span class="zh">目录</span><span class="en">Contents</span></span></div>
+</div></nav>
+
+<div class="wrap" id="top">
+  <main>
+  <header class="hero">
+    <div class="kicker">Processing Pipeline · P300</div>
+    <h1 class="b"><span class="zh">脑电<em>处理管线</em></span><span class="en">EEG <em>processing pipeline</em></span></h1>
+    <div class="lede">
+      <p class="b"><span class="zh"><a href="../EEG_Artifact_Simulator/">伪迹模拟器</a>（还在测试）讲的是伪迹长什么样。这一页接着往下走：一段带眨眼的脑电，怎样一步步变成「这一次是不是目标」的判断。</span><span class="en">The <a href="../EEG_Artifact_Simulator/">artifact simulator</a> (in Chinese, still in beta) shows what artifacts look like. This page picks up from there: how a stretch of EEG with blinks in it turns, step by step, into a decision on whether this trial was a target.</span></p>
+      <p class="b"><span class="zh">例子是最常见的事件相关电位任务。屏幕上依次闪过一串刺激，五个里有一个是目标。看到目标时，大脑会在 300 毫秒前后多出一个正波，叫 P300。数据在你的浏览器里现场合成，背景脑电和眨眼用的是模拟器那一套。</span><span class="en">The example is the most common event-related potential task. A stream of stimuli flashes on screen, and one in five is a target. When a target appears, the brain adds a positive wave about 300 ms later, called the P300. The data are generated live in your browser, with the same background EEG and blinks as the simulator.</span></p>
+      <p class="b"><span class="zh">管线有五步：滤波、ICA 去眨眼、切段、xDAWN 空间滤波、LDA 分类。每一步都能拿掉，看分数怎么变。计算都在页面里跑，改一个设置要等一两秒。</span><span class="en">The pipeline has five steps: filtering, ICA blink removal, epoching, xDAWN spatial filtering and LDA classification. You can take any step out and watch the score change. Everything runs in the page; each change takes a second or two.</span></p>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="n" id="stN">240</span><div class="l i"><span class="zh">试次</span><span class="en">trials</span></div></div>
+      <div class="stat"><span class="n">8</span><div class="l i"><span class="zh">电极</span><span class="en">electrodes</span></div></div>
+      <div class="stat"><span class="n">5</span><div class="l i"><span class="zh">步骤</span><span class="en">steps</span></div></div>
+      <div class="stat"><span class="n">5</span><div class="l i"><span class="zh">折交叉验证</span><span class="en">cross-validation folds</span></div></div>
+    </div>
+  </header>
+
+  <section class="area" id="flow" style="--c:#D85A30" data-chip-zh="总览" data-chip-en="Overview" data-icon="flow">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">管线总览</span><span class="en">Pipeline overview</span></span></div>
+    <div class="gh-desc b"><span class="zh">每个方框是一步。方框里写着这一步用没用到标签。用到标签的步骤，在交叉验证里只能看训练数据，否则分数会虚高。</span><span class="en">Each box is one step and says whether that step uses the labels. In cross-validation, a step that uses labels may only see the training data; otherwise the score is inflated.</span></div>
+    <div class="steps">
+      <a class="step" href="#s-filt" style="--sc:#0E7490"><div class="no">01</div><div class="nm i"><span class="zh">滤波</span><span class="en">Filter</span></div><div class="wd b"><span class="zh">1–10 Hz 零相位带通</span><span class="en">1–10 Hz zero-phase band-pass</span></div><span class="lb i"><span class="zh">不用标签</span><span class="en">no labels</span></span><div class="sh" id="sh1"></div></a>
+      <a class="step" href="#s-ica" style="--sc:#B45309"><div class="no">02</div><div class="nm">ICA</div><div class="wd b"><span class="zh">拆出眨眼成分，删掉</span><span class="en">split out the blink component and drop it</span></div><span class="lb i"><span class="zh">不用标签</span><span class="en">no labels</span></span><div class="sh x" id="sh2"></div></a>
+      <a class="step" href="#s-epoch" style="--sc:#2563EB"><div class="no">03</div><div class="nm i"><span class="zh">切段</span><span class="en">Epoch</span></div><div class="wd b"><span class="zh">每个刺激后 0–0.8 秒，降到 25 Hz</span><span class="en">0–0.8 s after each stimulus, downsampled to 25 Hz</span></div><span class="lb i"><span class="zh">只用刺激时刻</span><span class="en">stimulus times only</span></span><div class="sh" id="sh3"></div></a>
+      <a class="step" href="#s-xdawn" style="--sc:#1D9E75"><div class="no">04</div><div class="nm">xDAWN</div><div class="wd b"><span class="zh">8 个电极合成 <span class="nfv">2</span> 个虚拟通道</span><span class="en">8 electrodes combined into <span class="nfv">2</span> virtual channels</span></div><span class="lb sup i"><span class="zh">用标签</span><span class="en">uses labels</span></span><div class="sh" id="sh4"></div></a>
+      <a class="step" href="#s-lda" style="--sc:#DB2777"><div class="no">05</div><div class="nm">LDA</div><div class="wd b"><span class="zh"><span class="nff">40</span> 个数加权求和，得到一个分数</span><span class="en">a weighted sum of <span class="nff">40</span> numbers gives one score</span></div><span class="lb sup i"><span class="zh">用标签</span><span class="en">uses labels</span></span><div class="sh x" id="sh5"></div></a>
+      <a class="step res" href="#s-eval" style="--sc:#D85A30"><div class="no x"><span class="zh">结果 · 5 折交叉验证</span><span class="en">Result · 5-fold CV</span></div><div class="v dep" id="resAuc">—</div><div class="v2"><span class="x"><span class="zh">AUC · 0.5 是瞎猜</span><span class="en">AUC · 0.5 = chance</span></span><br><span class="x" id="resB"></span></div></a>
+    </div>
+    <div class="ctl" style="margin-top:1.3rem"><span class="k i"><span class="zh">试次数</span><span class="en">Trials</span></span><span class="seg" data-k="n"><button data-v="120">120</button><button data-v="240" class="on">240</button><button data-v="480">480</button></span></div>
+    <div class="ctl"><span class="k i"><span class="zh">P300 幅度</span><span class="en">P300 amplitude</span></span><span class="seg" data-k="amp"><button data-v="6">6 µV</button><button data-v="10" class="on">10 µV</button><button data-v="14">14 µV</button></span></div>
+    <div class="ctl"><span class="k i"><span class="zh">潜伏期抖动</span><span class="en">Latency jitter</span></span><span class="seg" data-k="jit"><button data-v="0">0 ms</button><button data-v="40" class="on">40 ms</button><button data-v="100">100 ms</button></span></div>
+    <div class="ctl"><span class="k i"><span class="zh">眨眼混淆</span><span class="en">Blink confound</span></span><span class="seg" data-k="conf"><button data-v="0"><span class="x"><span class="zh">关</span><span class="en">off</span></span></button><button data-v="1" class="on"><span class="x"><span class="zh">开</span><span class="en">on</span></span></button></span><button class="tool x" id="reseed" style="margin-left:.6rem"><span class="zh">换一批数据</span><span class="en">New data</span></button></div>
+    <div class="hint-line b" id="dataHint"></div>
+    <div class="status i" id="status"></div>
+  </section>
+
+  <section class="area" id="s-data" style="--c:#2563EB" data-chip-zh="原始数据" data-chip-en="Raw data" data-icon="wave">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">原始数据</span><span class="en">Raw data</span></span></div>
+    <div class="gh-desc b"><span class="zh">竖线是刺激出现的时刻，橙色实线是目标，灰色虚线是非目标。浅红底色是眨眼。三个按钮切换同一段数据在管线里不同位置的样子。</span><span class="en">Vertical lines mark stimulus onsets: solid orange for targets, dashed grey for non-targets. Light red shading marks blinks. The three buttons show the same stretch of data at different points in the pipeline.</span></div>
+    <div class="ctl"><span class="k i"><span class="zh">看哪一步</span><span class="en">Stage</span></span><span class="seg" data-k="stage"><button data-v="0"><span class="x"><span class="zh">原始</span><span class="en">raw</span></span></button><button data-v="1" class="on"><span class="x"><span class="zh">滤波后</span><span class="en">filtered</span></span></button><button data-v="2"><span class="x"><span class="zh">去眨眼后</span><span class="en">blinks removed</span></span></button></span>
+      <button class="tool x" id="wPrev" style="margin-left:.6rem"><span class="zh">← 前 6 秒</span><span class="en">← Previous 6 s</span></button><button class="tool x" id="wNext"><span class="zh">后 6 秒 →</span><span class="en">Next 6 s →</span></button></div>
+    <div class="panel-cap"><span class="i"><span class="zh">8 个电极 · 6 秒</span><span class="en">8 electrodes · 6 s</span></span> <span class="hint b" id="rawCap"></span></div>
+    <canvas id="raw" height="330"></canvas>
+  </section>
+
+  <section class="area" id="s-filt" style="--c:#0E7490" data-chip-zh="① 滤波" data-chip-en="① Filter" data-icon="layers">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">① 滤波</span><span class="en">① Filtering</span></span></div>
+    <div class="gh-desc b"><span class="zh">P300 是慢波，能量主要在 1–10 Hz。带通把更慢的漂移、更快的 α 波和肌电、50 Hz 工频挡在外面。</span><span class="en">The P300 is a slow wave with most of its energy in 1–10 Hz. The band-pass keeps out slower drift, faster activity such as the alpha rhythm and muscle noise, and 50 Hz mains interference.</span></div>
+    <div class="panel-cap"><span class="i"><span class="zh">幅频响应 · 前向加反向合起来</span><span class="en">Magnitude response · forward and backward passes combined</span></span> <span class="hint i"><span class="zh">两端截止处是 −6 dB</span><span class="en">−6 dB at both cutoffs</span></span></div>
+    <canvas id="fresp" height="200"></canvas>
+    <div class="prose">
+      <p class="b"><span class="zh"><b>为什么要零相位。</b>普通滤波器会把波形往后推，推多少还随频率变。先正着滤一遍，再把信号倒过来滤一遍，两次的相移正好抵消，P300 的潜伏期不会被挪动。代价是要用到「未来」的数据，所以只能离线用。在线系统得换成只看过去的因果滤波器，接受一点延迟。</span><span class="en"><b>Why zero phase.</b> An ordinary filter shifts the waveform later, by an amount that depends on frequency. Filter once forwards, then once more over the time-reversed signal, and the two phase shifts cancel, so the P300 latency does not move. The price is that it needs “future” samples, so it only works offline. An online system has to use a causal filter that only looks back, and accept some delay.</span></p>
+      <p class="b"><span class="zh"><b>为什么高通不能太高。</b>高通截止越高，慢的正波被削得越多，还会在波形前后造出本来没有的负波。做 ERP 研究一般把高通压在 0.1 Hz 左右（Tanner 等 2015）。BCI 分类更看重稳定，常用 0.5–1 Hz，这里用 1 Hz。</span><span class="en"><b>Why the high-pass cannot be too high.</b> The higher the high-pass cutoff, the more of the slow positive wave is cut away, and it also creates negative deflections before and after the wave that were never there. ERP research usually keeps the high-pass at about 0.1 Hz (Tanner et al. 2015). BCI classification cares more about stability and often uses 0.5–1 Hz; this page uses 1 Hz.</span></p>
+    </div>
+  </section>
+
+  <section class="area" id="s-pca" style="--c:#7C3AED" data-chip-zh="PCA" data-chip-en="PCA" data-icon="trend">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">先看 PCA：方差最大的方向</span><span class="en">First, PCA: the directions of largest variance</span></span></div>
+    <div class="gh-desc b"><span class="zh">PCA 把数据里方差最大的方向一个个找出来排好序。它不看标签，也不管方向背后是什么来源。它不在这条管线里，放在这里是为了和 ICA 对比。</span><span class="en">PCA finds the directions of largest variance in the data and ranks them. It ignores the labels and does not care what source lies behind a direction. It is not part of this pipeline; it is here for contrast with ICA.</span></div>
+    <div class="two">
+      <div><div class="panel-cap i"><span class="zh">PC1 的头皮分布</span><span class="en">PC1 scalp map</span></div><div id="pc1Head"></div></div>
+      <div><div class="panel-cap i"><span class="zh">8 个主成分各占的方差</span><span class="en">Variance share of the 8 components</span></div><canvas id="pcab" height="170"></canvas></div>
+    </div>
+    <div class="hint-line b" id="pcaNote"></div>
+    <div class="prose">
+      <p class="b"><span class="zh">所以 PCA 很少直接拿来去伪迹：眨眼和脑电在空间上并不垂直，砍掉 PC1 会连带砍掉额区的脑电。它更常出现在 ICA 的第一步：把数据白化，也就是先旋转、再缩放，让各个方向方差相等、互不相关。</span><span class="en">That is why PCA is rarely used on its own to remove artifacts: blinks and brain activity are not orthogonal in space, so cutting PC1 also cuts frontal EEG. PCA more often appears as the first step of ICA. There it whitens the data: it rotates and rescales them so that every direction has the same variance and no two directions are correlated.</span></p>
+    </div>
+  </section>
+
+  <section class="area" id="s-ica" style="--c:#B45309" data-chip-zh="② ICA" data-chip-en="② ICA" data-icon="eye">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">② ICA：把混在一起的来源拆开</span><span class="en">② ICA: unmixing the sources</span></span></div>
+    <div class="gh-desc b"><span class="zh">每个电极录到的都是好几个来源的混合：眨眼、各处的脑电、肌电。ICA 假设这些来源彼此独立，混合方式在整段记录里不变，然后反推出拆分矩阵。</span><span class="en">Each electrode records a mixture of several sources: blinks, brain activity from different places, muscle. ICA assumes these sources are independent and that the mixing stays the same for the whole recording, then works out the unmixing matrix.</span></div>
+    <div class="fm" role="math" aria-label="\mathbf{x}(t) = A\,\mathbf{s}(t), \qquad \hat{\mathbf{s}}(t) = W\,\mathbf{x}(t)"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="31.497ex" height="2.423ex" role="img" focusable="false" viewBox="0 -821 13921.8 1071" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-1-TEX-B-1D431" d="M227 0Q212 3 121 3Q40 3 28 0H21V62H117L245 213L109 382H26V444H34Q49 441 143 441Q247 441 265 444H274V382H246L281 339Q315 297 316 297Q320 297 354 341L389 382H352V444H360Q375 441 466 441Q547 441 559 444H566V382H471L355 246L504 63L545 62H586V0H578Q563 3 469 3Q365 3 347 0H338V62H366Q366 63 326 112T285 163L198 63L217 62H235V0H227Z"></path><path id="MJX-1-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-1-TEX-I-1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path id="MJX-1-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-1-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-1-TEX-I-1D434" d="M208 74Q208 50 254 46Q272 46 272 35Q272 34 270 22Q267 8 264 4T251 0Q249 0 239 0T205 1T141 2Q70 2 50 0H42Q35 7 35 11Q37 38 48 46H62Q132 49 164 96Q170 102 345 401T523 704Q530 716 547 716H555H572Q578 707 578 706L606 383Q634 60 636 57Q641 46 701 46Q726 46 726 36Q726 34 723 22Q720 7 718 4T704 0Q701 0 690 0T651 1T578 2Q484 2 455 0H443Q437 6 437 9T439 27Q443 40 445 43L449 46H469Q523 49 533 63L521 213H283L249 155Q208 86 208 74ZM516 260Q516 271 504 416T490 562L463 519Q447 492 400 412L310 260L413 259Q516 259 516 260Z"></path><path id="MJX-1-TEX-B-1D42C" d="M38 315Q38 339 45 360T70 404T127 440T223 453Q273 453 320 436L338 445L357 453H366Q380 453 383 447T386 403V387V355Q386 331 383 326T365 321H355H349Q333 321 329 324T324 341Q317 406 224 406H216Q123 406 123 353Q123 334 143 321T188 304T244 294T285 286Q305 281 325 273T373 237T412 172Q414 162 414 142Q414 -6 230 -6Q154 -6 117 22L68 -6H58Q44 -6 41 0T38 42V73Q38 85 38 101T37 122Q37 144 42 148T68 153H75Q87 153 91 151T97 147T103 132Q131 46 220 46H230Q257 46 265 47Q330 58 330 108Q330 127 316 142Q300 156 284 162Q271 168 212 178T122 202Q38 243 38 315Z"></path><path id="MJX-1-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-1-TEX-N-5E" d="M112 560L249 694L257 686Q387 562 387 560L361 531Q359 532 303 581L250 627L195 580Q182 569 169 557T148 538L140 532Q138 530 125 546L112 560Z"></path><path id="MJX-1-TEX-I-1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D431" xlink:href="#MJX-1-TEX-B-1D431"></use></g></g><g data-mml-node="mo" transform="translate(607,0)"><use data-c="28" xlink:href="#MJX-1-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(996,0)"><use data-c="1D461" xlink:href="#MJX-1-TEX-I-1D461"></use></g><g data-mml-node="mo" transform="translate(1357,0)"><use data-c="29" xlink:href="#MJX-1-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(2023.8,0)"><use data-c="3D" xlink:href="#MJX-1-TEX-N-3D"></use></g><g data-mml-node="mi" transform="translate(3079.6,0)"><use data-c="1D434" xlink:href="#MJX-1-TEX-I-1D434"></use></g><g data-mml-node="mstyle" transform="translate(3829.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(3996.6,0)"><g data-mml-node="mi"><use data-c="1D42C" xlink:href="#MJX-1-TEX-B-1D42C"></use></g></g><g data-mml-node="mo" transform="translate(4450.6,0)"><use data-c="28" xlink:href="#MJX-1-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(4839.6,0)"><use data-c="1D461" xlink:href="#MJX-1-TEX-I-1D461"></use></g><g data-mml-node="mo" transform="translate(5200.6,0)"><use data-c="29" xlink:href="#MJX-1-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(5589.6,0)"><use data-c="2C" xlink:href="#MJX-1-TEX-N-2C"></use></g><g data-mml-node="mstyle" transform="translate(5867.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(8034.2,0)"><g data-mml-node="mover"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D42C" xlink:href="#MJX-1-TEX-B-1D42C"></use></g></g><g data-mml-node="mo" transform="translate(227,27) translate(-250 0)"><use data-c="5E" xlink:href="#MJX-1-TEX-N-5E"></use></g></g></g><g data-mml-node="mo" transform="translate(8488.2,0)"><use data-c="28" xlink:href="#MJX-1-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(8877.2,0)"><use data-c="1D461" xlink:href="#MJX-1-TEX-I-1D461"></use></g><g data-mml-node="mo" transform="translate(9238.2,0)"><use data-c="29" xlink:href="#MJX-1-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(9905,0)"><use data-c="3D" xlink:href="#MJX-1-TEX-N-3D"></use></g><g data-mml-node="mi" transform="translate(10960.8,0)"><use data-c="1D44A" xlink:href="#MJX-1-TEX-I-1D44A"></use></g><g data-mml-node="mstyle" transform="translate(12008.8,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(12175.8,0)"><g data-mml-node="mi"><use data-c="1D431" xlink:href="#MJX-1-TEX-B-1D431"></use></g></g><g data-mml-node="mo" transform="translate(12782.8,0)"><use data-c="28" xlink:href="#MJX-1-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(13171.8,0)"><use data-c="1D461" xlink:href="#MJX-1-TEX-I-1D461"></use></g><g data-mml-node="mo" transform="translate(13532.8,0)"><use data-c="29" xlink:href="#MJX-1-TEX-N-29"></use></g></g></g></svg></div>
+    <div class="prose">
+      <p class="b"><span class="zh">A 的每一列是一个来源在 8 个电极上的分布，W 把混合拆回来。ICA 找的是最不像正态分布的方向。许多独立来源加在一起会趋向正态，反过来，越不像正态，越可能是单独一个来源。衡量「不像正态」的一个数是峰度（这里用的是超额峰度，正态分布为 0）。眨眼又高又尖、偶尔才出现，峰度很大，最容易被认出来。</span><span class="en">Each column of A is one source’s scalp map, that is, how strongly it shows up at each of the 8 electrodes, and W undoes the mixing. ICA looks for the directions that look least like a normal distribution. Many independent sources added together tend towards a normal distribution, so the less normal a direction looks, the more likely it is a single source. One measure of “not normal” is kurtosis (here the excess kurtosis, which is 0 for a normal distribution). A blink is tall, sharp and occasional, so its kurtosis is large and it is the easiest source to spot.</span></p>
+    </div>
+    <div class="panel-cap"><span class="i"><span class="zh">8 个独立成分 · 按峰度排序</span><span class="en">8 independent components · sorted by kurtosis</span></span> <span class="hint i"><span class="zh">点卡片切换删除或保留</span><span class="en">click a card to remove or keep it</span></span></div>
+    <div class="icgrid" id="icGrid"></div>
+    <div class="hkey b"><span class="zh"><i style="background:#C0473F"></i>正<i style="background:#2563EB"></i>负 · 圆的面积表示绝对值。正负号整体翻转不改变含义。</span><span class="en"><i style="background:#C0473F"></i>positive<i style="background:#2563EB"></i>negative · circle area shows magnitude. The overall sign is arbitrary: flipping all the signs together does not change the meaning.</span></div>
+    <div class="hint-line b" id="icaNote"></div>
+    <div class="panel-cap"><span class="i"><span class="zh">删除前后 · 同一段 6 秒</span><span class="en">Before and after removal · the same 6 s</span></span> <span class="hint i"><span class="zh">灰色是删除前，深色是删除后</span><span class="en">grey before, dark after</span></span></div>
+    <canvas id="icafp" height="150"></canvas>
+    <div class="prose"><p class="b" id="icaIter"></p></div>
+  </section>
+
+  <section class="area" id="s-epoch" style="--c:#2563EB" data-chip-zh="③ 切段" data-chip-en="③ Epoch" data-icon="doc">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">③ 切段与降采样</span><span class="en">③ Epoching and downsampling</span></span></div>
+    <div class="gh-desc b"><span class="zh">以每个刺激出现的时刻为零点，截取 0–0.8 秒。滤波后最高只剩 10 Hz 左右的成分，每 10 个点留 1 个（25 Hz）就够了，每个电极剩 20 个数。一个试次于是变成 8 × 20 = 160 个数。</span><span class="en">Each stimulus onset becomes time zero, and the 0–0.8 s after it is kept as one epoch. After filtering, little is left above about 10 Hz, so keeping 1 sample in 10 (25 Hz) is enough, which leaves 20 numbers per electrode. Each trial becomes 8 × 20 = 160 numbers.</span></div>
+    <div class="ctl"><span class="k i"><span class="zh">用哪份数据</span><span class="en">Data</span></span><span class="seg" data-k="erpStage"><button data-v="0"><span class="x"><span class="zh">含眨眼</span><span class="en">with blinks</span></span></button><button data-v="1" class="on"><span class="x"><span class="zh">去眨眼后</span><span class="en">blinks removed</span></span></button></span></div>
+    <div class="panel-cap"><span class="i"><span class="zh">按类别平均</span><span class="en">Class averages</span></span> <span class="hint b" id="erpCap"></span></div>
+    <canvas id="erp" height="250"></canvas>
+    <div class="legend"><span style="--c:#D85A30" class="i"><span class="zh">目标</span><span class="en">target</span></span><span style="--c:#4F7396" class="i"><span class="zh">非目标</span><span class="en">non-target</span></span></div>
+    <div class="hint-line b" id="erpNote"></div>
+    <div class="prose">
+      <p class="b"><span class="zh">降采样之前必须先低通，否则高于新的奈奎斯特频率（12.5 Hz）的成分会混叠进低频。前面的 10 Hz 低通已经做了这件事。真实的 P300 在头顶偏后的中线（Pz）最大，这 8 个电极里没有 Pz，离它最近的是 C3、C4。</span><span class="en">Low-pass filtering has to come before downsampling; otherwise anything above the new Nyquist frequency (12.5 Hz) aliases into the low frequencies. The 10 Hz low-pass earlier already takes care of that. A real P300 is largest on the midline just behind the top of the head (Pz). These 8 electrodes have no Pz; the closest are C3 and C4.</span></p>
+    </div>
+  </section>
+
+  <section class="area" id="s-xdawn" style="--c:#1D9E75" data-chip-zh="④ xDAWN" data-chip-en="④ xDAWN" data-icon="brain">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">④ xDAWN：为这个任务定制的空间滤波</span><span class="en">④ xDAWN: a spatial filter tailored to the task</span></span></div>
+    <div class="gh-desc b"><span class="zh">ICA 不知道哪些试次是目标。xDAWN 知道。它用目标试次的平均波形，找一组电极权重，让合成出来的虚拟通道里，诱发响应占的比例尽量大。</span><span class="en">ICA does not know which trials are targets. xDAWN does. It uses the average target waveform to find a set of electrode weights that make the evoked response as large a share as possible of the resulting virtual channel.</span></div>
+    <div class="fm" role="math" aria-label="\mathbf{v}^{\star} = \arg\max_{\mathbf{v}}\ \frac{\mathbf{v}^{\top} C_P\, \mathbf{v}}{\mathbf{v}^{\top} C_X\, \mathbf{v}}"><svg style="vertical-align: -1.971ex;" xmlns="http://www.w3.org/2000/svg" width="22.778ex" height="5.391ex" role="img" focusable="false" viewBox="0 -1511.3 10068 2382.7" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-2-TEX-B-1D42F" d="M401 444Q413 441 495 441Q568 441 574 444H580V382H510L409 156Q348 18 339 6Q331 -4 320 -4Q318 -4 313 -4T303 -3H288Q273 -3 264 12T221 102Q206 135 197 156L96 382H26V444H34Q49 441 145 441Q252 441 270 444H279V382H231L284 264Q335 149 338 149Q338 150 389 264T442 381Q442 382 418 382H394V444H401Z"></path><path id="MJX-2-TEX-N-22C6" d="M210 282Q210 284 225 381T241 480Q241 484 245 484Q249 486 251 486Q258 486 260 477T272 406Q275 390 276 380Q290 286 290 282L388 299Q484 314 487 314H488Q497 314 497 302Q497 297 434 266Q416 257 404 251L315 206L361 118Q372 98 383 75T401 40L407 28Q407 16 395 16Q394 16 392 16L390 17L250 159L110 17L108 16Q106 16 105 16Q93 16 93 28L99 40Q105 52 116 75T139 118L185 206L96 251Q6 296 4 300Q3 301 3 302Q3 314 12 314H13Q16 314 112 299L210 282Z"></path><path id="MJX-2-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-2-TEX-N-61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path id="MJX-2-TEX-N-72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z"></path><path id="MJX-2-TEX-N-67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z"></path><path id="MJX-2-TEX-N-2061" d=""></path><path id="MJX-2-TEX-N-6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path id="MJX-2-TEX-N-78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z"></path><path id="MJX-2-TEX-N-A0" d=""></path><path id="MJX-2-TEX-N-22A4" d="M55 642T55 648T59 659T66 666T71 668H708Q723 660 723 648T708 628H409V15Q402 2 391 0Q387 0 384 1T379 3T375 6T373 9T371 13T369 16V628H71Q70 628 67 630T59 637Z"></path><path id="MJX-2-TEX-I-1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path><path id="MJX-2-TEX-I-1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path><path id="MJX-2-TEX-I-1D44B" d="M42 0H40Q26 0 26 11Q26 15 29 27Q33 41 36 43T55 46Q141 49 190 98Q200 108 306 224T411 342Q302 620 297 625Q288 636 234 637H206Q200 643 200 645T202 664Q206 677 212 683H226Q260 681 347 681Q380 681 408 681T453 682T473 682Q490 682 490 671Q490 670 488 658Q484 643 481 640T465 637Q434 634 411 620L488 426L541 485Q646 598 646 610Q646 628 622 635Q617 635 609 637Q594 637 594 648Q594 650 596 664Q600 677 606 683H618Q619 683 643 683T697 681T738 680Q828 680 837 683H845Q852 676 852 672Q850 647 840 637H824Q790 636 763 628T722 611T698 593L687 584Q687 585 592 480L505 384Q505 383 536 304T601 142T638 56Q648 47 699 46Q734 46 734 37Q734 35 732 23Q728 7 725 4T711 1Q708 1 678 1T589 2Q528 2 496 2T461 1Q444 1 444 10Q444 11 446 25Q448 35 450 39T455 44T464 46T480 47T506 54Q523 62 523 64Q522 64 476 181L429 299Q241 95 236 84Q232 76 232 72Q232 53 261 47Q262 47 267 47T273 46Q276 46 277 46T280 45T283 42T284 35Q284 26 282 19Q279 6 276 4T261 1Q258 1 243 1T201 2T142 2Q64 2 42 0Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D42F" xlink:href="#MJX-2-TEX-B-1D42F"></use></g></g><g data-mml-node="TeXAtom" transform="translate(640,413) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="22C6" xlink:href="#MJX-2-TEX-N-22C6"></use></g></g></g><g data-mml-node="mo" transform="translate(1321.3,0)"><use data-c="3D" xlink:href="#MJX-2-TEX-N-3D"></use></g><g data-mml-node="mi" transform="translate(2377.1,0)"><use data-c="61" xlink:href="#MJX-2-TEX-N-61"></use><use data-c="72" xlink:href="#MJX-2-TEX-N-72" transform="translate(500,0)"></use><use data-c="67" xlink:href="#MJX-2-TEX-N-67" transform="translate(892,0)"></use></g><g data-mml-node="mo" transform="translate(3769.1,0)"><use data-c="2061" xlink:href="#MJX-2-TEX-N-2061"></use></g><g data-mml-node="munder" transform="translate(3935.8,0)"><g data-mml-node="mo"><use data-c="6D" xlink:href="#MJX-2-TEX-N-6D"></use><use data-c="61" xlink:href="#MJX-2-TEX-N-61" transform="translate(833,0)"></use><use data-c="78" xlink:href="#MJX-2-TEX-N-78" transform="translate(1333,0)"></use></g><g data-mml-node="TeXAtom" transform="translate(715.9,-611) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D42F" xlink:href="#MJX-2-TEX-B-1D42F"></use></g></g></g></g><g data-mml-node="mtext" transform="translate(5963.4,0)"><use data-c="A0" xlink:href="#MJX-2-TEX-N-A0"></use></g><g data-mml-node="mfrac" transform="translate(6213.4,0)"><g data-mml-node="mrow" transform="translate(255.7,676)"><g data-mml-node="msup"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D42F" xlink:href="#MJX-2-TEX-B-1D42F"></use></g></g><g data-mml-node="TeXAtom" transform="translate(640,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="22A4" xlink:href="#MJX-2-TEX-N-22A4"></use></g></g></g><g data-mml-node="msub" transform="translate(1240.1,0)"><g data-mml-node="mi"><use data-c="1D436" xlink:href="#MJX-2-TEX-I-1D436"></use></g><g data-mml-node="mi" transform="translate(748,-150) scale(0.707)"><use data-c="1D443" xlink:href="#MJX-2-TEX-I-1D443"></use></g></g><g data-mml-node="mstyle" transform="translate(2569.2,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2736.2,0)"><g data-mml-node="mi"><use data-c="1D42F" xlink:href="#MJX-2-TEX-B-1D42F"></use></g></g></g><g data-mml-node="mrow" transform="translate(220,-721.3)"><g data-mml-node="msup"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D42F" xlink:href="#MJX-2-TEX-B-1D42F"></use></g></g><g data-mml-node="TeXAtom" transform="translate(640,289) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="22A4" xlink:href="#MJX-2-TEX-N-22A4"></use></g></g></g><g data-mml-node="msub" transform="translate(1240.1,0)"><g data-mml-node="mi"><use data-c="1D436" xlink:href="#MJX-2-TEX-I-1D436"></use></g><g data-mml-node="mi" transform="translate(748,-150) scale(0.707)"><use data-c="1D44B" xlink:href="#MJX-2-TEX-I-1D44B"></use></g></g><g data-mml-node="mstyle" transform="translate(2640.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2807.6,0)"><g data-mml-node="mi"><use data-c="1D42F" xlink:href="#MJX-2-TEX-B-1D42F"></use></g></g></g><rect width="3614.6" height="60" x="120" y="220"></rect></g></g></g></svg></div>
+    <div class="prose">
+      <p class="b"><span class="zh">C<sub>P</sub> 是目标平均波形的协方差，代表诱发响应有多强、落在哪些电极上。C<sub>X</sub> 是全部数据的协方差，代表总的波动。比值最大的方向，就是信噪比最高的电极组合。这是一个广义特征值问题，取前 <span class="nfv">2</span> 个方向，每个试次就从 160 个数降到 <span class="nfv">2</span> × 20 = <span class="nff">40</span> 个数。</span><span class="en">C<sub>P</sub> is the covariance of the average target waveform: how strong the evoked response is and which electrodes it lands on. C<sub>X</sub> is the covariance of all the data: the total fluctuation. The direction with the largest ratio is the electrode combination with the best signal-to-noise ratio. This is a generalised eigenvalue problem; keeping the top <span class="nfv">2</span> directions takes each trial from 160 numbers down to <span class="nfv">2</span> × 20 = <span class="nff">40</span>.</span></p>
+      <p class="b"><span class="zh">它用了标签，是监督的。交叉验证的每一折都要只用训练数据重新拟合，下面「评估」一节有不这么做的后果。这里画的是用全部试次拟合的结果，只用来展示。</span><span class="en">It uses the labels, so it is supervised. In cross-validation it has to be refitted on the training data alone in every fold; the evaluation section below shows what happens otherwise. The plots here come from a fit on all trials and are for illustration only.</span></p>
+    </div>
+    <div class="heads" id="xdHeads"></div>
+    <div class="hkey b"><span class="zh"><i style="background:#C0473F"></i>正<i style="background:#2563EB"></i>负 · 圆的面积表示绝对值</span><span class="en"><i style="background:#C0473F"></i>positive<i style="background:#2563EB"></i>negative · circle area shows magnitude</span></div>
+    <div class="panel-cap"><span class="i"><span class="zh">虚拟通道的平均波形</span><span class="en">Average waveforms of the virtual channels</span></span> <span class="hint i"><span class="zh">和最好的单个电极对比</span><span class="en">against the best single electrode</span></span></div>
+    <canvas id="xdts" height="150"></canvas>
+    <div class="hint-line b" id="xdNote"></div>
+    <div class="ctl" style="margin-top:1.1rem"><span class="k i"><span class="zh">滤波器个数</span><span class="en">Filters</span></span><span class="seg" data-k="nf"><button data-v="1">1</button><button data-v="2" class="on">2</button><button data-v="3">3</button><button data-v="4">4</button></span></div>
+    <div class="hint-line dep b" id="nfNote"></div>
+    <div class="prose">
+      <p class="b"><span class="zh"><b>权重和分布不是一回事。</b>滤波器权重经常会给没有信号的电极一个负数，作用是减掉各电极共有的背景噪声。所以要回答「信号在哪儿」，看空间分布（pattern），不看权重（Haufe 等 2014）。</span><span class="en"><b>Weights and patterns are not the same thing.</b> Filter weights often give a negative value to an electrode with no signal, so as to subtract the background noise the electrodes share. To answer “where is the signal”, look at the spatial pattern, not the weights (Haufe et al. 2014).</span></p>
+      <p class="b"><span class="zh"><b>一个容易踩的坑。</b>ICA 删掉一个成分以后，8 个电极只剩 7 个独立维度，C<sub>X</sub> 不再可逆，pyRiemann 的 <code>Xdawn</code> 默认会直接报错（LinAlgError: not positive definite）。改用收缩估计 <code>estimator='lwf'</code> 能跑，但更糟：两个协方差都被加了一点对角线，被删掉的那个方向反而成了比值最大的方向。第一个滤波器的输出全是 0，等于少了一个滤波器，而且不报任何错。</span><span class="en"><b>An easy trap.</b> Once ICA removes a component, the 8 electrodes have only 7 independent dimensions left and C<sub>X</sub> is no longer invertible, so pyRiemann’s <code>Xdawn</code> fails outright by default (LinAlgError: not positive definite). Switching to the shrinkage estimator <code>estimator='lwf'</code> makes it run, but that is worse: both covariances get a little added to their diagonals, and the removed direction ends up with the largest ratio. The first filter outputs all zeros, so one filter is wasted, and nothing raises an error.</span></p>
+      <p class="b"><span class="zh">这一页只在 C<sub>X</sub> 方差不为零的方向里求解。用 MNE 时，可以直接拿 ICA 留下的 7 个成分当输入（见下面的代码）。换一组可逆的坐标不改变 xDAWN 的结果，两种做法在数学上等价。</span><span class="en">This page solves the problem only in the directions where C<sub>X</sub> has non-zero variance. With MNE you can pass the 7 components that ICA keeps directly to xDAWN (see the code below). An invertible change of coordinates does not change xDAWN’s result, so the two approaches are mathematically equivalent.</span></p>
+    </div>
+  </section>
+
+  <section class="area" id="s-lda" style="--c:#DB2777" data-chip-zh="⑤ LDA" data-chip-en="⑤ LDA" data-icon="layers">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">⑤ LDA：加权求和成一个分数</span><span class="en">⑤ LDA: a weighted sum becomes one score</span></span></div>
+    <div class="gh-desc b"><span class="zh">LDA 给每个特征配一个权重，加起来得到一个分数，大于 0 判为目标。权重不是「哪个特征两类差得多就给谁大权重」，还要把噪声之间的相关算进去。</span><span class="en">LDA gives each feature a weight and adds them up into a score; above 0 means target. The weights are not simply “the bigger the class difference, the bigger the weight”: correlations in the noise count too.</span></div>
+    <div class="fm" role="math" aria-label="\mathbf{w} = \Sigma^{-1}\,(\boldsymbol{\mu}_1 - \boldsymbol{\mu}_0), \qquad s(\mathbf{x}) = \mathbf{w}^{\top}\mathbf{x} + b"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="40.01ex" height="2.569ex" role="img" focusable="false" viewBox="0 -885.3 17684.6 1135.3" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-3-TEX-B-1D430" d="M624 444Q636 441 722 441Q797 441 800 444H805V382H741L593 11Q592 10 590 8T586 4T584 2T581 0T579 -2T575 -3T571 -3T567 -4T561 -4T553 -4H542Q525 -4 518 6T490 70Q474 110 463 137L415 257L367 137Q357 111 341 72Q320 17 313 7T289 -4H277Q259 -4 253 -2T238 11L90 382H25V444H32Q47 441 140 441Q243 441 261 444H270V382H222L310 164L382 342L366 382H303V444H310Q322 441 407 441Q508 441 523 444H531V382H506Q481 382 481 380Q482 376 529 259T577 142L674 382H617V444H624Z"></path><path id="MJX-3-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-3-TEX-N-3A3" d="M666 247Q664 244 652 126T638 4V0H351Q131 0 95 0T57 5V6Q54 12 57 17L73 36Q89 54 121 90T182 159L305 299L56 644L55 658Q55 677 60 681Q63 683 351 683H638V679Q640 674 652 564T666 447V443H626V447Q618 505 604 543T559 605Q529 626 478 631T333 637H294H189L293 494Q314 465 345 422Q400 346 400 340Q400 338 399 337L154 57Q407 57 428 58Q476 60 508 68T551 83T575 103Q595 125 608 162T624 225L626 251H666V247Z"></path><path id="MJX-3-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-3-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-3-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-3-TEX-BI-1D741" d="M294 -8Q265 -8 244 -5T213 1T201 4Q200 4 192 -32T172 -111T155 -168Q134 -211 86 -211Q62 -211 48 -196T34 -158Q37 -144 103 123T174 404Q182 424 201 438T244 452Q271 452 284 436T298 404Q298 392 267 269T235 114Q235 43 305 43Q342 43 375 68T418 110Q420 112 455 253T492 397Q514 444 562 444Q587 444 601 429T615 397Q615 387 599 320T563 178T542 93Q540 81 540 72Q540 42 558 42Q580 42 596 75Q606 94 616 134Q621 155 624 158T646 162H651H662Q682 162 682 148Q681 142 679 132T665 94T641 47T602 9T548 -8Q523 -8 502 -3T468 11T446 27T432 40L429 46Q367 -8 294 -8Z"></path><path id="MJX-3-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-3-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-3-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-3-TEX-I-1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path><path id="MJX-3-TEX-B-1D431" d="M227 0Q212 3 121 3Q40 3 28 0H21V62H117L245 213L109 382H26V444H34Q49 441 143 441Q247 441 265 444H274V382H246L281 339Q315 297 316 297Q320 297 354 341L389 382H352V444H360Q375 441 466 441Q547 441 559 444H566V382H471L355 246L504 63L545 62H586V0H578Q563 3 469 3Q365 3 347 0H338V62H366Q366 63 326 112T285 163L198 63L217 62H235V0H227Z"></path><path id="MJX-3-TEX-N-22A4" d="M55 642T55 648T59 659T66 666T71 668H708Q723 660 723 648T708 628H409V15Q402 2 391 0Q387 0 384 1T379 3T375 6T373 9T371 13T369 16V628H71Q70 628 67 630T59 637Z"></path><path id="MJX-3-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-3-TEX-I-1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D430" xlink:href="#MJX-3-TEX-B-1D430"></use></g></g><g data-mml-node="mo" transform="translate(1108.8,0)"><use data-c="3D" xlink:href="#MJX-3-TEX-N-3D"></use></g><g data-mml-node="msup" transform="translate(2164.6,0)"><g data-mml-node="mi"><use data-c="3A3" xlink:href="#MJX-3-TEX-N-3A3"></use></g><g data-mml-node="TeXAtom" transform="translate(755,413) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="2212" xlink:href="#MJX-3-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(778,0)"><use data-c="31" xlink:href="#MJX-3-TEX-N-31"></use></g></g></g><g data-mml-node="mstyle" transform="translate(3873.2,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(4040.2,0)"><use data-c="28" xlink:href="#MJX-3-TEX-N-28"></use></g><g data-mml-node="msub" transform="translate(4429.2,0)"><g data-mml-node="mi"><use data-c="1D741" xlink:href="#MJX-3-TEX-BI-1D741"></use></g><g data-mml-node="mn" transform="translate(741,-150) scale(0.707)"><use data-c="31" xlink:href="#MJX-3-TEX-N-31"></use></g></g><g data-mml-node="mo" transform="translate(5796,0)"><use data-c="2212" xlink:href="#MJX-3-TEX-N-2212"></use></g><g data-mml-node="msub" transform="translate(6796.2,0)"><g data-mml-node="mi"><use data-c="1D741" xlink:href="#MJX-3-TEX-BI-1D741"></use></g><g data-mml-node="mn" transform="translate(741,-150) scale(0.707)"><use data-c="30" xlink:href="#MJX-3-TEX-N-30"></use></g></g><g data-mml-node="mo" transform="translate(7940.8,0)"><use data-c="29" xlink:href="#MJX-3-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(8329.8,0)"><use data-c="2C" xlink:href="#MJX-3-TEX-N-2C"></use></g><g data-mml-node="mstyle" transform="translate(8607.8,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mi" transform="translate(10774.5,0)"><use data-c="1D460" xlink:href="#MJX-3-TEX-I-1D460"></use></g><g data-mml-node="mo" transform="translate(11243.5,0)"><use data-c="28" xlink:href="#MJX-3-TEX-N-28"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(11632.5,0)"><g data-mml-node="mi"><use data-c="1D431" xlink:href="#MJX-3-TEX-B-1D431"></use></g></g><g data-mml-node="mo" transform="translate(12239.5,0)"><use data-c="29" xlink:href="#MJX-3-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(12906.2,0)"><use data-c="3D" xlink:href="#MJX-3-TEX-N-3D"></use></g><g data-mml-node="msup" transform="translate(13962,0)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D430" xlink:href="#MJX-3-TEX-B-1D430"></use></g></g><g data-mml-node="TeXAtom" transform="translate(864,413) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="22A4" xlink:href="#MJX-3-TEX-N-22A4"></use></g></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(15426.1,0)"><g data-mml-node="mi"><use data-c="1D431" xlink:href="#MJX-3-TEX-B-1D431"></use></g></g><g data-mml-node="mo" transform="translate(16255.4,0)"><use data-c="2B" xlink:href="#MJX-3-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(17255.6,0)"><use data-c="1D44F" xlink:href="#MJX-3-TEX-I-1D44F"></use></g></g></g></svg></div>
+    <div class="sub-head i"><span class="zh">两个特征的小例子</span><span class="en">A two-feature example</span></div>
+    <div class="prose"><p class="b"><span class="zh">特征 2 在两类之间差 3，特征 1 两类完全一样。两个特征的噪声方差都是 4，相关系数是 ρ。实线是 LDA 的分界线，虚线是只看均值差的分界线。</span><span class="en">Feature 2 differs by 3 between the classes; feature 1 is identical in both. Both features have noise variance 4, with correlation ρ. The solid line is the LDA boundary; the dashed line is the boundary you get from the mean difference alone.</span></p></div>
+    <div class="ctl"><span class="k i"><span class="zh">噪声相关 ρ</span><span class="en">Noise correlation ρ</span></span><input type="range" id="rho" min="-0.9" max="0.9" step="0.05" value="0.5" aria-label="ρ"><span class="ro" id="rhoV"></span></div>
+    <canvas id="toy" height="300"></canvas>
+    <div class="toyout" id="toyOut"></div>
+    <div class="fm" role="math" aria-label="\begin{gathered} d' = \sqrt{\Delta\boldsymbol{\mu}^{\top}\,\Sigma^{-1}\,\Delta\boldsymbol{\mu}} \\ \mathrm{AUC} = \Phi\!\left(d'/\sqrt{2}\right) \end{gathered}"><svg style="vertical-align: -3.913ex;" xmlns="http://www.w3.org/2000/svg" width="20.156ex" height="8.957ex" role="img" focusable="false" viewBox="0 -2229.5 8908.8 3959" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-4-TEX-I-1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-4-TEX-V-2032" d="M79 43Q73 43 52 49T30 61Q30 68 85 293T146 528Q161 560 198 560Q218 560 240 545T262 501Q262 496 260 486Q259 479 173 263T84 45T79 43Z"></path><path id="MJX-4-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-4-TEX-LO-221A" d="M1001 1150Q1017 1150 1020 1132Q1020 1127 741 244L460 -643Q453 -650 436 -650H424Q423 -647 423 -645T421 -640T419 -631T415 -617T408 -594T399 -560T385 -512T367 -448T343 -364T312 -259L203 119L138 41L111 67L212 188L264 248L472 -474L983 1140Q988 1150 1001 1150Z"></path><path id="MJX-4-TEX-N-394" d="M51 0Q46 4 46 7Q46 9 215 357T388 709Q391 716 416 716Q439 716 444 709Q447 705 616 357T786 7Q786 4 781 0H51ZM507 344L384 596L137 92L383 91H630Q630 93 507 344Z"></path><path id="MJX-4-TEX-BI-1D741" d="M294 -8Q265 -8 244 -5T213 1T201 4Q200 4 192 -32T172 -111T155 -168Q134 -211 86 -211Q62 -211 48 -196T34 -158Q37 -144 103 123T174 404Q182 424 201 438T244 452Q271 452 284 436T298 404Q298 392 267 269T235 114Q235 43 305 43Q342 43 375 68T418 110Q420 112 455 253T492 397Q514 444 562 444Q587 444 601 429T615 397Q615 387 599 320T563 178T542 93Q540 81 540 72Q540 42 558 42Q580 42 596 75Q606 94 616 134Q621 155 624 158T646 162H651H662Q682 162 682 148Q681 142 679 132T665 94T641 47T602 9T548 -8Q523 -8 502 -3T468 11T446 27T432 40L429 46Q367 -8 294 -8Z"></path><path id="MJX-4-TEX-N-22A4" d="M55 642T55 648T59 659T66 666T71 668H708Q723 660 723 648T708 628H409V15Q402 2 391 0Q387 0 384 1T379 3T375 6T373 9T371 13T369 16V628H71Q70 628 67 630T59 637Z"></path><path id="MJX-4-TEX-N-3A3" d="M666 247Q664 244 652 126T638 4V0H351Q131 0 95 0T57 5V6Q54 12 57 17L73 36Q89 54 121 90T182 159L305 299L56 644L55 658Q55 677 60 681Q63 683 351 683H638V679Q640 674 652 564T666 447V443H626V447Q618 505 604 543T559 605Q529 626 478 631T333 637H294H189L293 494Q314 465 345 422Q400 346 400 340Q400 338 399 337L154 57Q407 57 428 58Q476 60 508 68T551 83T575 103Q595 125 608 162T624 225L626 251H666V247Z"></path><path id="MJX-4-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-4-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-4-TEX-N-41" d="M255 0Q240 3 140 3Q48 3 39 0H32V46H47Q119 49 139 88Q140 91 192 245T295 553T348 708Q351 716 366 716H376Q396 715 400 709Q402 707 508 390L617 67Q624 54 636 51T687 46H717V0H708Q699 3 581 3Q458 3 437 0H427V46H440Q510 46 510 64Q510 66 486 138L462 209H229L209 150Q189 91 189 85Q189 72 209 59T259 46H264V0H255ZM447 255L345 557L244 256Q244 255 345 255H447Z"></path><path id="MJX-4-TEX-N-55" d="M128 622Q121 629 117 631T101 634T58 637H25V683H36Q57 680 180 680Q315 680 324 683H335V637H302Q262 636 251 634T233 622L232 418V291Q232 189 240 145T280 67Q325 24 389 24Q454 24 506 64T571 183Q575 206 575 410V598Q569 608 565 613T541 627T489 637H472V683H481Q496 680 598 680T715 683H724V637H707Q634 633 622 598L621 399Q620 194 617 180Q617 179 615 171Q595 83 531 31T389 -22Q304 -22 226 33T130 192Q129 201 128 412V622Z"></path><path id="MJX-4-TEX-N-43" d="M56 342Q56 428 89 500T174 615T283 681T391 705Q394 705 400 705T408 704Q499 704 569 636L582 624L612 663Q639 700 643 704Q644 704 647 704T653 705H657Q660 705 666 699V419L660 413H626Q620 419 619 430Q610 512 571 572T476 651Q457 658 426 658Q322 658 252 588Q173 509 173 342Q173 221 211 151Q232 111 263 84T328 45T384 29T428 24Q517 24 571 93T626 244Q626 251 632 257H660L666 251V236Q661 133 590 56T403 -21Q262 -21 159 83T56 342Z"></path><path id="MJX-4-TEX-N-3A6" d="M312 622Q310 623 307 625T303 629T297 631T286 634T270 635T246 636T211 637H184V683H196Q220 680 361 680T526 683H538V637H511Q468 637 447 635T422 631T411 622V533L425 531Q525 519 595 466T665 342Q665 301 642 267T583 209T506 172T425 152L411 150V61Q417 55 421 53T447 48T511 46H538V0H526Q502 3 361 3T196 0H184V46H211Q231 46 245 46T270 47T286 48T297 51T303 54T307 57T312 61V150H310Q309 151 289 153T232 166T160 195Q149 201 136 210T103 238T69 284T56 342Q56 414 128 467T294 530Q309 532 310 533H312V622ZM170 342Q170 207 307 188H312V495H309Q301 495 282 491T231 469T186 423Q170 389 170 342ZM415 188Q487 199 519 236T551 342Q551 384 539 414T507 459T470 481T434 491T415 495H410V188H415Z"></path><path id="MJX-4-TEX-LO-28" d="M180 96T180 250T205 541T266 770T353 944T444 1069T527 1150H555Q561 1144 561 1141Q561 1137 545 1120T504 1072T447 995T386 878T330 721T288 513T272 251Q272 133 280 56Q293 -87 326 -209T399 -405T475 -531T536 -609T561 -640Q561 -643 555 -649H527Q483 -612 443 -568T353 -443T266 -270T205 -41Z"></path><path id="MJX-4-TEX-N-2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path><path id="MJX-4-TEX-N-221A" d="M95 178Q89 178 81 186T72 200T103 230T169 280T207 309Q209 311 212 311H213Q219 311 227 294T281 177Q300 134 312 108L397 -77Q398 -77 501 136T707 565T814 786Q820 800 834 800Q841 800 846 794T853 782V776L620 293L385 -193Q381 -200 366 -200Q357 -200 354 -197Q352 -195 256 15L160 225L144 214Q129 202 113 190T95 178Z"></path><path id="MJX-4-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-4-TEX-LO-29" d="M35 1138Q35 1150 51 1150H56H69Q113 1113 153 1069T243 944T330 771T391 541T416 250T391 -40T330 -270T243 -443T152 -568T69 -649H56Q43 -649 39 -647T35 -637Q65 -607 110 -548Q283 -316 316 56Q324 133 324 251Q324 368 316 445Q278 877 48 1123Q36 1137 35 1138Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtable"><g data-mml-node="mtr" transform="translate(0,879.1)"><g data-mml-node="mtd"><g data-mml-node="msup"><g data-mml-node="mi"><use data-c="1D451" xlink:href="#MJX-4-TEX-I-1D451"></use></g><g data-mml-node="mo" transform="translate(553,413) scale(0.707)"><use data-c="2032" xlink:href="#MJX-4-TEX-V-2032"></use></g></g><g data-mml-node="mo" transform="translate(1075.2,0)"><use data-c="3D" xlink:href="#MJX-4-TEX-N-3D"></use></g><g data-mml-node="msqrt" transform="translate(2131,0)"><g transform="translate(1020,0)"><g data-mml-node="mi"><use data-c="394" xlink:href="#MJX-4-TEX-N-394"></use></g><g data-mml-node="msup" transform="translate(833,0)"><g data-mml-node="mi"><use data-c="1D741" xlink:href="#MJX-4-TEX-BI-1D741"></use></g><g data-mml-node="TeXAtom" transform="translate(741,289) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="22A4" xlink:href="#MJX-4-TEX-N-22A4"></use></g></g></g><g data-mml-node="mstyle" transform="translate(2174.1,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="msup" transform="translate(2341.1,0)"><g data-mml-node="mi"><use data-c="3A3" xlink:href="#MJX-4-TEX-N-3A3"></use></g><g data-mml-node="TeXAtom" transform="translate(755,289) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="2212" xlink:href="#MJX-4-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(778,0)"><use data-c="31" xlink:href="#MJX-4-TEX-N-31"></use></g></g></g><g data-mml-node="mstyle" transform="translate(4049.8,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mi" transform="translate(4216.8,0)"><use data-c="394" xlink:href="#MJX-4-TEX-N-394"></use></g><g data-mml-node="mi" transform="translate(5049.8,0)"><use data-c="1D741" xlink:href="#MJX-4-TEX-BI-1D741"></use></g></g><g data-mml-node="mo" transform="translate(0,140.4)"><use data-c="221A" xlink:href="#MJX-4-TEX-LO-221A"></use></g><rect width="5757.8" height="60" x="1020" y="1230.4"></rect></g></g></g><g data-mml-node="mtr" transform="translate(0,-1080)"><g data-mml-node="mtd" transform="translate(393.6,0)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="41" xlink:href="#MJX-4-TEX-N-41"></use><use data-c="55" xlink:href="#MJX-4-TEX-N-55" transform="translate(750,0)"></use><use data-c="43" xlink:href="#MJX-4-TEX-N-43" transform="translate(1500,0)"></use></g></g><g data-mml-node="mo" transform="translate(2499.8,0)"><use data-c="3D" xlink:href="#MJX-4-TEX-N-3D"></use></g><g data-mml-node="mi" transform="translate(3555.6,0)"><use data-c="3A6" xlink:href="#MJX-4-TEX-N-3A6"></use></g><g data-mml-node="mstyle" transform="translate(4277.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mrow" transform="translate(4277.2,0)"><g data-mml-node="mo" transform="translate(0 -0.5)"><use data-c="28" xlink:href="#MJX-4-TEX-LO-28"></use></g><g data-mml-node="msup" transform="translate(597,0)"><g data-mml-node="mi"><use data-c="1D451" xlink:href="#MJX-4-TEX-I-1D451"></use></g><g data-mml-node="mo" transform="translate(553,413) scale(0.707)"><use data-c="2032" xlink:href="#MJX-4-TEX-V-2032"></use></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(1394.5,0)"><g data-mml-node="mo"><use data-c="2F" xlink:href="#MJX-4-TEX-N-2F"></use></g></g><g data-mml-node="msqrt" transform="translate(1894.5,0)"><g transform="translate(853,0)"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-4-TEX-N-32"></use></g></g><g data-mml-node="mo" transform="translate(0,148.3)"><use data-c="221A" xlink:href="#MJX-4-TEX-N-221A"></use></g><rect width="500" height="60" x="853" y="888.3"></rect></g><g data-mml-node="mo" transform="translate(3247.5,0) translate(0 -0.5)"><use data-c="29" xlink:href="#MJX-4-TEX-LO-29"></use></g></g></g></g></g></g></g></svg></div>
+    <div class="prose"><p class="b" id="toyNote"></p></div>
+
+    <div class="sub-head i"><span class="zh">收缩：样本不够时的协方差</span><span class="en">Shrinkage: covariance from too few samples</span></div>
+    <div class="prose">
+      <p class="b"><span class="zh">上面的公式要求 Σ 估得准。可是每折训练数据里目标只有几十个，特征却有 <span class="nff">40</span> 个；不做 xDAWN 时有 160 个，样本协方差可能连逆都求不出来。收缩把样本协方差往它的对角线拉一点：</span><span class="en">The formula above needs a good estimate of Σ. But each training fold holds only a few dozen targets for <span class="nff">40</span> features; without xDAWN there are 160 features, and the sample covariance may not even be invertible. Shrinkage pulls the sample covariance a little towards its diagonal:</span></p>
+    </div>
+    <div class="fm" role="math" aria-label="\hat{\Sigma} = (1-\lambda)\,S + \lambda\,\mathrm{diag}(S), \qquad 0 \le \lambda \le 1"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="40.442ex" height="2.943ex" role="img" focusable="false" viewBox="0 -1051 17875.2 1301" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-5-TEX-N-3A3" d="M666 247Q664 244 652 126T638 4V0H351Q131 0 95 0T57 5V6Q54 12 57 17L73 36Q89 54 121 90T182 159L305 299L56 644L55 658Q55 677 60 681Q63 683 351 683H638V679Q640 674 652 564T666 447V443H626V447Q618 505 604 543T559 605Q529 626 478 631T333 637H294H189L293 494Q314 465 345 422Q400 346 400 340Q400 338 399 337L154 57Q407 57 428 58Q476 60 508 68T551 83T575 103Q595 125 608 162T624 225L626 251H666V247Z"></path><path id="MJX-5-TEX-N-5E" d="M112 560L249 694L257 686Q387 562 387 560L361 531Q359 532 303 581L250 627L195 580Q182 569 169 557T148 538L140 532Q138 530 125 546L112 560Z"></path><path id="MJX-5-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-5-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-5-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-5-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-5-TEX-I-1D706" d="M166 673Q166 685 183 694H202Q292 691 316 644Q322 629 373 486T474 207T524 67Q531 47 537 34T546 15T551 6T555 2T556 -2T550 -11H482Q457 3 450 18T399 152L354 277L340 262Q327 246 293 207T236 141Q211 112 174 69Q123 9 111 -1T83 -12Q47 -12 47 20Q47 37 61 52T199 187Q229 216 266 252T321 306L338 322Q338 323 288 462T234 612Q214 657 183 657Q166 657 166 673Z"></path><path id="MJX-5-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-5-TEX-I-1D446" d="M308 24Q367 24 416 76T466 197Q466 260 414 284Q308 311 278 321T236 341Q176 383 176 462Q176 523 208 573T273 648Q302 673 343 688T407 704H418H425Q521 704 564 640Q565 640 577 653T603 682T623 704Q624 704 627 704T632 705Q645 705 645 698T617 577T585 459T569 456Q549 456 549 465Q549 471 550 475Q550 478 551 494T553 520Q553 554 544 579T526 616T501 641Q465 662 419 662Q362 662 313 616T263 510Q263 480 278 458T319 427Q323 425 389 408T456 390Q490 379 522 342T554 242Q554 216 546 186Q541 164 528 137T492 78T426 18T332 -20Q320 -22 298 -22Q199 -22 144 33L134 44L106 13Q83 -14 78 -18T65 -22Q52 -22 52 -14Q52 -11 110 221Q112 227 130 227H143Q149 221 149 216Q149 214 148 207T144 186T142 153Q144 114 160 87T203 47T255 29T308 24Z"></path><path id="MJX-5-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-5-TEX-N-64" d="M376 495Q376 511 376 535T377 568Q377 613 367 624T316 637H298V660Q298 683 300 683L310 684Q320 685 339 686T376 688Q393 689 413 690T443 693T454 694H457V390Q457 84 458 81Q461 61 472 55T517 46H535V0Q533 0 459 -5T380 -11H373V44L365 37Q307 -11 235 -11Q158 -11 96 50T34 215Q34 315 97 378T244 442Q319 442 376 393V495ZM373 342Q328 405 260 405Q211 405 173 369Q146 341 139 305T131 211Q131 155 138 120T173 59Q203 26 251 26Q322 26 373 103V342Z"></path><path id="MJX-5-TEX-N-69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path id="MJX-5-TEX-N-61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path id="MJX-5-TEX-N-67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z"></path><path id="MJX-5-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-5-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-5-TEX-N-2264" d="M674 636Q682 636 688 630T694 615T687 601Q686 600 417 472L151 346L399 228Q687 92 691 87Q694 81 694 76Q694 58 676 56H670L382 192Q92 329 90 331Q83 336 83 348Q84 359 96 365Q104 369 382 500T665 634Q669 636 674 636ZM84 -118Q84 -108 99 -98H678Q694 -104 694 -118Q694 -130 679 -138H98Q84 -131 84 -118Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mover"><g data-mml-node="mi"><use data-c="3A3" xlink:href="#MJX-5-TEX-N-3A3"></use></g><g data-mml-node="mo" transform="translate(361,257) translate(-250 0)"><use data-c="5E" xlink:href="#MJX-5-TEX-N-5E"></use></g></g></g><g data-mml-node="mo" transform="translate(999.8,0)"><use data-c="3D" xlink:href="#MJX-5-TEX-N-3D"></use></g><g data-mml-node="mo" transform="translate(2055.6,0)"><use data-c="28" xlink:href="#MJX-5-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(2444.6,0)"><use data-c="31" xlink:href="#MJX-5-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(3166.8,0)"><use data-c="2212" xlink:href="#MJX-5-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(4167,0)"><use data-c="1D706" xlink:href="#MJX-5-TEX-I-1D706"></use></g><g data-mml-node="mo" transform="translate(4750,0)"><use data-c="29" xlink:href="#MJX-5-TEX-N-29"></use></g><g data-mml-node="mstyle" transform="translate(5139,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mi" transform="translate(5306,0)"><use data-c="1D446" xlink:href="#MJX-5-TEX-I-1D446"></use></g><g data-mml-node="mo" transform="translate(6173.2,0)"><use data-c="2B" xlink:href="#MJX-5-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(7173.4,0)"><use data-c="1D706" xlink:href="#MJX-5-TEX-I-1D706"></use></g><g data-mml-node="mstyle" transform="translate(7756.4,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(7923.4,0)"><g data-mml-node="mi"><use data-c="64" xlink:href="#MJX-5-TEX-N-64"></use><use data-c="69" xlink:href="#MJX-5-TEX-N-69" transform="translate(556,0)"></use><use data-c="61" xlink:href="#MJX-5-TEX-N-61" transform="translate(834,0)"></use><use data-c="67" xlink:href="#MJX-5-TEX-N-67" transform="translate(1334,0)"></use></g></g><g data-mml-node="mo" transform="translate(9757.4,0)"><use data-c="28" xlink:href="#MJX-5-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(10146.4,0)"><use data-c="1D446" xlink:href="#MJX-5-TEX-I-1D446"></use></g><g data-mml-node="mo" transform="translate(10791.4,0)"><use data-c="29" xlink:href="#MJX-5-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(11180.4,0)"><use data-c="2C" xlink:href="#MJX-5-TEX-N-2C"></use></g><g data-mml-node="mstyle" transform="translate(11458.4,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mn" transform="translate(13625.1,0)"><use data-c="30" xlink:href="#MJX-5-TEX-N-30"></use></g><g data-mml-node="mo" transform="translate(14402.9,0)"><use data-c="2264" xlink:href="#MJX-5-TEX-N-2264"></use></g><g data-mml-node="mi" transform="translate(15458.7,0)"><use data-c="1D706" xlink:href="#MJX-5-TEX-I-1D706"></use></g><g data-mml-node="mo" transform="translate(16319.4,0)"><use data-c="2264" xlink:href="#MJX-5-TEX-N-2264"></use></g><g data-mml-node="mn" transform="translate(17375.2,0)"><use data-c="31" xlink:href="#MJX-5-TEX-N-31"></use></g></g></g></svg></div>
+    <div class="prose"><p class="b" id="lamNote"><span class="zh">λ 由 Ledoit–Wolf 公式从数据里直接算出来，不用调参。</span><span class="en">λ comes straight from the Ledoit–Wolf formula, with nothing to tune.</span></p></div>
+
+    <div class="sub-head i"><span class="zh">分数分布</span><span class="en">Score distributions</span></div>
+    <div class="prose"><p class="b"><span class="zh">交叉验证里，每个试次都只被没见过它的模型打分。两类的分数分得越开，AUC 越高。</span><span class="en">In cross-validation, every trial is scored only by a model that has never seen it. The further apart the two classes’ scores, the higher the AUC.</span></p></div>
+    <div class="panel-cap"><span class="i"><span class="zh">两类各自按比例画</span><span class="en">Each class scaled to its own count</span></span> <span class="hint b" id="histCap"></span></div>
+    <canvas id="hist" height="190" class="dep"></canvas>
+  </section>
+
+  <section class="area" id="s-eval" style="--c:#C0473F" data-chip-zh="评估" data-chip-en="Evaluation" data-icon="doc">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">评估：交叉验证与消融</span><span class="en">Evaluation: cross-validation and ablations</span></span></div>
+    <div class="gh-desc b"><span class="zh">数据按类别分层分成 5 份，轮流拿 1 份测试、4 份训练。用到标签的 xDAWN 和 LDA 都只在训练的 4 份上拟合。</span><span class="en">The data are split into 5 class-stratified folds; each fold takes a turn as the test set while the other 4 are used for training. xDAWN and LDA, the steps that use labels, are fitted on the 4 training folds only.</span></div>
+    <div class="prose">
+      <p class="b"><span class="zh">目标只占 20%，全猜「非目标」准确率就有 80%，所以不看准确率。<b>AUC</b> 是随机抽一个目标、一个非目标，目标分数更高的概率，0.5 等于瞎猜，它不依赖阈值。<b>平衡准确率</b>（BACC）是两类各自答对比例的平均，阈值固定在 0。</span><span class="en">Targets are only 20% of trials, so always guessing “non-target” already scores 80% accuracy; that is why accuracy is not used. <b>AUC</b> is the probability that a randomly drawn target scores higher than a randomly drawn non-target; 0.5 means guessing, and it does not depend on a threshold. <b>Balanced accuracy</b> (BACC) is the average of the fraction correct within each class, with the threshold fixed at 0.</span></p>
+    </div>
+    <div class="fm" role="math" aria-label="\mathrm{BACC} = \tfrac{1}{2}\left(\mathrm{TPR} + \mathrm{TNR}\right)"><svg style="vertical-align: -0.781ex;" xmlns="http://www.w3.org/2000/svg" width="25.739ex" height="2.737ex" role="img" focusable="false" viewBox="0 -864.9 11376.6 1209.9" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-6-TEX-N-42" d="M131 622Q124 629 120 631T104 634T61 637H28V683H229H267H346Q423 683 459 678T531 651Q574 627 599 590T624 512Q624 461 583 419T476 360L466 357Q539 348 595 302T651 187Q651 119 600 67T469 3Q456 1 242 0H28V46H61Q103 47 112 49T131 61V622ZM511 513Q511 560 485 594T416 636Q415 636 403 636T371 636T333 637Q266 637 251 636T232 628Q229 624 229 499V374H312L396 375L406 377Q410 378 417 380T442 393T474 417T499 456T511 513ZM537 188Q537 239 509 282T430 336L329 337H229V200V116Q229 57 234 52Q240 47 334 47H383Q425 47 443 53Q486 67 511 104T537 188Z"></path><path id="MJX-6-TEX-N-41" d="M255 0Q240 3 140 3Q48 3 39 0H32V46H47Q119 49 139 88Q140 91 192 245T295 553T348 708Q351 716 366 716H376Q396 715 400 709Q402 707 508 390L617 67Q624 54 636 51T687 46H717V0H708Q699 3 581 3Q458 3 437 0H427V46H440Q510 46 510 64Q510 66 486 138L462 209H229L209 150Q189 91 189 85Q189 72 209 59T259 46H264V0H255ZM447 255L345 557L244 256Q244 255 345 255H447Z"></path><path id="MJX-6-TEX-N-43" d="M56 342Q56 428 89 500T174 615T283 681T391 705Q394 705 400 705T408 704Q499 704 569 636L582 624L612 663Q639 700 643 704Q644 704 647 704T653 705H657Q660 705 666 699V419L660 413H626Q620 419 619 430Q610 512 571 572T476 651Q457 658 426 658Q322 658 252 588Q173 509 173 342Q173 221 211 151Q232 111 263 84T328 45T384 29T428 24Q517 24 571 93T626 244Q626 251 632 257H660L666 251V236Q661 133 590 56T403 -21Q262 -21 159 83T56 342Z"></path><path id="MJX-6-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-6-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-6-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-6-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-6-TEX-N-54" d="M36 443Q37 448 46 558T55 671V677H666V671Q667 666 676 556T685 443V437H645V443Q645 445 642 478T631 544T610 593Q593 614 555 625Q534 630 478 630H451H443Q417 630 414 618Q413 616 413 339V63Q420 53 439 50T528 46H558V0H545L361 3Q186 1 177 0H164V46H194Q264 46 283 49T309 63V339V550Q309 620 304 625T271 630H244H224Q154 630 119 601Q101 585 93 554T81 486T76 443V437H36V443Z"></path><path id="MJX-6-TEX-N-50" d="M130 622Q123 629 119 631T103 634T60 637H27V683H214Q237 683 276 683T331 684Q419 684 471 671T567 616Q624 563 624 489Q624 421 573 372T451 307Q429 302 328 301H234V181Q234 62 237 58Q245 47 304 46H337V0H326Q305 3 182 3Q47 3 38 0H27V46H60Q102 47 111 49T130 61V622ZM507 488Q507 514 506 528T500 564T483 597T450 620T397 635Q385 637 307 637H286Q237 637 234 628Q231 624 231 483V342H302H339Q390 342 423 349T481 382Q507 411 507 488Z"></path><path id="MJX-6-TEX-N-52" d="M130 622Q123 629 119 631T103 634T60 637H27V683H202H236H300Q376 683 417 677T500 648Q595 600 609 517Q610 512 610 501Q610 468 594 439T556 392T511 361T472 343L456 338Q459 335 467 332Q497 316 516 298T545 254T559 211T568 155T578 94Q588 46 602 31T640 16H645Q660 16 674 32T692 87Q692 98 696 101T712 105T728 103T732 90Q732 59 716 27T672 -16Q656 -22 630 -22Q481 -16 458 90Q456 101 456 163T449 246Q430 304 373 320L363 322L297 323H231V192L232 61Q238 51 249 49T301 46H334V0H323Q302 3 181 3Q59 3 38 0H27V46H60Q102 47 111 49T130 61V622ZM491 499V509Q491 527 490 539T481 570T462 601T424 623T362 636Q360 636 340 636T304 637H283Q238 637 234 628Q231 624 231 492V360H289Q390 360 434 378T489 456Q491 467 491 499Z"></path><path id="MJX-6-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-6-TEX-N-4E" d="M42 46Q74 48 94 56T118 69T128 86V634H124Q114 637 52 637H25V683H232L235 680Q237 679 322 554T493 303L578 178V598Q572 608 568 613T544 627T492 637H475V683H483Q498 680 600 680Q706 680 715 683H724V637H707Q634 633 622 598L621 302V6L614 0H600Q585 0 582 3T481 150T282 443T171 605V345L172 86Q183 50 257 46H274V0H265Q250 3 150 3Q48 3 33 0H25V46H42Z"></path><path id="MJX-6-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="42" xlink:href="#MJX-6-TEX-N-42"></use><use data-c="41" xlink:href="#MJX-6-TEX-N-41" transform="translate(708,0)"></use><use data-c="43" xlink:href="#MJX-6-TEX-N-43" transform="translate(1458,0)"></use><use data-c="43" xlink:href="#MJX-6-TEX-N-43" transform="translate(2180,0)"></use></g></g><g data-mml-node="mo" transform="translate(3179.8,0)"><use data-c="3D" xlink:href="#MJX-6-TEX-N-3D"></use></g><g data-mml-node="mstyle" transform="translate(4235.6,0)"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(220,394) scale(0.707)"><use data-c="31" xlink:href="#MJX-6-TEX-N-31"></use></g><g data-mml-node="mn" transform="translate(220,-345) scale(0.707)"><use data-c="32" xlink:href="#MJX-6-TEX-N-32"></use></g><rect width="553.6" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mrow" transform="translate(5029.1,0)"><g data-mml-node="mo"><use data-c="28" xlink:href="#MJX-6-TEX-N-28"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(389,0)"><g data-mml-node="mi"><use data-c="54" xlink:href="#MJX-6-TEX-N-54"></use><use data-c="50" xlink:href="#MJX-6-TEX-N-50" transform="translate(722,0)"></use><use data-c="52" xlink:href="#MJX-6-TEX-N-52" transform="translate(1403,0)"></use></g></g><g data-mml-node="mo" transform="translate(2750.2,0)"><use data-c="2B" xlink:href="#MJX-6-TEX-N-2B"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(3750.4,0)"><g data-mml-node="mi"><use data-c="54" xlink:href="#MJX-6-TEX-N-54"></use><use data-c="4E" xlink:href="#MJX-6-TEX-N-4E" transform="translate(722,0)"></use><use data-c="52" xlink:href="#MJX-6-TEX-N-52" transform="translate(1472,0)"></use></g></g><g data-mml-node="mo" transform="translate(5958.4,0)"><use data-c="29" xlink:href="#MJX-6-TEX-N-29"></use></g></g></g></g></svg></div>
+    <div class="sub-head i"><span class="zh">消融：每次拿掉一步</span><span class="en">Ablations: one step out at a time</span></div>
+    <div class="abl dep" id="abl" style="--c:#C0473F"></div>
+    <div class="hint-line b" id="ablNote"></div>
+
+    <div class="sub-head i"><span class="zh">打乱标签：泄漏有多大</span><span class="en">Shuffled labels: how big is the leak</span></div>
+    <div class="prose"><p class="b"><span class="zh">把标签随机打乱，AUC 就应该是 0.5。打乱 20 次，比较四种做法。「泄漏」指一个用到标签的步骤看到了测试数据。</span><span class="en">Shuffle the labels at random and the AUC should be 0.5. Shuffle 20 times and compare four procedures. A “leak” means a step that uses labels got to see the test data.</span></p></div>
+    <div class="ctl"><button class="tool x" id="leakBtn"><span class="zh">打乱 20 次</span><span class="en">Shuffle 20 times</span></button><span class="ro" id="leakSt"></span></div>
+    <canvas id="leak" height="210"></canvas>
+    <div class="hint-line b" id="leakNote"></div>
+  </section>
+
+  <section class="area" id="s-assume" style="--c:#9A3412" data-chip-zh="假设与失效" data-chip-en="Assumptions" data-icon="warn">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">每一步的假设，以及什么时候失效</span><span class="en">What each step assumes, and when it breaks</span></span><span class="cnt">6</span></div>
+    <div class="gh-desc b"><span class="zh">管线在合成数据上跑得好，是因为合成数据满足它的全部假设。真实数据不一定。</span><span class="en">The pipeline works well on synthetic data because synthetic data meet all of its assumptions. Real data may not.</span></div>
+    <div id="assumeList"></div>
+  </section>
+
+  <section class="area" id="s-code" style="--c:#0F766E" data-chip-zh="代码" data-chip-en="Code" data-icon="doc">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">Python 版本</span><span class="en">Python version</span></span></div>
+    <div class="gh-desc b"><span class="zh">同样的管线用 MNE、pyRiemann 和 scikit-learn 写出来是这样。xDAWN 和 LDA 放进同一个 Pipeline 交给 cross_val_score，它们就会在每一折里只用训练数据拟合。</span><span class="en">Here is the same pipeline in MNE, pyRiemann and scikit-learn. Put xDAWN and LDA in one Pipeline and hand it to cross_val_score, and both are fitted on the training data alone in every fold.</span></div>
+<pre class="code zh">import mne
+from mne.preprocessing import ICA
+from pyriemann.spatialfilters import Xdawn
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+
+<span class="cm"># raw: mne.io.Raw，8 导，250 Hz
+# events: (n, 3) 的整数数组，第 3 列 1 = 非目标，2 = 目标</span>
+raw.notch_filter(50, method='iir')
+raw.filter(1, 10, method='iir')                 <span class="cm"># 默认零相位：正着一遍、倒着一遍</span>
+
+ica = ICA(n_components=8, method='fastica', random_state=0).fit(raw)
+ica.exclude, _ = ica.find_bads_eog(raw, ch_name='Fp1',     <span class="cm"># 用 Fp1 当眼电参考</span>
+                                   measure='correlation', threshold=0.8)
+src = ica.get_sources(raw)                                  <span class="cm"># 8 个成分的时间序列</span>
+src.drop_channels([src.ch_names[i] for i in ica.exclude])   <span class="cm"># 删掉眨眼成分，剩 7 个，满秩</span>
+
+epochs = mne.Epochs(src, events, event_id={'nontarget': 1, 'target': 2},
+                    tmin=0, tmax=0.8, baseline=None, decim=10,
+                    picks='all', preload=True)
+X, y = epochs.get_data(), epochs.events[:, 2]
+
+clf = make_pipeline(
+    Xdawn(nfilter=2, classes=[2]),
+    FunctionTransformer(lambda Z: Z.reshape(len(Z), -1)),
+    LDA(solver='lsqr', shrinkage='auto'))
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+print(cross_val_score(clf, X, y, cv=cv, scoring='roc_auc').mean())</pre>
+<pre class="code en">import mne
+from mne.preprocessing import ICA
+from pyriemann.spatialfilters import Xdawn
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+
+<span class="cm"># raw: mne.io.Raw, 8 channels, 250 Hz
+# events: (n, 3) integer array; column 3 is 1 = non-target, 2 = target</span>
+raw.notch_filter(50, method='iir')
+raw.filter(1, 10, method='iir')                 <span class="cm"># zero phase by default: forwards, then backwards</span>
+
+ica = ICA(n_components=8, method='fastica', random_state=0).fit(raw)
+ica.exclude, _ = ica.find_bads_eog(raw, ch_name='Fp1',     <span class="cm"># use Fp1 as the EOG reference</span>
+                                   measure='correlation', threshold=0.8)
+src = ica.get_sources(raw)                                  <span class="cm"># time courses of the 8 components</span>
+src.drop_channels([src.ch_names[i] for i in ica.exclude])   <span class="cm"># drop the blink component: 7 left, full rank</span>
+
+epochs = mne.Epochs(src, events, event_id={'nontarget': 1, 'target': 2},
+                    tmin=0, tmax=0.8, baseline=None, decim=10,
+                    picks='all', preload=True)
+X, y = epochs.get_data(), epochs.events[:, 2]
+
+clf = make_pipeline(
+    Xdawn(nfilter=2, classes=[2]),
+    FunctionTransformer(lambda Z: Z.reshape(len(Z), -1)),
+    LDA(solver='lsqr', shrinkage='auto'))
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+print(cross_val_score(clf, X, y, cv=cv, scoring='roc_auc').mean())</pre>
+    <div class="prose">
+      <p class="b"><span class="zh"><b>为什么不用 find_bads_eog 的默认阈值。</b>默认是把 8 个相关系数换成 z 分数，超过 3 才算眼电成分。可是 8 个数里最大的那个，z 分数最多只有 √7 ≈ 2.65，所以默认设置在 8 导数据上永远挑不出成分，哪怕相关高达 0.99。通道少时要改用相关系数本身做阈值。</span><span class="en"><b>Why not the default threshold of find_bads_eog.</b> By default the 8 correlations are converted to z-scores, and a component counts as ocular only above 3. But the largest of 8 numbers can have a z-score of at most √7 ≈ 2.65, so on 8-channel data the default never picks anything, even at a correlation of 0.99. With few channels, threshold on the correlation itself.</span></p>
+      <p class="b"><span class="zh"><b>为什么不用 ica.apply。</b><code>ica.apply</code> 把眨眼成分从 8 个电极里减掉，得到的数据只有 7 维，接下来 xDAWN 就会撞上前面说的那个坑。直接拿 7 个保留成分当输入，可以绕开它。</span><span class="en"><b>Why not ica.apply.</b> <code>ica.apply</code> subtracts the blink component from the 8 electrodes, which leaves data with only 7 dimensions, and xDAWN then walks into the trap described above. Feeding in the 7 kept components avoids it.</span></p>
+      <p class="b"><span class="zh">这段代码在这一页第一次打开时的那批数据上测过（MNE 1.12、pyRiemann 0.11、scikit-learn 1.9），AUC 是 0.84；把 <code>nfilter</code> 改成 1 是 0.89。页面上对应的是 0.84 和 0.88。剩下的差别来自滤波器设计、ICA 的实现和分折方式。</span><span class="en">This code was tested on the batch this page shows when it first opens (MNE 1.12, pyRiemann 0.11, scikit-learn 1.9): AUC 0.84, or 0.89 with <code>nfilter</code> set to 1. The page gives 0.84 and 0.88. The remaining gap comes from filter design, the ICA implementation and how the folds are split.</span></p>
+    </div>
+  </section>
+
+  <section class="area" id="s-src" style="--c:#78716C" data-chip-zh="来源" data-chip-en="Sources" data-icon="book">
+    <div class="group-head"><span class="ic"></span><span class="gh-t i"><span class="zh">来源</span><span class="en">Sources</span></span></div>
+    <div id="srcList"></div>
+  </section>
+  </main>
+
+  <footer><div class="fnote">
+    <p class="b"><span class="zh">数据是合成的，不来自真人。背景脑电和眨眼沿用模拟器的参数；目标试次在 0.25 秒处加一个负波、0.38 秒处加一个正波，幅度和空间分布是按教科书的形状设的，不是从真实记录拟合的。刺激间隔在 1.0–1.4 秒之间随机：模拟器的 α 波是固定相位的正弦，间隔若恰好是周期的整数倍，平均之后它不会抵消。</span><span class="en">The data are synthetic and come from no real person. Background EEG and blinks reuse the simulator’s parameters; target trials get a negative wave at 0.25 s and a positive wave at 0.38 s, with amplitudes and scalp distributions set to the textbook shape rather than fitted to real recordings. The interval between stimuli is random between 1.0 and 1.4 s: the simulator’s alpha is a fixed-phase sine, and if the interval were an exact multiple of its period, it would not average out.</span></p>
+    <p class="b"><span class="zh">计算核心逐步和 SciPy 1.17、scikit-learn 1.9、pyRiemann 0.11 对拍过：滤波在信号中段的相对误差是 3×10⁻¹⁰；PCA、xDAWN（包括 ICA 之后秩为 7 的情况）、收缩 LDA 的系数和 λ、5 折 AUC 都在小数点后 10 位一致；FastICA 比的是眨眼成分的头皮分布，余弦相似度 0.99999。</span><span class="en">The computational core was checked step by step against SciPy 1.17, scikit-learn 1.9 and pyRiemann 0.11. Filtering agrees to a relative error of 3×10⁻¹⁰ in the middle of the signal; PCA, xDAWN (including the rank-7 case after ICA), the shrinkage-LDA coefficients and λ, and the 5-fold AUC agree to 10 decimal places; for FastICA the blink component’s scalp map was compared, with a cosine similarity of 0.99999.</span></p>
+    <p class="b"><span class="zh">LDA 的阈值取 0，相当于把两类先验当作相等，所以平衡准确率和 scikit-learn 默认的 predict 不完全一样；AUC 不受阈值影响。</span><span class="en">The LDA threshold is 0, which treats the two classes’ priors as equal, so balanced accuracy differs slightly from scikit-learn’s default predict; AUC does not depend on the threshold.</span></p>
+    <p class="b"><span class="zh">FastICA 没收敛时，不同浏览器的数学函数在最后几位上的差别会被迭代放大，结果可能在小数点后第三位上略有不同。</span><span class="en">When FastICA has not converged, tiny last-digit differences between browsers’ built-in mathematical functions are amplified by the iterations, so results can differ slightly in the third decimal place.</span></p>
+  </div></footer>
+</div>
+<button class="totop" id="totop" aria-label="回到顶部 · Back to top">↑</button>
+
+<script id="core">
+/* ── 计算核心:数据合成 · 滤波 · FastICA · xDAWN · 收缩 LDA · 交叉验证。不碰 DOM,可在 Node 里单独跑 ── */
+const PIPE=(()=>{
+'use strict';
+/* 与模拟器同一套电极与背景参数 */
+const FS=250,CH=['Fp1','F7','F8','C3','C4','T7','T8','O1'],NC=8;
+const PK=[1.0,1.0,1.0,1.1,1.1,1.0,1.0,1.2],AO=[4,5,5,9,9,5,5,10],LN=[20,18,22,19,21,24,23,18],PINK=4;
+const WBLINK=[1,.45,.45,.15,.15,.08,.08,.02];
+/* 事件相关电位的空间分布(示意):外源成分两类都有;N2、P3 只在目标试次出现,P3 在中央—顶区最大 */
+const WEX=[.35,.45,.45,.8,.8,.5,.5,1],WN2=[.45,.55,.55,1,.95,.35,.35,.25],WP3=[.15,.3,.3,1,1,.45,.45,.75];
+const EP=Math.round(.8*FS),DEC=10,P=EP/DEC;          /* 0–0.8 s,降到 25 Hz → 每段 20 个点 */
+
+function rng(seed){let s=Math.floor(seed)%2147483647;if(s<=0)s+=2147483646;
+ const R=()=>(s=(s*16807)%2147483647)/2147483647;
+ const g=()=>{const u=R()||1e-9,v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(6.283185307179586*v)};return{R,g}}
+function pink(q,g){const w=g();q.b0=.99886*q.b0+w*.0555179;q.b1=.99332*q.b1+w*.0750759;q.b2=.969*q.b2+w*.153852;q.b3=.8665*q.b3+w*.3104856;q.b4=.55*q.b4+w*.5329522;q.b5=-.7616*q.b5-w*.016898;const o=q.b0+q.b1+q.b2+q.b3+q.b4+q.b5+q.b6+w*.5362;q.b6=w*.115926;return o}
+function blinkW(dt){if(dt<0||dt>0.7)return 0;const s=dt<.12?.06:.13;return Math.exp(-((dt-.12)**2)/(2*s*s))}
+const gau=(t,m,s)=>Math.exp(-((t-m)**2)/(2*s*s));
+
+/* o: {seed,n,pt,amp,jit(ms),pBase,conf,pConf,isi} */
+function makeData(o){
+ const {R,g}=rng(o.seed),n=o.n,nt=Math.max(2,Math.round(n*o.pt)),L=Math.round(o.isi*FS);
+ const y=new Array(n).fill(0);for(let k=0;k<nt;k++)y[k]=1;
+ for(let k=n-1;k>0;k--){const j=Math.floor(R()*(k+1));const t=y[k];y[k]=y[j];y[j]=t}
+ const on=[];let t0=Math.round(L/2);for(let k=0;k<n;k++){on.push(t0);t0+=Math.round((o.isi+(R()-.5)*.4)*FS)}   /* 刺激间隔在 isi±0.2 s 里随机,背景节律才不会和刺激锁相 */
+ const T=t0+L;
+ const X=[];for(let i=0;i<NC;i++){
+  const q={d:0,b0:0,b1:0,b2:0,b3:0,b4:0,b5:0,b6:0},pa=R()*6,pb=R()*6,pm=R()*6,f=(i===3||i===4)?11:10,x=new Float64Array(T);
+  for(let s=0;s<T;s++){const t=s/FS;q.d=q.d*.999+g()*.5;const am=.65+.35*Math.sin(6.2832*.35*t+pm);
+   x[s]=q.d+PINK*PK[i]*pink(q,g)+AO[i]*am*Math.sin(6.2832*f*t+pa)+3*Math.sin(6.2832*20*t+pb)+LN[i]*Math.sin(6.2832*50*t)}
+  X.push(x)}
+ for(let k=0;k<n;k++){const s0=on[k],dj=(o.jit/1000)*g();
+  for(let s=0;s<EP;s++){const t=s/FS,ex=-2.5*gau(t,.10,.025)+3*gau(t,.18,.035);
+   const n2=y[k]?-.5*o.amp*gau(t,.25,.035):0,p3=y[k]?o.amp*gau(t,.38+dj,.07):0;
+   for(let i=0;i<NC;i++)X[i][s0+s]+=WEX[i]*ex+WN2[i]*n2+WP3[i]*p3}}
+ const blink=new Float64Array(T),BL=Math.round(.7*FS);let nb=[0,0];
+ for(let k=0;k<n;k++){const conf=o.conf&&y[k]===1,p=conf?o.pConf:o.pBase;
+  if(R()<p){const tb=conf?.30+.20*R():R()*o.isi,sb=on[k]+Math.round(tb*FS);nb[y[k]]++;
+   for(let s=0;s<BL&&sb+s<T;s++){const w=200*blinkW(s/FS);blink[sb+s]+=w;for(let i=0;i<NC;i++)X[i][sb+s]+=WBLINK[i]*w}}}
+ return {X,y,on,blink,T,nt,nb}}
+
+/* ── 滤波:RBJ 二阶节级联,前向 + 反向(零相位),两端奇对称延拓 2 s ── */
+function bq(type,f0,Q){const w0=2*Math.PI*f0/FS,c=Math.cos(w0),a=Math.sin(w0)/(2*Q);let b;
+ if(type==='lp')b=[(1-c)/2,1-c,(1-c)/2];else if(type==='hp')b=[(1+c)/2,-(1+c),(1+c)/2];else b=[1,-2*c,1];
+ const a0=1+a;return{b:b.map(v=>v/a0),a1:-2*c/a0,a2:(1-a)/a0}}
+const bandpass=(lo,hi)=>[bq('n',50,8),bq('hp',lo,.5412),bq('hp',lo,1.3066),bq('lp',hi,.5412),bq('lp',hi,1.3066)];
+function sos(x,secs){for(const f of secs){let x1=0,x2=0,y1=0,y2=0;
+ for(let k=0;k<x.length;k++){const xn=x[k],yn=f.b[0]*xn+f.b[1]*x1+f.b[2]*x2-f.a1*y1-f.a2*y2;x2=x1;x1=xn;y2=y1;y1=yn;x[k]=yn}}}
+function filtfilt(x,secs){const pad=Math.min(2*FS,x.length-1),m=x.length,y=new Float64Array(m+2*pad);
+ for(let k=0;k<pad;k++){y[k]=2*x[0]-x[pad-k];y[m+pad+k]=2*x[m-1]-x[m-2-k]}
+ y.set(x,pad);sos(y,secs);y.reverse();sos(y,secs);y.reverse();return y.slice(pad,pad+m)}
+const filterAll=(X,lo,hi)=>X.map(x=>filtfilt(x,bandpass(lo,hi)));
+
+/* 切段 + 降采样:每段扁平存成 [通道][时间] */
+function epochs(X,on){return on.map(s0=>{const e=new Float64Array(NC*P);for(let i=0;i<NC;i++)for(let p=0;p<P;p++)e[i*P+p]=X[i][s0+p*DEC];return e})}
+
+/* ── 线性代数 ── */
+function jacobi(Ain,n){const A=Float64Array.from(Ain),V=new Float64Array(n*n);for(let i=0;i<n;i++)V[i*n+i]=1;
+ let scale=0;for(let i=0;i<n*n;i++)scale+=A[i]*A[i];
+ for(let sw=0;sw<100;sw++){let off=0;for(let p=0;p<n;p++)for(let q=p+1;q<n;q++)off+=A[p*n+q]**2;if(off<=1e-26*scale)break;
+  for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){const apq=A[p*n+q];if(apq===0)continue;
+   const th=(A[q*n+q]-A[p*n+p])/(2*apq),t=(th>=0?1:-1)/(Math.abs(th)+Math.sqrt(th*th+1)),c=1/Math.sqrt(t*t+1),s=t*c;
+   for(let k=0;k<n;k++){const a=A[k*n+p],b=A[k*n+q];A[k*n+p]=c*a-s*b;A[k*n+q]=s*a+c*b}
+   for(let k=0;k<n;k++){const a=A[p*n+k],b=A[q*n+k];A[p*n+k]=c*a-s*b;A[q*n+k]=s*a+c*b}
+   for(let k=0;k<n;k++){const a=V[k*n+p],b=V[k*n+q];V[k*n+p]=c*a-s*b;V[k*n+q]=s*a+c*b}}}
+ const d=new Float64Array(n);for(let i=0;i<n;i++)d[i]=A[i*n+i];return{d,V}}       /* V 的第 k 列是第 k 个特征向量 */
+function cholSolve(A,b,n){const L=new Float64Array(n*n);
+ for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let s=A[i*n+j];for(let k=0;k<j;k++)s-=L[i*n+k]*L[j*n+k];
+  if(i===j)L[i*n+i]=Math.sqrt(Math.max(s,1e-12*Math.abs(A[i*n+i])+1e-300));else L[i*n+j]=s/L[j*n+j]}
+ const z=new Float64Array(n);for(let i=0;i<n;i++){let s=b[i];for(let k=0;k<i;k++)s-=L[i*n+k]*z[k];z[i]=s/L[i*n+i]}
+ const x=new Float64Array(n);for(let i=n-1;i>=0;i--){let s=z[i];for(let k=i+1;k<n;k++)s-=L[k*n+i]*x[k];x[i]=s/L[i*n+i]}return x}
+/* 大矩阵用 Householder 三对角化 + 隐式 QL(JAMA 的 tred2/tql2),O(n³);8×8 的小矩阵仍用上面的 Jacobi */
+function symEig(A,n){const V=[];for(let i=0;i<n;i++)V.push(Float64Array.from(A.subarray(i*n,i*n+n)));const d=new Float64Array(n),e=new Float64Array(n);
+ for(let j=0;j<n;j++)d[j]=V[n-1][j];
+ for(let i=n-1;i>0;i--){let scale=0,h=0;for(let k=0;k<i;k++)scale+=Math.abs(d[k]);
+  if(scale===0){e[i]=d[i-1];for(let j=0;j<i;j++){d[j]=V[i-1][j];V[i][j]=0;V[j][i]=0}}
+  else{for(let k=0;k<i;k++){d[k]/=scale;h+=d[k]*d[k]}let f=d[i-1],g=Math.sqrt(h);if(f>0)g=-g;e[i]=scale*g;h-=f*g;d[i-1]=f-g;for(let j=0;j<i;j++)e[j]=0;
+   for(let j=0;j<i;j++){f=d[j];V[j][i]=f;g=e[j]+V[j][j]*f;for(let k=j+1;k<=i-1;k++){g+=V[k][j]*d[k];e[k]+=V[k][j]*f}e[j]=g}
+   f=0;for(let j=0;j<i;j++){e[j]/=h;f+=e[j]*d[j]}const hh=f/(h+h);for(let j=0;j<i;j++)e[j]-=hh*d[j];
+   for(let j=0;j<i;j++){f=d[j];g=e[j];for(let k=j;k<=i-1;k++)V[k][j]-=f*e[k]+g*d[k];d[j]=V[i-1][j];V[i][j]=0}}
+  d[i]=h}
+ for(let i=0;i<n-1;i++){V[n-1][i]=V[i][i];V[i][i]=1;const h=d[i+1];
+  if(h!==0){for(let k=0;k<=i;k++)d[k]=V[k][i+1]/h;for(let j=0;j<=i;j++){let g=0;for(let k=0;k<=i;k++)g+=V[k][i+1]*V[k][j];for(let k=0;k<=i;k++)V[k][j]-=g*d[k]}}
+  for(let k=0;k<=i;k++)V[k][i+1]=0}
+ for(let j=0;j<n;j++){d[j]=V[n-1][j];V[n-1][j]=0}V[n-1][n-1]=1;e[0]=0;
+ for(let i=1;i<n;i++)e[i-1]=e[i];e[n-1]=0;let f=0,tst=0;const eps=2**-52;
+ for(let l=0;l<n;l++){tst=Math.max(tst,Math.abs(d[l])+Math.abs(e[l]));let m=l;while(m<n){if(Math.abs(e[m])<=eps*tst)break;m++}
+  if(m>l){let it=0;do{it++;let g=d[l],p=(d[l+1]-g)/(2*e[l]),r=Math.hypot(p,1);if(p<0)r=-r;d[l]=e[l]/(p+r);d[l+1]=e[l]*(p+r);const dl1=d[l+1];let h=g-d[l];
+   for(let i=l+2;i<n;i++)d[i]-=h;f+=h;p=d[m];let c=1,c2=1,c3=1;const el1=e[l+1];let s=0,s2=0;
+   for(let i=m-1;i>=l;i--){c3=c2;c2=c;s2=s;g=c*e[i];h=c*p;r=Math.hypot(p,e[i]);e[i+1]=s*r;s=e[i]/r;c=p/r;p=c*d[i]-s*g;d[i+1]=h+s*(c*g+s*d[i]);
+    for(let k=0;k<n;k++){h=V[k][i+1];V[k][i+1]=s*V[k][i]+c*h;V[k][i]=c*V[k][i]-s*h}}
+   p=-s*s2*c3*el1*e[l]/dl1;e[l]=s*p;d[l]=c*p}while(Math.abs(e[l])>eps*tst&&it<100)}
+  d[l]+=f;e[l]=0}
+ const W=new Float64Array(n*n);for(let i=0;i<n;i++)W.set(V[i],i*n);return{d,V:W}}
+function pinvSolve(A,b,n){const{d,V}=n>16?symEig(A,n):jacobi(A,n),dmax=Math.max(...d),x=new Float64Array(n);   /* 奇异时取最小范数解 */
+ for(let k=0;k<n;k++){if(d[k]<=1e-10*dmax)continue;let s=0;for(let i=0;i<n;i++)s+=V[i*n+k]*b[i];s/=d[k];for(let i=0;i<n;i++)x[i]+=V[i*n+k]*s}return x}
+function corr(a,b){const n=a.length;let ma=0,mb=0;for(let i=0;i<n;i++){ma+=a[i];mb+=b[i]}ma/=n;mb/=n;
+ let sab=0,saa=0,sbb=0;for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y}return sab/Math.sqrt(saa*sbb)}
+
+/* ── PCA 与 FastICA(对称正交化,tanh 非线性)── */
+function covCont(X,step){const m=Math.floor(X[0].length/step),D=X.map(x=>{const r=new Float64Array(m);let mu=0;
+  for(let j=0;j<m;j++){r[j]=x[j*step];mu+=r[j]}mu/=m;for(let j=0;j<m;j++)r[j]-=mu;return r});
+ const C=new Float64Array(NC*NC);for(let a=0;a<NC;a++)for(let b=a;b<NC;b++){let s=0;const u=D[a],v=D[b];for(let j=0;j<m;j++)s+=u[j]*v[j];C[a*NC+b]=C[b*NC+a]=s/m}
+ return{D,C,m}}
+function pca(X,step){const{C}=covCont(X,step),{d,V}=jacobi(C,NC),idx=[...d.keys()].sort((a,b)=>d[b]-d[a]),tot=d.reduce((a,b)=>a+b,0);
+ return idx.map(k=>({frac:d[k]/tot,vec:Array.from({length:NC},(_,i)=>V[i*NC+k])}))}
+function symdecor(W){const n=NC,M=new Float64Array(n*n);
+ for(let a=0;a<n;a++)for(let b=0;b<n;b++){let s=0;for(let k=0;k<n;k++)s+=W[a*n+k]*W[b*n+k];M[a*n+b]=s}
+ const{d,V}=jacobi(M,n),Mi=new Float64Array(n*n);
+ for(let a=0;a<n;a++)for(let b=0;b<n;b++){let s=0;for(let k=0;k<n;k++)s+=V[a*n+k]*V[b*n+k]/Math.sqrt(d[k]);Mi[a*n+b]=s}
+ const O=new Float64Array(n*n);for(let a=0;a<n;a++)for(let b=0;b<n;b++){let s=0;for(let k=0;k<n;k++)s+=Mi[a*n+k]*W[k*n+b];O[a*n+b]=s}return O}
+function fastica(X,step,seed){const n=NC,{D,C,m}=covCont(X,step),{d,V}=jacobi(C,n);
+ const K=new Float64Array(n*n);for(let k=0;k<n;k++)for(let i=0;i<n;i++)K[k*n+i]=V[i*n+k]/Math.sqrt(d[k]);
+ const Z=[];for(let k=0;k<n;k++){const z=new Float64Array(m);for(let i=0;i<n;i++){const kk=K[k*n+i],di=D[i];for(let j=0;j<m;j++)z[j]+=kk*di[j]}Z.push(z)}
+ const{g}=rng(seed||7);let W=new Float64Array(n*n);for(let i=0;i<n*n;i++)W[i]=g();W=symdecor(W);
+ let it=0;const u=new Float64Array(m),rowDelta=new Float64Array(n);           /* rowDelta:最后一次迭代里每个成分方向的变化 */
+ for(;it<200;it++){const Wn=new Float64Array(n*n);
+  for(let r=0;r<n;r++){u.fill(0);for(let k=0;k<n;k++){const w=W[r*n+k],z=Z[k];for(let j=0;j<m;j++)u[j]+=w*z[j]}
+   let gp=0;for(let j=0;j<m;j++){const t=Math.tanh(u[j]);u[j]=t;gp+=1-t*t}gp/=m;
+   for(let k=0;k<n;k++){let s=0;const z=Z[k];for(let j=0;j<m;j++)s+=u[j]*z[j];Wn[r*n+k]=s/m-gp*W[r*n+k]}}
+  const W2=symdecor(Wn);let lim=0;for(let r=0;r<n;r++){let s=0;for(let k=0;k<n;k++)s+=W2[r*n+k]*W[r*n+k];rowDelta[r]=Math.abs(Math.abs(s)-1);lim=Math.max(lim,rowDelta[r])}
+  W=W2;if(lim<1e-4)break}
+ const U=new Float64Array(n*n),A=new Float64Array(n*n);           /* 拆分矩阵 U = W·K;混合矩阵 A = V·√d·Wᵀ(第 r 列 = 第 r 个成分的头皮分布)*/
+ for(let r=0;r<n;r++)for(let i=0;i<n;i++){let s=0;for(let k=0;k<n;k++)s+=W[r*n+k]*K[k*n+i];U[r*n+i]=s}
+ for(let i=0;i<n;i++)for(let r=0;r<n;r++){let s=0;for(let k=0;k<n;k++)s+=V[i*n+k]*Math.sqrt(d[k])*W[r*n+k];A[i*n+r]=s}
+ return{U,A,iters:Math.min(it+1,200),converged:it<200,rowDelta}}
+function sources(X,U){const T=X[0].length,S=[];for(let r=0;r<NC;r++){const s=new Float64Array(T);for(let i=0;i<NC;i++){const w=U[r*NC+i],x=X[i];for(let t=0;t<T;t++)s[t]+=w*x[t]}S.push(s)}return S}
+function removeComp(X,A,S,rs){return X.map((x,i)=>{const y=Float64Array.from(x);for(const r of rs){const a=A[i*NC+r],s=S[r];for(let t=0;t<y.length;t++)y[t]-=a*s[t]}return y})}
+
+/* ── xDAWN(与 pyRiemann 的 Xdawn 同一做法):最大化「目标类平均 ERP 的能量 / 全部数据的能量」── */
+function xdawnFit(E,y,idx,nf){const n=NC;
+ const Cx=new Float64Array(n*n),Pm=new Float64Array(n*P),mu=new Float64Array(n);let nt=0;     /* 协方差都先减均值,和 pyRiemann 的 scm 一致 */
+ for(const k of idx){const e=E[k];for(let a=0;a<n;a++){for(let p=0;p<P;p++)mu[a]+=e[a*P+p];for(let b=a;b<n;b++){let s=0;for(let p=0;p<P;p++)s+=e[a*P+p]*e[b*P+p];Cx[a*n+b]+=s}}
+  if(y[k]===1){nt++;for(let j=0;j<n*P;j++)Pm[j]+=e[j]}}
+ const N=idx.length*P;for(let a=0;a<n;a++)mu[a]/=N;
+ for(let a=0;a<n;a++)for(let b=a;b<n;b++){Cx[a*n+b]=Cx[a*n+b]/N-mu[a]*mu[b];Cx[b*n+a]=Cx[a*n+b]}
+ for(let j=0;j<n*P;j++)Pm[j]/=nt;
+ for(let a=0;a<n;a++){let m=0;for(let p=0;p<P;p++)m+=Pm[a*P+p];m/=P;for(let p=0;p<P;p++)Pm[a*P+p]-=m}
+ const Cp=new Float64Array(n*n);for(let a=0;a<n;a++)for(let b=0;b<n;b++){let s=0;for(let p=0;p<P;p++)s+=Pm[a*P+p]*Pm[b*P+p];Cp[a*n+b]=s/P}
+ const{d,V}=jacobi(Cx,n),M=new Float64Array(n*n),dmax=Math.max(...d);          /* 只在 Cx 的列空间里白化:ICA 删掉一个成分后数据只剩 7 维 */
+ for(let k=0;k<n;k++)if(d[k]>1e-9*dmax)for(let i=0;i<n;i++)M[k*n+i]=V[i*n+k]/Math.sqrt(d[k]);
+ const S=new Float64Array(n*n);for(let a=0;a<n;a++)for(let b=0;b<n;b++){let s=0;for(let i=0;i<n;i++)for(let j=0;j<n;j++)s+=M[a*n+i]*Cp[i*n+j]*M[b*n+j];S[a*n+b]=s}
+ const r=jacobi(S,n),ord=[...r.d.keys()].sort((a,b)=>r.d[b]-r.d[a]);
+ const filters=[],patterns=[];
+ for(const k of ord.slice(0,nf)){const v=new Float64Array(n);for(let i=0;i<n;i++){let s=0;for(let a=0;a<n;a++)s+=M[a*n+i]*r.V[a*n+k];v[i]=s}
+  const nv=Math.hypot(...v);for(let i=0;i<n;i++)v[i]/=nv;
+  const pat=new Float64Array(n);for(let i=0;i<n;i++){let s=0;for(let j=0;j<n;j++)s+=Cx[i*n+j]*v[j];pat[i]=s}
+  filters.push(v);patterns.push(pat)}
+ return{filters,patterns,ratio:ord.slice(0,nf).map(k=>r.d[k]),Cx,Cp}}
+function xdawnApply(e,filters){const f=new Float64Array(filters.length*P);
+ filters.forEach((v,r)=>{for(let p=0;p<P;p++){let s=0;for(let i=0;i<NC;i++)s+=v[i]*e[i*P+p];f[r*P+p]=s}});return f}
+
+/* ── 收缩 LDA(与 sklearn 的 LinearDiscriminantAnalysis(solver='lsqr', shrinkage='auto') 同一做法:
+   每类先标准化、算 Ledoit-Wolf 收缩、再换回原单位;两类按先验加权 ── */
+function lwShrink(Xc,n,p){                          /* Xc:已中心化、已标准化,n×p 扁平 */
+ const tr=new Float64Array(p);for(let i=0;i<n;i++)for(let j=0;j<p;j++)tr[j]+=Xc[i*p+j]**2;
+ let trs=0;for(let j=0;j<p;j++){tr[j]/=n;trs+=tr[j]}const mu=trs/p;
+ let beta_=0,delta_=0;
+ for(let a=0;a<p;a++)for(let b=0;b<p;b++){let sxy=0,sx2y2=0;for(let i=0;i<n;i++){const u=Xc[i*p+a],v=Xc[i*p+b];sxy+=u*v;sx2y2+=u*u*v*v}delta_+=sxy*sxy;beta_+=sx2y2}
+ delta_/=n*n;let beta=(beta_/n-delta_)/(p*n),delta=(delta_-2*mu*trs+p*mu*mu)/p;beta=Math.min(beta,delta);
+ return beta<=0||!(delta>0)?0:beta/delta}
+function classCov(F,idx,p,shrink){const n=idx.length,mean=new Float64Array(p);for(const k of idx)for(let j=0;j<p;j++)mean[j]+=F[k][j];for(let j=0;j<p;j++)mean[j]/=n;
+ const Xc=new Float64Array(n*p);idx.forEach((k,i)=>{for(let j=0;j<p;j++)Xc[i*p+j]=F[k][j]-mean[j]});
+ const sd=new Float64Array(p);for(let j=0;j<p;j++){let s=0;for(let i=0;i<n;i++)s+=Xc[i*p+j]**2;sd[j]=Math.sqrt(s/n)||1}
+ let lam=0;
+ if(shrink){const Xs=new Float64Array(n*p);for(let i=0;i<n;i++)for(let j=0;j<p;j++)Xs[i*p+j]=Xc[i*p+j]/sd[j];lam=lwShrink(Xs,n,p)}
+ const S=new Float64Array(p*p);
+ for(let a=0;a<p;a++)for(let b=a;b<p;b++){let s=0;for(let i=0;i<n;i++)s+=Xc[i*p+a]*Xc[i*p+b];s/=n;
+  if(shrink){const r=s/(sd[a]*sd[b]);s=((1-lam)*r+(a===b?lam:0))*sd[a]*sd[b]}S[a*p+b]=S[b*p+a]=s}
+ return{mean,S,lam}}
+function ldaFit(F,y,idx,shrink){const p=F[idx[0]].length,i0=idx.filter(k=>y[k]===0),i1=idx.filter(k=>y[k]===1);
+ const c0=classCov(F,i0,p,shrink),c1=classCov(F,i1,p,shrink),p0=i0.length/idx.length,p1=1-p0,S=new Float64Array(p*p);
+ for(let j=0;j<p*p;j++)S[j]=p0*c0.S[j]+p1*c1.S[j];
+ const dm=new Float64Array(p);for(let j=0;j<p;j++)dm[j]=c1.mean[j]-c0.mean[j];
+ const w=shrink?cholSolve(S,dm,p):pinvSolve(S,dm,p);let b=0;for(let j=0;j<p;j++)b-=.5*(c1.mean[j]+c0.mean[j])*w[j];
+ return{w,b,lam:p0*c0.lam+p1*c1.lam}}
+const score=(m,f)=>{let s=m.b;for(let j=0;j<f.length;j++)s+=m.w[j]*f[j];return s};
+
+/* ── 评估 ── */
+function auc(sc,y){const idx=sc.map((s,i)=>i).sort((a,b)=>sc[a]-sc[b]),rk=new Float64Array(sc.length);
+ for(let i=0;i<idx.length;){let j=i;while(j+1<idx.length&&sc[idx[j+1]]===sc[idx[i]])j++;const r=(i+j)/2+1;for(let k=i;k<=j;k++)rk[idx[k]]=r;i=j+1}
+ let n1=0,sr=0;y.forEach((v,i)=>{if(v===1){n1++;sr+=rk[i]}});const n0=y.length-n1;return(sr-n1*(n1+1)/2)/(n1*n0)}
+function bacc(sc,y){let tp=0,p=0,tn=0,nn=0;y.forEach((v,i)=>{if(v===1){p++;if(sc[i]>0)tp++}else{nn++;if(sc[i]<=0)tn++}});return(tp/p+tn/nn)/2}
+function folds(y,K,seed){const{R}=rng(seed),f=new Array(y.length);
+ for(const c of [0,1]){const id=y.map((v,i)=>v===c?i:-1).filter(i=>i>=0);
+  for(let k=id.length-1;k>0;k--){const j=Math.floor(R()*(k+1));const t=id[k];id[k]=id[j];id[j]=t}
+  id.forEach((i,r)=>f[i]=r%K)}return f}
+/* opt: {xdawn:bool, nf, shrink:bool, leaky:bool};返回各折平均 AUC、平衡准确率、收缩强度 λ */
+function cv(E,y,opt,fold,K){const all=[...y.keys()];let full=null;
+ if(opt.xdawn&&opt.leaky)full=xdawnFit(E,y,all,opt.nf);
+ const res={auc:0,bacc:0,lam:0,oof:new Float64Array(y.length)};
+ for(let f=0;f<K;f++){const tr=all.filter(i=>fold[i]!==f),te=all.filter(i=>fold[i]===f);
+  let F;if(opt.xdawn){const xf=opt.leaky?full:xdawnFit(E,y,tr,opt.nf);F=E.map(e=>xdawnApply(e,xf.filters))}else F=E;
+  const m=ldaFit(F,y,tr,opt.shrink),sc=te.map(i=>score(m,F[i])),yt=te.map(i=>y[i]);
+  te.forEach((i,j)=>res.oof[i]=sc[j]);res.auc+=auc(sc,yt)/K;res.bacc+=bacc(sc,yt)/K;res.lam+=m.lam/K}
+ return res}
+/* 对照:按 |t| 挑 k 个特征再上收缩 LDA。leaky=true 时在全部试次上挑(错误做法) */
+function selectT(E,y,idx,k){const p=E[0].length,m=[new Float64Array(p),new Float64Array(p)],v=[new Float64Array(p),new Float64Array(p)],c=[0,0];
+ for(const i of idx){c[y[i]]++;for(let j=0;j<p;j++)m[y[i]][j]+=E[i][j]}for(const g of[0,1])for(let j=0;j<p;j++)m[g][j]/=c[g];
+ for(const i of idx)for(let j=0;j<p;j++)v[y[i]][j]+=(E[i][j]-m[y[i]][j])**2;
+ const t=Array.from({length:p},(_,j)=>Math.abs(m[1][j]-m[0][j])/Math.sqrt(v[0][j]/(c[0]-1)/c[0]+v[1][j]/(c[1]-1)/c[1]));
+ return[...t.keys()].sort((a,b)=>t[b]-t[a]).slice(0,k)}
+function cvSelect(E,y,fold,K,k,leaky){const all=[...y.keys()],pre=leaky?selectT(E,y,all,k):null;let a=0;
+ for(let f=0;f<K;f++){const tr=all.filter(i=>fold[i]!==f),te=all.filter(i=>fold[i]===f),s=pre||selectT(E,y,tr,k);
+  const F=E.map(e=>Float64Array.from(s,j=>e[j])),m=ldaFit(F,y,tr,true);a+=auc(te.map(i=>score(m,F[i])),te.map(i=>y[i]))/K}return a}
+function kurtosis(s){const n=s.length;let m=0;for(let i=0;i<n;i++)m+=s[i];m/=n;let m2=0,m4=0;for(let i=0;i<n;i++){const e=(s[i]-m)**2;m2+=e;m4+=e*e}m2/=n;m4/=n;return m4/(m2*m2)-3}
+/* 单次滤波的 |H(f)|²;前向 + 反向各滤一次,正好就是 filtfilt 的幅度增益 */
+function response(lo,hi,f){const w=2*Math.PI*f/FS;let g=1;for(const s of bandpass(lo,hi)){
+  const cr=s.b[0]+s.b[1]*Math.cos(w)+s.b[2]*Math.cos(2*w),ci=-(s.b[1]*Math.sin(w)+s.b[2]*Math.sin(2*w));
+  const dr=1+s.a1*Math.cos(w)+s.a2*Math.cos(2*w),di=-(s.a1*Math.sin(w)+s.a2*Math.sin(2*w));g*=(cr*cr+ci*ci)/(dr*dr+di*di)}return g}
+
+return{FS,CH,NC,EP,DEC,P,WBLINK,WP3,WEX,WN2,selectT,cvSelect,kurtosis,response,makeData,filterAll,epochs,pca,fastica,sources,removeComp,corr,xdawnFit,xdawnApply,ldaFit,score,auc,bacc,folds,cv,jacobi,symEig,cholSolve,pinvSolve,lwShrink,classCov,rng}
+})();
+</script>
+<script>
+(()=>{
+'use strict';
+const P=PIPE,CH=P.CH,NC=8,FS=P.FS,EP=P.EP,DEC=P.DEC;
+const ICON={
+ wave:'<path d="M3 10h2v4H3zM7 6h2v12H7zM11 2h2v20h-2zM15 6h2v12h-2zM19 10h2v4h-2z"/>',
+ doc:'<path d="M4 4.5h16v2H4zM4 9.5h16v2H4zM4 14.5h11v2H4zM4 19.5h7v2H4z"/>',
+ warn:'<path fill-rule="evenodd" d="M12 2.5L1.5 21h21L12 2.5zM11 9.5h2v5.5h-2V9.5zm0 7.3h2v2h-2v-2z"/>',
+ brain:'<path d="M9.5 3A3.5 3.5 0 006 6.5c-1.8.4-3 2-3 3.9 0 1.2.5 2.3 1.4 3A4 4 0 008 20.5h1.2A2.8 2.8 0 0012 17.7V5.8A2.8 2.8 0 009.5 3zm5 0A2.8 2.8 0 0012 5.8v11.9a2.8 2.8 0 002.8 2.8H16a4 4 0 003.6-7.1c.9-.7 1.4-1.8 1.4-3 0-1.9-1.2-3.5-3-3.9A3.5 3.5 0 0014.5 3z"/>',
+ trend:'<path d="M3 3h2.2v15.8H21V21H3V3zm4.4 11.4l4-4.6 3.1 2.7 4.3-5.3 1.7 1.4-5.7 7-3.2-2.8-2.6 3z"/>',
+ layers:'<path d="M12 2l9.5 4.8L12 11.6 2.5 6.8 12 2zM4.9 10.4l7.1 3.6 7.1-3.6 2.4 1.2L12 16.4 2.5 11.6l2.4-1.2zm0 4.7l7.1 3.6 7.1-3.6 2.4 1.2L12 21.1 2.5 16.3l2.4-1.2z"/>',
+ book:'<path fill-rule="evenodd" d="M2.5 3.5h6.3A3.2 3.2 0 0112 6.7v14.1a3.2 3.2 0 00-3.2-3.2H2.5V3.5zm19 0h-6.3A3.2 3.2 0 0012 6.7v14.1a3.2 3.2 0 013.2-3.2h6.3V3.5z"/>',
+ flow:'<path d="M3 3h7v7H3zM14 14h7v7h-7zM10 5.5h5a3 3 0 013 3V14h-2V8.5a1 1 0 00-1-1h-5z"/>',
+ eye:'<path fill-rule="evenodd" d="M12 5C6.5 5 2.4 8.6 1 12c1.4 3.4 5.5 7 11 7s9.6-3.6 11-7c-1.4-3.4-5.5-7-11-7zm0 2.8a4.2 4.2 0 110 8.4 4.2 4.2 0 010-8.4zm0 2.2a2 2 0 100 4 2 2 0 000-4z"/>'
+};
+const svgI=k=>`<svg viewBox="0 0 24 24">${ICON[k]||''}</svg>`;
+const COL=['#2563EB','#0E7490','#1D9E75','#D85A30','#DB2777','#CA8A04','#78716C','#7C3AED'];
+const POS=[[55,30],[26,55],[124,55],[48,88],[102,88],[18,88],[132,88],[55,146]];
+const TGT='#D85A30',NON='#4F7396',INK='#2C2C2A',DIM='#5F5E5A',MUTED='#8a8a84',HAIR='#e8e6df',LINE='#d6d5cf',RED='#C0473F',BLUE='#2563EB';
+const MONO='10px "JetBrains Mono",ui-monospace,monospace',SANS='11px "Noto Sans SC",-apple-system,"PingFang SC",sans-serif';
+const $=id=>document.getElementById(id),f2=v=>v.toFixed(2),f3=v=>v.toFixed(3);
+const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return`rgba(${n>>16},${n>>8&255},${n&255},${a})`};
+const sgn=v=>(v>0?'+':v<0?'−':'±')+Math.abs(v).toFixed(2);
+const sci=v=>{if(!(v>0))return '0';const e=Math.floor(Math.log10(v)),m=v/10**e;return (m>=9.95?'1':m.toFixed(1).replace(/\.0$/,''))+'×10<sup>'+(m>=9.95?e+1:e)+'</sup>'};
+/* 双语:T2 给 HTML(显示由 CSS 按 data-lang 控制);TL 给画布(画布不吃 CSS,按当前语言挑一种) */
+let LANG='both';
+const T2=(z,e)=>`<span class="zh">${z}</span><span class="en">${e}</span>`;
+const TL=(z,e)=>LANG==='en'?e:z;
+function prep(c,H){const d=window.devicePixelRatio||1,W=Math.max(c.clientWidth||c.parentNode.clientWidth||0,240);c.width=Math.round(W*d);c.height=Math.round(H*d);c.style.height=H+'px';
+ const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,W,H);x.font=MONO;x.lineJoin='round';return[x,W]}
+/* 用 MessageChannel 让出主线程:后台标签页里 setTimeout 会被限到每秒一次 */
+const tick=()=>new Promise(r=>{const m=new MessageChannel();m.port1.onmessage=()=>r();m.port2.postMessage(0)});
+const flipOf=v=>{let m=0,k=0;v.forEach((a,i)=>{if(Math.abs(a)>m){m=Math.abs(a);k=i}});return v[k]<0?-1:1};
+const erf=z=>{const s=Math.sign(z),a=Math.abs(z),t=1/(1+.3275911*a);return s*(1-((((1.061405429*t-1.453152027)*t+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-a*a))};
+const Phi=z=>.5*(1+erf(z/Math.SQRT2));
+
+/* 头皮小图:8 个电极,红正蓝负,圆面积 ∝ |值| */
+function head(v,aria){const mx=Math.max(...v.map(Math.abs))||1;
+ let h=`<svg viewBox="0 0 150 165" role="img" aria-label="${aria}"><circle cx="75" cy="88" r="68" fill="none" stroke="${LINE}"/><path d="M68 21 L75 10 L82 21" fill="none" stroke="${LINE}"/><path d="M7 80 Q2 88 7 96 M143 80 Q148 88 143 96" fill="none" stroke="${LINE}"/>`;
+ CH.forEach((c,i)=>{const a=v[i]/mx,[x,y]=POS[i],r=13*Math.sqrt(Math.abs(a));
+  h+=`<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="${LINE}" stroke-dasharray="2 2"/>`;
+  if(r>.4)h+=`<circle cx="${x}" cy="${y}" r="${r.toFixed(2)}" fill="${a>=0?RED:BLUE}" fill-opacity=".85"/>`;
+  h+=`<text x="${x}" y="${y+3}" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono,monospace" fill="${Math.abs(a)>.5?'#fff':DIM}">${c}</text>`});
+ return h+'</svg>'}
+
+/* ── 状态与计算 ── */
+const S={seed:3,n:240,amp:10,jit:40,conf:1,nf:2,stage:1,erpStage:1,w0:0,rho:.5};
+let D=null,busy=0,leakRun=0,lastLeak=null;
+const status=(z,e)=>$('status').innerHTML='<b>●</b> '+T2(z,e);
+const ROWS=[
+ {k:'full',nm:['完整管线','Full pipeline'],d:()=>[`ICA 去眨眼，xDAWN ${S.nf} 个滤波器，收缩 LDA`,`ICA blink removal, xDAWN with ${S.nf} filter${S.nf>1?'s':''}, shrinkage LDA`],E:'Ec',o:()=>({xdawn:1,nf:S.nf,shrink:1})},
+ {k:'noica',nm:['不做 ICA','No ICA'],d:()=>['眨眼留在数据里','blinks stay in the data'],E:'Er',o:()=>({xdawn:1,nf:S.nf,shrink:1})},
+ {k:'noxd',nm:['不做 xDAWN','No xDAWN'],d:()=>['160 个数直接进收缩 LDA','160 numbers go straight into shrinkage LDA'],E:'Ec',o:()=>({xdawn:0,shrink:1})},
+ {k:'noshr',nm:['不收缩','No shrinkage'],d:()=>[`xDAWN 后 ${S.nf*20} 个数，普通 LDA`,`${S.nf*20} numbers after xDAWN, plain LDA`],E:'Ec',o:()=>({xdawn:1,nf:S.nf,shrink:0})},
+ {k:'bare',nm:['不做 xDAWN，也不收缩','No xDAWN, no shrinkage'],d:()=>['160 个数进普通 LDA，协方差奇异时用伪逆','160 numbers into plain LDA; pseudo-inverse when the covariance is singular'],E:'Ec',o:()=>({xdawn:0,shrink:0})},
+ {k:'leak',nm:['xDAWN 用全部试次拟合','xDAWN fitted on all trials'],d:()=>['测试折的标签参与了求空间滤波器','test-fold labels helped fit the spatial filters'],E:'Ec',o:()=>({xdawn:1,nf:S.nf,shrink:1,leaky:1})}];
+
+async function runAll(){const my=++busy,t0=performance.now();document.body.classList.add('busy');leakRun++;$('leakBtn').disabled=true;
+ status('合成数据…','Generating data…');await tick();if(my!==busy)return;
+ const d=P.makeData({seed:S.seed,n:S.n,pt:.2,amp:S.amp,jit:S.jit,pBase:.15,conf:!!S.conf,pConf:.6,isi:1.2});
+ status('滤波…','Filtering…');await tick();if(my!==busy)return;
+ const Xf=P.filterAll(d.X,1,10);
+ status('PCA 与 FastICA…','PCA and FastICA…');await tick();if(my!==busy)return;
+ const pca=P.pca(Xf,10),ica=P.fastica(Xf,10,7),Sx=P.sources(Xf,ica.U);
+ const kurt=Sx.map(P.kurtosis),cfp=Sx.map(s=>P.corr(s,Xf[0]));
+ let blink=0;cfp.forEach((v,i)=>{if(Math.abs(v)>Math.abs(cfp[blink]))blink=i});
+ const ord=[...kurt.keys()].sort((a,b)=>kurt[b]-kurt[a]);
+ const flip=ord.map(()=>1);for(let r=0;r<NC;r++)flip[r]=flipOf(Array.from({length:NC},(_,i)=>ica.A[i*NC+r]));
+ D={d,Xf,pca,ica,Sx,kurt,cfp,blink,ord,flip,rm:new Set([blink]),y:d.y,Er:P.epochs(Xf,d.on),fold:P.folds(d.y,5,11),res:{}};
+ S.w0=firstWindow();lastLeak=null;
+ $('stN').textContent=S.n;drawHint();drawPCA();drawRaw();drawICA();
+ await downstream(my,t0)}
+
+async function downstream(my,t0){t0=t0||performance.now();document.body.classList.add('busy');leakRun++;$('leakBtn').disabled=true;
+ status('删除选中的成分，切段…','Removing the selected components, epoching…');await tick();if(my!==busy)return;
+ D.Xc=P.removeComp(D.Xf,D.ica.A,D.Sx,[...D.rm]);D.Ec=P.epochs(D.Xc,D.d.on);
+ D.xd=P.xdawnFit(D.Ec,D.y,[...D.y.keys()],2);D.avgC=erpAvg(D.Xc);D.avgF=D.avgF||erpAvg(D.Xf);
+ drawShapes();drawRaw();drawICA();drawICAfp();drawERP();drawXD();
+ D.res={};
+ for(const r of ROWS){status(`交叉验证：${r.nm[0]}…`,`Cross-validating: ${r.nm[1]}…`);await tick();if(my!==busy)return;
+  D.res[r.k]=P.cv(D[r.E],D.y,r.o(),D.fold,5);if(r.k==='full'){drawResult();drawScores()}}
+ status('比较滤波器个数…','Comparing filter counts…');await tick();if(my!==busy)return;
+ D.nfAuc=[1,2,3,4].map(nf=>nf===S.nf?D.res.full.auc:P.cv(D.Ec,D.y,{xdawn:1,nf,shrink:1},D.fold,5).auc);
+ drawTable();drawLam();drawNF();clearLeak();
+ const s=((performance.now()-t0)/1000).toFixed(1);
+ $('status').innerHTML=T2(`完成 · 用时 ${s} 秒`,`Done · ${s} s`);document.body.classList.remove('busy')}
+
+function erpAvg(X){const n=D.y.length,on=D.d.on,A=[0,1].map(()=>CH.map(()=>new Float64Array(EP))),c=[0,0];
+ for(let k=0;k<n;k++){const g=D.y[k];c[g]++;for(let i=0;i<NC;i++){const xi=X[i],a=A[g][i],s0=on[k];for(let s=0;s<EP;s++)a[s]+=xi[s0+s]}}
+ for(const g of[0,1])for(let i=0;i<NC;i++)for(let s=0;s<EP;s++)A[g][i][s]/=c[g];return A}
+function firstWindow(){const{on,blink}=D.d,y=D.y;
+ for(let k=0;k<y.length;k++){if(!y[k])continue;let m=0;for(let s=on[k];s<on[k]+.7*FS;s++)m=Math.max(m,blink[s]);if(m>60)return Math.max(0,on[k]-Math.round(2.4*FS))}
+ return 0}
+const icName=r=>'IC'+(D.ord.indexOf(r)+1);
+const icList=(sepZ,sepE)=>[[...D.rm].map(icName).join(sepZ),[...D.rm].map(icName).join(sepE)];
+
+/* ── 总览 ── */
+function drawHint(){const d=D.d,nt=d.nt,nn=S.n-nt,pt=Math.round(100*d.nb[1]/nt),pn=Math.round(100*d.nb[0]/nn);
+ $('dataHint').innerHTML=T2(`这批数据：<b>${S.n}</b> 个试次，其中目标 <b>${nt}</b> 个。目标试次里眨眼 ${d.nb[1]} 次（${pt}%），非目标试次里 ${d.nb[0]} 次（${pn}%）。`+
+  (S.conf?'眨眼混淆打开时，目标试次有六成会在刺激后 0.3–0.5 秒眨一次眼，就像被试看到目标会下意识眨眼。这种眨眼和标签有关，分类器可以靠它「作弊」。':'眨眼混淆关闭时，眨眼随机出现，和标签无关，只是噪声。'),
+  `This batch: <b>${S.n}</b> trials, <b>${nt}</b> of them targets. Blinks fall in ${d.nb[1]} target trial${d.nb[1]===1?'':'s'} (${pt}%) and ${d.nb[0]} non-target trial${d.nb[0]===1?'':'s'} (${pn}%). `+
+  (S.conf?'With the blink confound on, six in ten target trials get a blink 0.3–0.5 s after the stimulus, as if the participant reflexively blinks on seeing a target. These blinks go with the labels, so a classifier can use them to “cheat”.':'With the confound off, blinks land at random and have nothing to do with the labels; they are just noise.'))}
+function drawShapes(){const T=D.d.T.toLocaleString('en-US'),n=S.n,rk=NC-D.rm.size;
+ $('sh1').textContent=`8 × ${T}`;$('sh2').innerHTML=T2(`8 × ${T} · 秩 ${rk}`,`8 × ${T} · rank ${rk}`);$('sh3').textContent=`${n} × 8 × 20`;
+ $('sh4').textContent=`${n} × ${S.nf} × 20`;$('sh5').innerHTML=T2(`${n} 个分数`,`${n} scores`);
+ document.querySelectorAll('.nfv').forEach(e=>e.textContent=S.nf);document.querySelectorAll('.nff').forEach(e=>e.textContent=S.nf*20)}
+function drawResult(){const r=D.res.full;$('resAuc').textContent=f2(r.auc);$('resB').innerHTML=T2(`平衡准确率 ${f2(r.bacc)}`,`balanced acc. ${f2(r.bacc)}`)}
+
+/* ── 原始数据 ── */
+function stageX(st){return st===0?D.d.X:st===1||!D.Xc?D.Xf:D.Xc}
+function drawRaw(){if(!D)return;const c=$('raw'),H=330,[x,W]=prep(c,H),pl=46,pr=6,pt=16,rh=(H-pt-18)/8,L=6*FS,w0=S.w0,X=stageX(S.stage),sc=S.stage===0?150:60,PW=W-pl-pr;
+ const bl=D.d.blink;x.fillStyle=rgba(RED,.08);let s0=-1;
+ for(let s=0;s<=L;s++){const v=s<L&&bl[w0+s]>15;if(v&&s0<0)s0=s;if(!v&&s0>=0){x.fillRect(pl+s0/L*PW,pt,(s-s0)/L*PW,rh*8);s0=-1}}
+ D.d.on.forEach((o,k)=>{if(o<w0||o>=w0+L)return;const px=pl+(o-w0)/L*PW,t=D.y[k];
+  x.strokeStyle=t?TGT:LINE;x.lineWidth=t?1.4:1;x.setLineDash(t?[]:[3,3]);x.beginPath();x.moveTo(px,pt-2);x.lineTo(px,pt+rh*8);x.stroke();
+  if(t){x.font=SANS;x.fillStyle=TGT;x.textAlign='left';x.fillText(TL('目标','target'),Math.min(px+3,W-40),11);x.font=MONO}});
+ x.setLineDash([]);
+ CH.forEach((ch,i)=>{const y0=pt+rh*i+rh/2,xi=X[i];x.fillStyle=COL[i];x.beginPath();x.arc(6,y0,3.5,0,7);x.fill();x.fillStyle=DIM;x.textAlign='left';x.fillText(ch,13,y0+3.5);
+  let m=0;if(S.stage===0){for(let s=0;s<L;s++)m+=xi[w0+s];m/=L}
+  x.save();x.beginPath();x.rect(pl,pt+rh*i,PW,rh);x.clip();x.strokeStyle=COL[i];x.lineWidth=1;x.beginPath();
+  for(let s=0;s<L;s++){const px=pl+s/L*PW,py=y0-(xi[w0+s]-m)/sc*rh/2;s?x.lineTo(px,py):x.moveTo(px,py)}x.stroke();x.restore()});
+ x.fillStyle=MUTED;x.textAlign='center';for(let t=0;t<=6;t++)x.fillText((w0/FS+t).toFixed(0)+' s',Math.min(Math.max(pl+t/6*PW,pl+12),W-14),H-3);
+ const[lz,le]=icList('、',', ');
+ $('rawCap').innerHTML=T2(`纵轴每道 ±${sc} µV · `+(S.stage===0?'原始，已减去窗口均值':S.stage===1?'1–10 Hz 带通之后':(D.rm.size?`删去 ${lz} 之后`:'没有删任何成分')),
+  `±${sc} µV per row · `+(S.stage===0?'raw, window mean removed':S.stage===1?'after the 1–10 Hz band-pass':(D.rm.size?`after removing ${le}`:'no component removed')))}
+
+/* ── 滤波 ── */
+function drawResp(){const c=$('fresp'),H=200,[x,W]=prep(c,H),pl=44,pr=12,pt=10,pb=24,l0=Math.log10(.3),l1=Math.log10(125);
+ const fx=f=>pl+(Math.log10(f)-l0)/(l1-l0)*(W-pl-pr),dy=db=>pt+(3-db)/63*(H-pt-pb);
+ x.fillStyle=rgba('#0E7490',.07);x.fillRect(fx(1),pt,fx(10)-fx(1),H-pt-pb);
+ x.strokeStyle=HAIR;x.fillStyle=MUTED;x.textAlign='right';
+ [0,-20,-40,-60].forEach(db=>{x.beginPath();x.moveTo(pl,dy(db));x.lineTo(W-pr,dy(db));x.stroke();x.fillText(db+' dB',pl-5,dy(db)+3)});
+ x.textAlign='center';[.5,1,2,5,10,20,50,100].forEach(f=>x.fillText(f+(f===100?' Hz':''),fx(f),H-6));
+ x.strokeStyle='#0E7490';x.lineWidth=1.8;x.beginPath();
+ for(let px=pl;px<=W-pr;px++){const f=10**(l0+(px-pl)/(W-pl-pr)*(l1-l0)),db=Math.max(-60,20*Math.log10(Math.max(P.response(1,10,f),1e-9)));px===pl?x.moveTo(px,dy(db)):x.lineTo(px,dy(db))}x.stroke();
+ x.fillStyle=INK;[1,10].forEach(f=>{x.beginPath();x.arc(fx(f),dy(-6),3,0,7);x.fill()});
+ x.font=SANS;x.fillStyle=DIM;x.textAlign='center';x.fillText(TL('P300 的主要能量','main P300 energy'),(fx(1)+fx(10))/2,dy(-14));
+ x.fillText(TL('慢漂移','slow drift'),fx(.45),dy(-30));x.fillText(TL('α、肌电','alpha, muscle'),fx(22),dy(-30));x.fillText(TL('50 Hz 工频','50 Hz mains'),fx(50),dy(-52))}
+
+/* ── PCA ── */
+function drawPCA(){const pc=D.pca,v=pc[0].vec.map(a=>a*flipOf(pc[0].vec));
+ $('pc1Head').innerHTML=head(v,'PC1 头皮分布 · PC1 scalp map');
+ const c=$('pcab'),H=170,[x,W]=prep(c,H),pl=8,pb=20,pt=16,bw=(W-pl)/8;
+ pc.forEach((p,k)=>{const h=p.frac*(H-pt-pb);x.fillStyle=k?LINE:'#7C3AED';x.fillRect(pl+k*bw+bw*.18,H-pb-h,bw*.64,h);
+  x.fillStyle=k?DIM:'#7C3AED';x.textAlign='center';x.fillText((100*p.frac).toFixed(p.frac<.1?1:0)+'%',pl+k*bw+bw/2,H-pb-h-4);x.fillStyle=MUTED;x.fillText('PC'+(k+1),pl+k*bw+bw/2,H-5)});
+ const top=[...v.keys()].sort((a,b)=>Math.abs(v[b])-Math.abs(v[a])).slice(0,3).map(i=>CH[i]),isBlink=Math.abs(v[0])===Math.max(...v.map(Math.abs));
+ const p1=(100*pc[0].frac).toFixed(0),p2=(100*pc[1].frac).toFixed(1);
+ $('pcaNote').innerHTML=T2(`这批数据里，PC1 占总方差的 <b>${p1}%</b>，第二名只有 ${p2}%。PC1 主要落在 ${top.join('、')}`+(isBlink?'，正是眨眼的分布。方差最大的方向是伪迹，不是要找的 P300。':'。'),
+  `In this batch PC1 holds <b>${p1}%</b> of the total variance; the runner-up has only ${p2}%. PC1 sits mostly on ${top.join(', ')}`+(isBlink?', which is exactly the blink pattern. The direction of largest variance is the artifact, not the P300 you are looking for.':'.'))}
+
+/* ── ICA ── */
+function drawICA(){if(!D)return;const g=$('icGrid');
+ g.innerHTML=D.ord.map(r=>{const a=Array.from({length:NC},(_,i)=>D.ica.A[i*NC+r]*D.flip[r]),rm=D.rm.has(r);
+  return`<button class="iccard${rm?' rm':''}" data-r="${r}" aria-pressed="${rm}"><div class="t"><b>${icName(r)}</b><span class="st x">${rm?T2('已删除','removed'):T2('保留','kept')}</span></div>${head(a,icName(r)+' 头皮分布 · scalp map')}<div class="m"><div><span class="i">${T2('峰度','kurtosis')}</span> <b>${D.kurt[r].toFixed(1)}</b></div><div><span class="i">${T2('与 Fp1 相关','corr. with Fp1')}</span> <b>${Math.abs(D.cfp[r]).toFixed(2)}</b></div></div><canvas height="30"></canvas></button>`}).join('');
+ g.querySelectorAll('.iccard').forEach(b=>b.onclick=()=>{const r=+b.dataset.r;if(!D.rm.has(r)&&D.rm.size>=NC-2){$('icaNote').innerHTML=T2('至少要留下 2 个成分，否则后面的 xDAWN 和 LDA 没有数据可用。','Keep at least 2 components; otherwise xDAWN and LDA have no data left to work with.');return}D.rm.has(r)?D.rm.delete(r):D.rm.add(r);drawICA();downstream(++busy)});
+ drawSparks();
+ const ks=D.ord.filter(r=>r!==D.blink).map(r=>D.kurt[r]),kmin=Math.min(...ks).toFixed(1),kmax=Math.max(...ks).toFixed(1),bn=icName(D.blink),rb=Math.abs(D.cfp[D.blink]).toFixed(2),kb=D.kurt[D.blink].toFixed(1);
+ const dflt=D.rm.size===1&&D.rm.has(D.blink),[lz,le]=icList('、',', ');
+ $('icaNote').innerHTML=T2(`默认删的是和 Fp1 相关最高的 <b>${bn}</b>：相关 ${rb}，峰度 ${kb}。其余成分的峰度在 ${kmin} 到 ${kmax} 之间，接近正态。`+(dflt?'点卡片可以改删哪些，下游所有结果都会重算。':`现在删的是 ${D.rm.size?lz:'（没有）'}。`),
+  `Removed by default: <b>${bn}</b>, the component most correlated with Fp1 (r = ${rb}, kurtosis ${kb}). The other components have kurtosis between ${kmin} and ${kmax}, close to normal. `+(dflt?'Click the cards to change which ones are removed; everything downstream is recomputed.':`Now removed: ${D.rm.size?le:'(none)'}.`));
+ const it=D.ica.iters,dB=sci(D.ica.rowDelta[D.blink]),dO=sci(Math.max(...D.ica.rowDelta.filter((_,r)=>r!==D.blink)));
+ $('icaIter').innerHTML=D.ica.converged?T2(`FastICA 迭代 ${it} 次收敛。换几批数据会发现，多数时候它跑满 200 次也停不下来：接近正态的成分没有唯一的方向，旋转它们目标函数几乎不变。眨眼成分的峰度远离 0，方向定得很早，不受影响。`,
+   `FastICA converged after ${it} iterations. Try a few batches and you will see that it usually runs the full 200 iterations without converging: the near-normal components have no unique direction, and rotating them barely changes the objective. The blink component’s kurtosis is far from 0, so its direction settles early and is not affected.`):
+  T2(`<b>关于收敛。</b>这批数据上 FastICA 跑满 200 次迭代也没达到收敛标准，scikit-learn 遇到这种情况会给出 ConvergenceWarning。原因是那几个接近正态的成分没有唯一的方向：旋转它们，目标函数几乎不变，所以一直在转。最后一次迭代里，${bn} 的方向只变了 ${dB}，其余成分还在以 ${dO} 的幅度转动。眨眼成分早就定住了，不影响结果。`,
+   `<b>About convergence.</b> On this batch FastICA ran the full 200 iterations without meeting its convergence criterion; scikit-learn issues a ConvergenceWarning in this situation. The near-normal components have no unique direction: rotating them barely changes the objective, so they keep turning. In the last iteration ${bn}’s direction moved by only ${dB}, while the others were still turning by as much as ${dO}. The blink component settled long ago, so the result is unaffected.`)}
+function drawSparks(){if(!D)return;const L=6*FS,w0=S.w0;
+ document.querySelectorAll('#icGrid .iccard').forEach(b=>{const r=+b.dataset.r,c=b.querySelector('canvas'),[x,W]=prep(c,30),s=D.Sx[r];let m=0;
+  for(let k=0;k<L;k++)m=Math.max(m,Math.abs(s[w0+k]));x.strokeStyle=D.rm.has(r)?RED:DIM;x.lineWidth=1;x.beginPath();
+  for(let k=0;k<L;k+=2){const px=k/L*W,py=15-D.flip[r]*s[w0+k]/(m||1)*13;k?x.lineTo(px,py):x.moveTo(px,py)}x.stroke()})}
+function drawICAfp(){if(!D)return;const c=$('icafp'),H=150,[x,W]=prep(c,H),pl=40,L=6*FS,w0=S.w0,PW=W-pl-6;
+ [[0,'Fp1'],[3,'C3']].forEach(([i,nm],row)=>{const y0=10+row*68+30,a=D.Xf[i],b=D.Xc[i];let m=0;for(let s=0;s<L;s++)m=Math.max(m,Math.abs(a[w0+s]));const sc=Math.max(20,m);
+  x.fillStyle=DIM;x.textAlign='left';x.fillText(nm,4,y0+3);
+  [[a,LINE,1.6],[b,INK,1]].forEach(([z,col,lw])=>{x.strokeStyle=col;x.lineWidth=lw;x.beginPath();for(let s=0;s<L;s++){const px=pl+s/L*PW,py=y0-z[w0+s]/sc*30;s?x.lineTo(px,py):x.moveTo(px,py)}x.stroke()});
+  x.fillStyle=MUTED;x.textAlign='right';x.fillText('±'+sc.toFixed(0)+' µV',W-6,y0-22)})}
+
+/* ── 切段 ── */
+function drawERP(){if(!D)return;const c=$('erp'),Wc=c.clientWidth,cols=Wc<560?2:4,rows=NC/cols,ph=118,H=rows*ph+4,[x,W]=prep(c,H);
+ const A=S.erpStage===0?D.avgF:D.avgC;let mx=0;for(const g of[0,1])for(const a of A[g])for(const v of a)mx=Math.max(mx,Math.abs(v));mx*=1.08;const pw=W/cols;
+ CH.forEach((ch,i)=>{const ox=(i%cols)*pw,oy=Math.floor(i/cols)*ph,l=ox+10,r=ox+pw-10,t=oy+20,b=oy+ph-20,ym=(t+b)/2,X=s=>l+s/(EP-1)*(r-l);
+  x.fillStyle=COL[i];x.beginPath();x.arc(l+3,oy+10,3,0,7);x.fill();x.fillStyle=DIM;x.textAlign='left';x.fillText(ch,l+10,oy+13);
+  if(S.conf){x.fillStyle=rgba(RED,.07);x.fillRect(X(.3*FS),t,X(.5*FS)-X(.3*FS),b-t)}
+  x.strokeStyle=HAIR;x.beginPath();x.moveTo(l,ym);x.lineTo(r,ym);x.stroke();
+  x.fillStyle=MUTED;[[0,'left'],[.4,'center'],[.8,'right']].forEach(([tt,al])=>{x.textAlign=al;x.fillText(tt+' s',X(tt*FS),oy+ph-6)});
+  [[0,NON,1.1],[1,TGT,1.6]].forEach(([g,col,lw])=>{const a=A[g][i];x.strokeStyle=col;x.lineWidth=lw;x.beginPath();
+   for(let s=0;s<EP;s++){const py=ym-a[s]/mx*(b-t)/2;s?x.lineTo(X(s),py):x.moveTo(X(s),py)}x.stroke();
+   x.fillStyle=col;for(let s=0;s<EP;s+=DEC){x.beginPath();x.arc(X(s),ym-a[s]/mx*(b-t)/2,1.8,0,7);x.fill()}})});
+ const m0=mx.toFixed(0);
+ $('erpCap').innerHTML=T2(`纵轴 ±${m0} µV，正向朝上 · 圆点是降采样后留下的 20 个点`,`±${m0} µV, positive up · dots are the 20 samples kept after downsampling`);
+ $('erpNote').innerHTML=S.erpStage===0?(S.conf?T2('看 Fp1：目标的平均波形在 0.3–0.5 秒（浅红底）有一个大鼓包。它来自眨眼，不来自大脑。切到「去眨眼后」，鼓包就没了。','Look at Fp1: the target average has a large bump at 0.3–0.5 s (light red). It comes from blinks, not from the brain. Switch to “blinks removed” and the bump is gone.'):
+   T2('眨眼和标签无关时，两类平均下来眨眼差不多，Fp1 上两条线都被抬高一点，但抬得一样多。','When blinks have nothing to do with the labels, both classes average about the same amount of blink: both traces at Fp1 are lifted a little, and by the same amount.')):
+  T2('去眨眼后剩下的是脑电：目标比非目标多出一个负波（约 0.25 秒）和一个正波（约 0.38 秒，就是 P300），在 C3、C4 最大。'+(S.jit>=100?'潜伏期抖动 100 ms 时，每次的 P300 早晚不一，平均出来又矮又宽。':''),
+   'What remains after blink removal is brain activity: targets add a negative wave (about 0.25 s) and a positive wave (about 0.38 s, the P300), largest at C3 and C4.'+(S.jit>=100?' With 100 ms of latency jitter, each P300 arrives a little earlier or later, so the average comes out lower and wider.':''))}
+
+/* ── xDAWN ── */
+function drawXD(){if(!D)return;const xd=D.xd,fl=xd.filters.map(v=>Array.from(v)),pt=xd.patterns.map(v=>Array.from(v));
+ for(let k=0;k<2;k++){const s=flipOf(pt[k]);fl[k]=fl[k].map(a=>a*s);pt[k]=pt[k].map(a=>a*s)}
+ const rc=CH.map((_,i)=>xd.Cp[i*NC+i]/xd.Cx[i*NC+i]),bc=rc.indexOf(Math.max(...rc));
+ const cell=(h,z,e)=>`<div class="hcell">${h}<div class="c b">${T2(z,e)}</div></div>`;
+ $('xdHeads').innerHTML=cell(head(fl[0],'xDAWN 1 滤波器权重 · filter weights'),'<b>xDAWN 1 · 权重</b><br>和 8 个电极的数据相乘再相加','<b>xDAWN 1 · weights</b><br>multiplied by the 8 electrode signals and summed')+
+  cell(head(pt[0],'xDAWN 1 空间分布 · pattern'),'<b>xDAWN 1 · 空间分布</b><br>pattern = C<sub>X</sub> · 权重','<b>xDAWN 1 · pattern</b><br>pattern = C<sub>X</sub> · weights')+
+  cell(head(pt[1],'xDAWN 2 空间分布 · pattern'),'<b>xDAWN 2 · 空间分布</b>','<b>xDAWN 2 · pattern</b>');
+ const c=$('xdts'),Wc=c.clientWidth,narrow=Wc<760,H=narrow?3*112:150,[x,W]=prep(c,H),pw=narrow?W:W/3,ph=narrow?112:150,R=TL('比值','ratio');
+ const panels=[[fl[0],`xDAWN 1 · ${R} ${xd.ratio[0].toFixed(3)}`],[fl[1],`xDAWN 2 · ${R} ${xd.ratio[1].toFixed(3)}`],[CH.map((_,i)=>i===bc?1:0),`${CH[bc]}${TL('（最好的单电极）',' (best single electrode)')} · ${R} ${rc[bc].toFixed(3)}`]];
+ panels.forEach(([v,ttl],p)=>{const ox=narrow?0:p*pw,oy=narrow?p*ph:0,l=ox+10,r=ox+pw-10,t=oy+22,b=oy+ph-18,ym=(t+b)/2,X=s=>l+s/(EP-1)*(r-l);
+  const tr=[0,1].map(g=>{const o=new Float64Array(EP);for(let i=0;i<NC;i++){if(!v[i])continue;const a=D.avgC[g][i];for(let s=0;s<EP;s++)o[s]+=v[i]*a[s]}return o});
+  let mx=0;tr.forEach(o=>o.forEach(z=>mx=Math.max(mx,Math.abs(z))));mx=mx*1.1||1;
+  x.fillStyle=DIM;x.textAlign='left';x.fillText(ttl,l,oy+13);x.strokeStyle=HAIR;x.beginPath();x.moveTo(l,ym);x.lineTo(r,ym);x.stroke();
+  x.fillStyle=MUTED;[[0,'left'],[.4,'center'],[.8,'right']].forEach(([tt,al])=>{x.textAlign=al;x.fillText(tt+' s',X(tt*FS),oy+ph-4)});
+  [[0,NON,1.1],[1,TGT,1.6]].forEach(([g,col,lw])=>{x.strokeStyle=col;x.lineWidth=lw;x.beginPath();for(let s=0;s<EP;s++){const py=ym-tr[g][s]/mx*(b-t)/2;s?x.lineTo(X(s),py):x.moveTo(X(s),py)}x.stroke()})});
+ const r1=xd.ratio[0].toFixed(3),r2=rc[bc].toFixed(3),k=(xd.ratio[0]/rc[bc]).toFixed(1);
+ $('xdNote').innerHTML=T2(`「比值」是目标平均波形的能量占总波动的比例，也就是上面公式里的那个分式。xDAWN 1 是 <b>${r1}</b>，最好的单个电极 ${CH[bc]} 是 ${r2}：8 个电极按权重合起来，比例提高到 ${k} 倍。`,
+  `The “ratio” is the share of the total fluctuation taken up by the average target waveform, i.e. the fraction in the formula above. xDAWN 1 reaches <b>${r1}</b>; the best single electrode, ${CH[bc]}, reaches ${r2}. Weighting and combining the 8 electrodes multiplies the share by ${k}.`)}
+
+/* ── LDA 小例子 ── */
+const TOY=(()=>{const{g}=P.rng(5),a=[];for(let i=0;i<300;i++)a.push([g(),g(),i<150?0:1]);return a})();
+function drawToy(){const c=$('toy'),H=300,[x,W]=prep(c,H),rho=S.rho,sc=Math.max(4,Math.min((W-24)/17,(H-24)/16)),cx=W/2,cy=H/2;
+ const px=a=>cx+a*sc,py=b=>cy-(b-1.5)*sc,q=Math.sqrt(1-rho*rho);
+ x.strokeStyle=HAIR;x.beginPath();x.moveTo(px(-8.5),py(0));x.lineTo(px(8.5),py(0));x.moveTo(px(0),py(-6.5));x.lineTo(px(0),py(9.5));x.stroke();
+ x.font=SANS;x.fillStyle=MUTED;x.textAlign='right';x.fillText(TL('特征 1','feature 1'),px(8.4),py(0)-6);x.textAlign='left';x.fillText(TL('特征 2','feature 2'),px(0)+6,py(9.2));x.font=MONO;
+ TOY.forEach(([z1,z2,g])=>{const a=2*z1,b=2*(rho*z1+q*z2)+(g?3:0);x.fillStyle=rgba(g?TGT:NON,.5);x.beginPath();x.arc(px(a),py(b),2.1,0,7);x.fill()});
+ [[0,NON],[3,TGT]].forEach(([m,col])=>{x.strokeStyle=col;x.lineWidth=1.3;x.beginPath();x.ellipse(px(0),py(m),4*Math.sqrt(1+rho)*sc,4*Math.sqrt(1-rho)*sc,-Math.PI/4,0,2*Math.PI);x.stroke()});
+ x.save();x.beginPath();x.rect(4,4,W-8,H-8);x.clip();
+ x.setLineDash([5,4]);x.strokeStyle=MUTED;x.lineWidth=1.2;x.beginPath();x.moveTo(px(-9),py(1.5));x.lineTo(px(9),py(1.5));x.stroke();x.setLineDash([]);
+ x.strokeStyle='#DB2777';x.lineWidth=2;x.beginPath();x.moveTo(px(-9),py(1.5-9*rho));x.lineTo(px(9),py(1.5+9*rho));x.stroke();x.restore();
+ const n=Math.hypot(rho,1),ux=-rho/n,uy=1/n,ax=px(0),ay=py(1.5),bx=px(2.6*ux),by=py(1.5+2.6*uy);
+ x.strokeStyle=INK;x.fillStyle=INK;x.lineWidth=1.6;x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();
+ const an=Math.atan2(by-ay,bx-ax);x.beginPath();x.moveTo(bx,by);x.lineTo(bx-8*Math.cos(an-.4),by-8*Math.sin(an-.4));x.lineTo(bx-8*Math.cos(an+.4),by-8*Math.sin(an+.4));x.closePath();x.fill();
+ x.font='italic 13px Georgia,serif';x.fillText('w',bx+5,by-3);x.font=MONO;
+ const k=3/(4*(1-rho*rho)),d2=1.5,dB=1.5/q,ra=Math.abs(rho).toFixed(2);
+ $('rhoV').innerHTML=`ρ = <b>${rho.toFixed(2)}</b>`;
+ $('toyOut').innerHTML=`<div><span class="k i">${T2('LDA 权重 w','LDA weights w')}</span><span class="v">(${(-rho*k).toFixed(2)}, ${k.toFixed(2)})</span><span class="s x">${T2('特征 1 的权重 = −ρ × 特征 2 的','weight 1 = −ρ × weight 2')}</span></div>`+
+  `<div><span class="k i">${T2('只用特征 2','feature 2 only')}</span><span class="v">AUC ${Phi(d2/Math.SQRT2).toFixed(2)}</span><span class="s">d′ = ${d2.toFixed(2)}</span></div>`+
+  `<div><span class="k i">${T2('两个都用','both features')}</span><span class="v">AUC ${Phi(dB/Math.SQRT2).toFixed(2)}</span><span class="s">d′ = ${dB.toFixed(2)}</span></div>`;
+ $('toyNote').innerHTML=Math.abs(rho)<.025?T2('ρ = 0 时，特征 1 和特征 2 的噪声互不相干，特征 1 帮不上忙，两条分界线重合。','At ρ = 0 the two features’ noise is unrelated, feature 1 cannot help, and the two boundaries coincide.'):
+  T2(`特征 1 自己毫无用处，两类在它上面完全重叠。但它和特征 2 共享噪声：从特征 2 里${rho<0?'加上':'减去'} ${ra} 倍的特征 1，等于把特征 2 里的一部分噪声扣掉。相邻电极共有的背景脑电就是这种噪声。ρ 越接近 ±1，噪声抵消得越多，AUC 越高。`,
+   `Feature 1 is useless on its own: the classes overlap completely along it. But it shares noise with feature 2. ${rho<0?'Adding':'Subtracting'} ${ra} times feature 1 ${rho<0?'to':'from'} feature 2 removes part of feature 2’s noise. The background EEG that neighbouring electrodes share is exactly this kind of noise. The closer ρ gets to ±1, the more of the noise cancels and the higher the AUC.`)}
+
+/* ── 分数分布 ── */
+function drawScores(){if(!D||!D.res.full)return;const r=D.res.full,c=$('hist'),H=190,[x,W]=prep(c,H),pl=10,pr=10,pt=18,pb=22,sc=r.oof;
+ let lo=Infinity,hi=-Infinity;sc.forEach(v=>{lo=Math.min(lo,v);hi=Math.max(hi,v)});const nb=32,bw=(hi-lo)/nb||1,h=[new Float64Array(nb),new Float64Array(nb)],cnt=[0,0];
+ sc.forEach((v,i)=>{const b=Math.min(nb-1,Math.floor((v-lo)/bw));h[D.y[i]][b]++;cnt[D.y[i]]++});for(const g of[0,1])for(let b=0;b<nb;b++)h[g][b]/=cnt[g];
+ const mx=Math.max(...h[0],...h[1]),X=v=>pl+(v-lo)/(hi-lo)*(W-pl-pr),bp=(W-pl-pr)/nb;
+ [[0,NON],[1,TGT]].forEach(([g,col])=>{for(let b=0;b<nb;b++){const hh=h[g][b]/mx*(H-pt-pb);x.fillStyle=rgba(col,.32);x.fillRect(pl+b*bp+.5,H-pb-hh,bp-1,hh)}
+  x.strokeStyle=col;x.lineWidth=1.4;x.beginPath();for(let b=0;b<nb;b++){const yy=H-pb-h[g][b]/mx*(H-pt-pb);b?x.lineTo(pl+b*bp,yy):x.moveTo(pl,yy);x.lineTo(pl+(b+1)*bp,yy)}x.stroke()});
+ if(lo<0&&hi>0){x.setLineDash([4,3]);x.strokeStyle=INK;x.beginPath();x.moveTo(X(0),pt-6);x.lineTo(X(0),H-pb);x.stroke();x.setLineDash([]);x.fillStyle=INK;x.textAlign='left';x.font=SANS;x.fillText(TL('阈值 0','threshold 0'),X(0)+4,pt+2);x.font=MONO}
+ x.strokeStyle=LINE;x.beginPath();x.moveTo(pl,H-pb);x.lineTo(W-pr,H-pb);x.stroke();
+ x.font=SANS;x.textAlign='left';x.fillStyle=NON;x.fillText(TL(`非目标 ${cnt[0]} 个`,`${cnt[0]} non-targets`),pl,H-5);x.textAlign='right';x.fillStyle=TGT;x.fillText(TL(`目标 ${cnt[1]} 个`,`${cnt[1]} targets`),W-pr,H-5);x.font=MONO;
+ $('histCap').innerHTML=T2(`完整管线 · AUC ${f3(r.auc)} · 平衡准确率 ${f2(r.bacc)}`,`full pipeline · AUC ${f3(r.auc)} · balanced accuracy ${f2(r.bacc)}`)}
+function drawLam(){const a=f2(D.res.full.lam),b=f2(D.res.noxd.lam),nf=S.nf*20;
+ $('lamNote').innerHTML=T2(`λ 由 Ledoit–Wolf 公式从数据里直接算出来，不用调参。这批数据上，${nf} 个特征时 λ ≈ <b>${a}</b>，160 个特征时 λ ≈ <b>${b}</b>。特征越多，相对的样本越少，拉得越多。`,
+  `λ comes straight from the Ledoit–Wolf formula, with nothing to tune. On this batch λ ≈ <b>${a}</b> with ${nf} features and λ ≈ <b>${b}</b> with 160. The more features per sample, the harder it pulls.`)}
+function drawNF(){const a=D.nfAuc,b=a.indexOf(Math.max(...a)),ntr=Math.round(D.d.nt*.8);
+ const lz=a.map((v,i)=>`${i+1} 个滤波器 ${i===b?'<b>':''}${f3(v)}${i===b?'</b>':''}`).join('，'),le=a.map((v,i)=>`${i+1} filter${i?'s':''} ${i===b?'<b>':''}${f3(v)}${i===b?'</b>':''}`).join(', ');
+ $('nfNote').innerHTML=T2(`完整管线在这批数据上：${lz}。`+(b===0?`1 个反而最好。每多一个滤波器就多 20 个特征的权重要估，而每折训练集里的目标只有 ${ntr} 个左右，第二个方向带来的信息抵不上多出来的估计误差。`:'')+
+  '但别拿这几个分数来挑滤波器个数：看着测试分数挑超参数，本身就是泄漏。正确做法是在每个训练折内部再分一次，叫嵌套交叉验证。',
+  `Full pipeline on this batch: ${le}. `+(b===0?`One filter is actually best. Each extra filter adds 20 features whose weights must be estimated, while each training fold holds only about ${ntr} targets; what the second direction adds does not pay for the extra estimation error. `:'')+
+  'But do not use these scores to pick the number of filters: choosing a hyperparameter by looking at test scores is itself a leak. The right way is to split again inside each training fold, which is called nested cross-validation.')}
+
+/* ── 消融表 ── */
+function drawTable(){const R=D.res,base=R.full.auc,lo=.4,sp=.6;
+ $('abl').innerHTML=`<div class="ab hd"><div class="nm i">${T2('做法','Method')}</div><div class="bar" style="background:none"></div><div class="v">AUC</div><div class="d x">${T2('差','Δ')}</div><div class="ba">BACC</div></div>`+
+  ROWS.map(r=>{const v=R[r.k],[dz,de]=r.d();return`<div class="ab${r.k==='full'?' base':''}"><div class="nm"><b class="i">${T2(r.nm[0],r.nm[1])}</b><span class="sd b">${T2(dz,de)}</span></div><div class="bar"><i style="width:${Math.max(0,Math.min(1,(v.auc-lo)/sp))*100}%"></i><em style="left:${(.5-lo)/sp*100}%"></em></div><div class="v">${f3(v.auc)}</div><div class="d">${r.k==='full'?'—':sgn(v.auc-base)}</div><div class="ba">${f2(v.bacc)}</div></div>`}).join('');
+ const dI=R.noica.auc-base,dL=R.leak.auc-base,nTr=Math.round(S.n*.8),z=[],e=[];
+ if(S.conf&&dI>.015){z.push(`<b>不做 ICA 的分数反而高 ${dI.toFixed(2)}。</b>多出来的部分来自目标试次里的眨眼：分类器学会了认眨眼。去伪迹让分数下降，是把作弊得来的那部分还回去。`);
+  e.push(`<b>Without ICA the score is ${dI.toFixed(2)} higher.</b> The extra comes from the blinks in the target trials: the classifier has learned to recognise blinks. Removing the artifacts lowers the score because it hands back what was gained by cheating.`)}
+ else if(dI<-.015){z.push(S.conf?`这批数据上去眨眼让 AUC 提高了 ${(-dI).toFixed(2)}。眨眼混淆虽然开着，但在这里眨眼带来的噪声比它透露的标签信息更多。`:`去眨眼让 AUC 提高了 ${(-dI).toFixed(2)}：眨眼和标签无关时，它只是噪声。`);
+  e.push(S.conf?`On this batch, removing blinks raised AUC by ${(-dI).toFixed(2)}. The blink confound is on, but here the blinks add more noise than label information.`:`Removing blinks raised AUC by ${(-dI).toFixed(2)}: when blinks have nothing to do with the labels, they are just noise.`)}
+ else if(dI>.015){z.push(`这批数据上不做 ICA 的 AUC 高 ${dI.toFixed(2)}。眨眼混淆关着，眨眼和标签无关，这点差距多半来自删成分时连带删掉的一点信号，或者这批数据的偶然波动。换一批数据看看。`);
+  e.push(`On this batch AUC is ${dI.toFixed(2)} higher without ICA. The blink confound is off, so blinks have nothing to do with the labels; the gap probably comes from a little signal removed along with the component, or from chance in this batch. Try another batch.`)}
+ else{z.push('这批数据上做不做 ICA 差别不大。');e.push('On this batch ICA makes little difference.')}
+ z.push(`不收缩又不做 xDAWN 的那一行通常最差：每折训练只有 ${nTr} 个试次，却要估一个 160 × 160 的协方差。`);
+ e.push(`The row with neither xDAWN nor shrinkage is usually the worst: each training set has only ${nTr} trials but has to estimate a 160 × 160 covariance.`);
+ z.push(`xDAWN 用全部试次拟合，AUC 差 ${sgn(dL)}。真信号强的时候，从测试折漏进来的那点信息被淹没了，看起来没什么区别。下面把标签打乱、拿掉真信号，泄漏就显出来了。`);
+ e.push(`Fitting xDAWN on all trials changes AUC by ${sgn(dL)}. When the real signal is strong, the little information leaking in from the test fold is drowned out and makes no visible difference. Shuffle the labels below to take the real signal away, and the leak shows.`);
+ $('ablNote').innerHTML=T2(z.join('<br>'),e.join('<br>'))}
+
+/* ── 打乱标签 ── */
+const LROWS=[['h',['诚实 · xDAWN 每折重拟合','honest · xDAWN refitted per fold'],BLUE],['xl',['泄漏 · xDAWN 用全部试次','leak · xDAWN on all trials'],RED],['sh',['诚实 · 每折内挑 10 个特征','honest · 10 features picked per fold'],BLUE],['sl',['泄漏 · 用全部试次挑 10 个特征','leak · 10 features picked on all trials'],RED]];
+function clearLeak(){leakRun++;lastLeak=null;$('leakSt').textContent='';$('leakBtn').disabled=false;drawLeak(null);$('leakNote').innerHTML=T2('点上面的按钮开始，大约要几秒。','Press the button above to start; it takes a few seconds.')}
+async function runLeak(){if(!D||!D.Ec)return;const my=++leakRun,Dm=D,{R}=P.rng(1000+S.seed),o={h:[],xl:[],sh:[],sl:[]};$('leakBtn').disabled=true;
+ for(let r=0;r<20;r++){const ys=Dm.y.slice();for(let k=ys.length-1;k>0;k--){const j=Math.floor(R()*(k+1));const t=ys[k];ys[k]=ys[j];ys[j]=t}
+  const f=P.folds(ys,5,100+r);
+  o.h.push(P.cv(Dm.Ec,ys,{xdawn:1,nf:S.nf,shrink:1},f,5).auc);o.xl.push(P.cv(Dm.Ec,ys,{xdawn:1,nf:S.nf,shrink:1,leaky:1},f,5).auc);
+  o.sh.push(P.cvSelect(Dm.Ec,ys,f,5,10,false));o.sl.push(P.cvSelect(Dm.Ec,ys,f,5,10,true));
+  lastLeak=o;drawLeak(o);$('leakSt').textContent=`${r+1} / 20`;await tick();if(my!==leakRun||Dm!==D)return}
+ $('leakBtn').disabled=false;const m=k=>f2(o[k].reduce((a,b)=>a+b)/o[k].length);
+ $('leakNote').innerHTML=T2(`四种做法面对的都是纯随机标签。诚实的两种平均 ${m('h')} 和 ${m('sh')}，在 0.5 附近。<b>xDAWN 用全部试次拟合，平均 ${m('xl')}</b>：标签是随机的，滤波器没有真信号可抓，就去拟合测试折里那些「目标」试次的噪声。<b>在全部试次上从 160 个特征里挑 10 个，平均 ${m('sl')}</b>，更严重。明明什么都学不到，却报出了像样的分数。这和基因芯片研究里有名的选择偏差是同一个问题（Ambroise 与 McLachlan 2002）。把滤波器个数调多，xDAWN 那一行还会往右移：能拿去拟合噪声的自由度更多了。`,
+  `All four procedures face purely random labels. The two honest ones average ${m('h')} and ${m('sh')}, close to 0.5. <b>Fitting xDAWN on all trials averages ${m('xl')}</b>: with random labels there is no real signal for the filters to catch, so they fit the noise of the “target” trials in the test fold. <b>Picking 10 of 160 features on all trials averages ${m('sl')}</b>, which is worse. Nothing can be learned, yet a respectable score comes out. This is the same problem as the well-known selection bias in microarray studies (Ambroise and McLachlan 2002). Raise the number of xDAWN filters and that row moves further right: more degrees of freedom to fit the noise.`)}
+function drawLeak(o){const c=$('leak'),H=210,[x,W]=prep(c,H),pl=Math.min(230,Math.round(W*(W<460?.58:.46))),pr=14,pt=8,rh=(H-pt-26)/4,lo=.3,hi=.9,X=v=>pl+(v-lo)/(hi-lo)*(W-pl-pr);
+ x.strokeStyle=HAIR;x.fillStyle=MUTED;x.textAlign='center';[.3,.5,.7,.9].forEach(v=>{x.beginPath();x.moveTo(X(v),pt);x.lineTo(X(v),H-22);x.stroke();x.fillText(v.toFixed(1),X(v),H-8)});
+ x.setLineDash([4,3]);x.strokeStyle=INK;x.beginPath();x.moveTo(X(.5),pt);x.lineTo(X(.5),H-22);x.stroke();x.setLineDash([]);
+ LROWS.forEach(([k,nm,col],i)=>{const y0=pt+rh*i+rh/2;const lab=TL(nm[0],nm[1]);x.font=W<460?'10px "Noto Sans SC",sans-serif':SANS;x.fillStyle=DIM;x.textAlign='right';if(x.measureText(lab).width>pl-14){const j=lab.indexOf(' · ');x.fillText(lab.slice(0,j),pl-10,y0-3);x.fillText(lab.slice(j+3),pl-10,y0+10)}else x.fillText(lab,pl-10,y0+4);x.font=MONO;
+  if(!o||!o[k].length)return;x.fillStyle=rgba(col,.45);o[k].forEach((v,j)=>{x.beginPath();x.arc(X(Math.max(lo,Math.min(hi,v))),y0+((j%5)-2)*2.2,3,0,7);x.fill()});
+  const m=o[k].reduce((a,b)=>a+b)/o[k].length;x.strokeStyle=col;x.lineWidth=2.2;x.beginPath();x.moveTo(X(m),y0-10);x.lineTo(X(m),y0+10);x.stroke();x.lineWidth=1})}
+
+/* ── 静态内容 ── */
+const ASSUME=[
+ [['滤波','Filtering'],'#0E7490',['ERP 的能量在 1–10 Hz','ERP energy lies in 1–10 Hz'],
+  ['高通设得太高会削掉慢波，还会在波形前后造出假的波峰。零相位滤波要用到未来的数据，不能直接搬到在线系统。','A high-pass set too high cuts away slow waves and creates spurious peaks before and after the waveform. Zero-phase filtering needs future samples and cannot be moved straight into an online system.'],
+  ['换成在线用的因果滤波器后，所有潜伏期都会推后一点。','Switch to a causal filter for online use and every latency shifts a little later.']],
+ [['ICA','ICA'],'#B45309',['来源彼此独立，混合方式整段不变，数据够长','Sources are independent, the mixing stays fixed throughout, and there is enough data'],
+  ['电极移位、导联脱落、头动都会改变混合方式。通道越多，需要的数据越长，大致按通道数的平方增长。','Electrode shifts, lost contacts and head movement all change the mixing. The more channels, the more data you need, growing roughly with the square of the channel count.'],
+  ['眨眼成分在记录后半段「漏」回来；或者一个成分里混着眨眼和脑电，删了它会连带删掉信号。','The blink component “leaks” back in later in the recording; or one component mixes blinks with brain activity, and removing it takes signal with it.']],
+ [['切段','Epoching'],'#2563EB',['诱发响应和刺激锁时，每次的潜伏期差不多','The evoked response is time-locked to the stimulus, with about the same latency every time'],
+  ['疲劳、走神会让 P300 一会早一会晚。','Fatigue and lapses of attention make the P300 arrive earlier or later.'],
+  ['平均波形变矮变宽。把总览里的潜伏期抖动拨到 100 ms 就能看到 AUC 掉下来。','The average gets lower and wider. Set the latency jitter in the overview to 100 ms and watch AUC drop.']],
+ [['xDAWN','xDAWN'],'#1D9E75',['所有目标试次共享同一个诱发波形','All target trials share one evoked waveform'],
+  ['和上一条一样怕潜伏期抖动；目标太少时，平均波形本身就不准。','Like the step above, it suffers from latency jitter; with too few targets the average waveform itself is unreliable.'],
+  ['滤波器在不同折之间变化很大，分数不稳。','The filters change a lot from fold to fold and the scores are unstable.']],
+ [['LDA','LDA'],'#DB2777',['两类协方差相同，训练和测试来自同一个分布','Both classes share one covariance, and training and test data come from the same distribution'],
+  ['跨天、跨被试时，均值和协方差都会漂。','Across days or across participants, both the means and the covariances drift.'],
+  ['交叉验证很高，第二天上线就掉。','Cross-validation looks great, then the score drops on the first day online.']],
+ [['交叉验证','Cross-validation'],'#C0473F',['试次之间相互独立','Trials are independent of each other'],
+  ['相邻试次时间上挨着，状态相近；随机分折会让训练和测试共享这些状态。伪迹和标签相关时，分数里还混着伪迹的功劳。','Neighbouring trials are close in time and in state, and random folds let training and test share those states. When artifacts go with the labels, the score also contains the artifacts’ contribution.'],
+  ['分数偏乐观。更接近在线的做法是按时间分块：前面训练，后面测试。','Scores come out optimistic. Closer to online use is splitting by time blocks: train on the earlier part, test on the later part.']]];
+const EK=[['假设','Assumption'],['何时失效','What breaks it'],['表现','Symptom']];
+$('assumeList').innerHTML=ASSUME.map(([nm,c,a,b,s],i)=>`<div class="ent" style="--c:${c}"><div class="ent-left"><div class="ent-tag"><span class="dot"></span>${i<5?'①②③④⑤'[i]+' ':''}<span class="i">${nm[0]===nm[1]?nm[0]:T2(nm[0],nm[1])}</span></div></div><div class="ent-right"><div class="ent-desc">`+
+ `<p class="b">${T2(`<span class="k">${EK[0][0]}</span><b>${a[0]}</b>`,`<span class="k">${EK[0][1]}</span><b>${a[1]}</b>`)}</p>`+
+ `<p class="b">${T2(`<span class="k">${EK[1][0]}</span>${b[0]}`,`<span class="k">${EK[1][1]}</span>${b[1]}`)}</p>`+
+ `<p class="b">${T2(`<span class="k">${EK[2][0]}</span>${s[0]}`,`<span class="k">${EK[2][1]}</span>${s[1]}`)}</p></div></div></div>`).join('');
+const SRC=[
+ ['https://doi.org/10.1016/0013-4694(88)90149-6','Talking off the top of your head: toward a mental prosthesis utilizing event-related brain potentials',['Farwell 与 Donchin','Farwell & Donchin'],'1988 · EEG Clin Neurophysiol'],
+ ['https://doi.org/10.1111/psyp.12437','How inappropriate high-pass filters can produce artifactual effects and incorrect conclusions in ERP studies',['Tanner 等','Tanner et al.'],'2015 · Psychophysiology'],
+ ['https://doi.org/10.1016/S0893-6080(00)00026-5','Independent component analysis: algorithms and applications',['Hyvärinen 与 Oja','Hyvärinen & Oja'],'2000 · Neural Networks'],
+ ['https://doi.org/10.1111/1469-8986.3720163','Removing electroencephalographic artifacts by blind source separation',['Jung 等','Jung et al.'],'2000 · Psychophysiology'],
+ ['https://doi.org/10.1109/TBME.2009.2012869','xDAWN algorithm to enhance evoked potentials: application to brain–computer interface',['Rivet 等','Rivet et al.'],'2009 · IEEE TBME'],
+ ['https://doi.org/10.1016/j.neuroimage.2010.06.048','Single-trial analysis and classification of ERP components — a tutorial',['Blankertz 等','Blankertz et al.'],'2011 · NeuroImage'],
+ ['https://doi.org/10.1016/S0047-259X(03)00096-4','A well-conditioned estimator for large-dimensional covariance matrices',['Ledoit 与 Wolf','Ledoit & Wolf'],'2004 · J Multivariate Anal'],
+ ['https://doi.org/10.1016/j.neuroimage.2013.10.067','On the interpretation of weight vectors of linear models in multivariate neuroimaging',['Haufe 等','Haufe et al.'],'2014 · NeuroImage'],
+ ['https://doi.org/10.1016/j.neuroimage.2016.10.038','Assessing and tuning brain decoders: cross-validation, caveats, and guidelines',['Varoquaux 等','Varoquaux et al.'],'2017 · NeuroImage'],
+ ['https://doi.org/10.1073/pnas.102102699','Selection bias in gene extraction on the basis of microarray gene-expression data',['Ambroise 与 McLachlan','Ambroise & McLachlan'],'2002 · PNAS'],
+ ['https://doi.org/10.1088/1741-2552/aab2f2','A review of classification algorithms for EEG-based brain–computer interfaces: a 10 year update',['Lotte 等','Lotte et al.'],'2018 · J Neural Eng']];
+$('srcList').innerHTML=SRC.map(s=>`<a class="dl" href="${s[0]}" target="_blank" rel="noopener"><span class="dn">${s[1]}</span><span class="dk"><span class="x">${T2(s[2][0],s[2][1])}</span> ${s[3]}</span></a>`).join('');
+
+/* ── 交互 ── */
+document.querySelectorAll('.seg[data-k]').forEach(sg=>sg.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=sg.dataset.k,v=+b.dataset.v;if(S[k]===v)return;S[k]=v;
+ sg.querySelectorAll('button').forEach(z=>z.classList.toggle('on',z===b));
+ if(k==='stage')drawRaw();else if(k==='erpStage')drawERP();else if(k==='nf'){if(D)downstream(++busy)}else runAll()}));
+$('reseed').onclick=()=>{S.seed++;runAll()};
+const winMove=d=>{if(!D)return;S.w0=Math.max(0,Math.min(D.d.T-6*FS-1,S.w0+d*6*FS));drawRaw();drawSparks();drawICAfp()};
+$('wPrev').onclick=()=>winMove(-1);$('wNext').onclick=()=>winMove(1);
+$('rho').oninput=e=>{S.rho=+e.target.value;drawToy()};
+$('leakBtn').onclick=runLeak;
+/* 画布上的字随语言变,换语言或改窗口大小时重画 */
+function redrawCanvases(){drawResp();drawToy();if(!D)return;drawRaw();drawPCA();drawSparks();drawICAfp();drawERP();drawXD();drawScores();drawLeak(lastLeak)}
+let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(redrawCanvases,150)});
+
+/* ── 语言(与入门环境页同一套:?lang= 优先,其次本地记忆,默认对照) ── */
+function getLang(){const q=new URLSearchParams(location.search).get('lang');if(q==='zh'||q==='en'||q==='both')return q;
+ try{const s=localStorage.getItem('bci-pipe-lang');if(s==='zh'||s==='en'||s==='both')return s}catch(e){}return 'both'}
+function setLang(l,save){LANG=l;document.documentElement.dataset.lang=l;document.documentElement.lang=l==='en'?'en':'zh-CN';
+ document.querySelectorAll('#langTabs .mtab').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+ if(save){try{localStorage.setItem('bci-pipe-lang',l)}catch(e){}
+  const u=new URL(location.href);if(l==='both')u.searchParams.delete('lang');else u.searchParams.set('lang',l);history.replaceState(null,'',u)}}
+setLang(getLang(),false);
+document.querySelectorAll('#langTabs .mtab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.lang===LANG)return;setLang(b.dataset.lang,true);redrawCanvases();fitPad()}));
+
+/* ── 目录与回到顶部 ── */
+const chips=$('chips'),TG=[...document.querySelectorAll('section.area')].map(s=>{s.querySelector('.group-head .ic').innerHTML=svgI(s.dataset.icon);
+ const a=document.createElement('a');a.className='fbtn';a.href='#'+s.id;a.style.setProperty('--c',s.style.getPropertyValue('--c'));a.innerHTML=`<span class="fic">${svgI(s.dataset.icon)}</span>`+T2(s.dataset.chipZh,s.dataset.chipEn);chips.appendChild(a);return{el:s,a}});
+let NAVH=150;const fitPad=()=>{NAVH=document.querySelector('.nav').offsetHeight+10;document.documentElement.style.scrollPaddingTop=NAVH+'px'};fitPad();addEventListener('resize',fitPad);
+let tk=false;function onScroll(){if(tk)return;tk=true;requestAnimationFrame(()=>{const y=scrollY+NAVH;let cur=null;TG.forEach(t=>{if(t.el.getBoundingClientRect().top+scrollY<=y)cur=t});
+ TG.forEach(t=>t.a.classList.toggle('cur',t===cur));$('totop').classList.toggle('on',scrollY>640);tk=false})}
+addEventListener('scroll',onScroll,{passive:true});$('totop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+const tb=$('tabs'),ton=tb.querySelector('.mtab.on');if(ton&&tb.scrollWidth>tb.clientWidth)tb.scrollLeft+=ton.getBoundingClientRect().right-tb.getBoundingClientRect().right;
+clearLeak();drawResp();drawToy();onScroll();runAll();
+})();
+</script>
+</body>
+</html>
