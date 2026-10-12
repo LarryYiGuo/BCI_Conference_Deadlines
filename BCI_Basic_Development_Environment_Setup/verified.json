@@ -1,35 +1,35 @@
 {
   "last_run": {
-    "date": "2026-10-05",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/37309342481",
+    "date": "2026-10-12",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/38254987408",
     "passed": true,
     "os": {
       "Linux": {
         "passed": true,
         "device": "cpu",
-        "python": "3.11.16",
-        "elapsed": 3.7,
+        "python": "3.11.17",
+        "elapsed": 3.0,
         "failed": []
       },
       "macOS": {
         "passed": true,
         "device": "mps",
-        "python": "3.11.16",
-        "elapsed": 37.1,
+        "python": "3.11.17",
+        "elapsed": 28.6,
         "failed": []
       },
       "Windows": {
         "passed": true,
         "device": "cpu",
-        "python": "3.11.16",
-        "elapsed": 8.0,
+        "python": "3.11.17",
+        "elapsed": 9.6,
         "failed": []
       }
     }
   },
   "verified": {
-    "date": "2026-10-05",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/37309342481",
+    "date": "2026-10-12",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/38254987408",
     "platforms": [
       "Linux",
       "Windows",
@@ -51,7 +51,7 @@
       "numpy": "2.4.6",
       "pandas": "3.0.6",
       "pyriemann": "0.12",
-      "python": "3.11.16",
+      "python": "3.11.17",
       "scikit-learn": "1.9.1",
       "scipy": "1.17.1",
       "torch": "2.13.0",
@@ -59,6 +59,22 @@
     }
   },
   "history": [
+    {
+      "date": "2026-10-12",
+      "passed": true,
+      "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/38254987408",
+      "os": {
+        "Linux": true,
+        "macOS": true,
+        "Windows": true
+      },
+      "key": {
+        "mne": "1.13.2",
+        "braindecode": "1.8.1",
+        "moabb": "1.7.2",
+        "torch": "2.13.0"
+      }
+    },
     {
       "date": "2026-10-05",
       "passed": true,
