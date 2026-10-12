@@ -53,7 +53,7 @@ per-venue **recent-paper index**. Editorial style inspired by
 
 ## Artifact Simulator (beta)
 
-- [`EEG_Artifact_Simulator/`](EEG_Artifact_Simulator/) (Chinese, **beta — still being tested**) synthesizes 8-channel background EEG at 250 Hz
+- [`EEG_Artifact_Simulator/`](EEG_Artifact_Simulator/) (English / Chinese, **beta — still being tested**) synthesizes 8-channel background EEG at 250 Hz
   plus twelve common artifacts and states in real time; switch between raw, 0.5–50 Hz and 5–50 Hz
   (the OpenBCI default) to see each one in the waveform, spectrum and band-power map
 - Four tabs: **simulator** · **removal** (what filtering can and cannot remove, and what to do with the
@@ -61,10 +61,9 @@ per-venue **recent-paper index**. Editorial style inspired by
   **notes & sources**
 - **The simulator is synthetic, not real data**; the real-recording annotations are read from screenshots
 
-## Processing Pipeline
+## Processing Pipeline (beta)
 
-- [`EEG_Processing_Pipeline/`](EEG_Processing_Pipeline/) (Chinese and English side by side, or either one
-  alone) generates synthetic P300 data in the browser and runs it through filtering, ICA blink removal,
+- [`EEG_Processing_Pipeline/`](EEG_Processing_Pipeline/) (English / Chinese, **beta**) generates synthetic P300 data in the browser and runs it through filtering, ICA blink removal,
   epoching, xDAWN and shrinkage LDA, with 5-fold cross-validation, ablations, an xDAWN filter-count control
   and a shuffled-label leakage test
 - The computational core is checked step by step against SciPy, scikit-learn and pyRiemann; a tested
@@ -151,15 +150,15 @@ MIT
 
 ## 伪迹模拟器(Beta)
 
-- [`EEG_Artifact_Simulator/`](EEG_Artifact_Simulator/)(中文,**Beta,还在测试**)用 8 个电极、250 Hz 实时合成背景脑电和十二种常见伪迹与状态,
+- [`EEG_Artifact_Simulator/`](EEG_Artifact_Simulator/)(中文 / 英文,**Beta,还在测试**)用 8 个电极、250 Hz 实时合成背景脑电和十二种常见伪迹与状态,
   在原始 / 0.5–50 Hz / 5–50 Hz(OpenBCI 默认)三种滤波之间切换,看它们在波形、频谱和频段功率上的样子
 - 分四页:**模拟器** · **去伪迹**(哪些能靠滤波去掉、其余怎么处理) · **实图分析**(四张 32 导截图逐个标注,
   标注框与伪迹清单互相跳转) · **其他**(电极选择、幅度校准、来源)
 - **模拟器是合成信号,不是真实数据**;实图分析的标注是读截图得出的
 
-## 处理管线
+## 处理管线(Beta)
 
-- [`EEG_Processing_Pipeline/`](EEG_Processing_Pipeline/)(中英对照,可切换只看中文或英文)在浏览器里合成一组 P300 数据,
+- [`EEG_Processing_Pipeline/`](EEG_Processing_Pipeline/)(中文 / 英文,**Beta,还在测试**)在浏览器里合成一组 P300 数据,
   走完滤波、ICA 去眨眼、切段、xDAWN、收缩 LDA,并用 5 折交叉验证、消融、xDAWN 滤波器个数和打乱标签检验每一步
 - 计算核心与 SciPy、scikit-learn、pyRiemann 逐步对拍过;页面上附一份测过的 MNE + pyRiemann + scikit-learn 版本
 - **数据是合成的,不是真实记录**

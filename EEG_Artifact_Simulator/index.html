@@ -2,8 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<script>/* 语言在首屏前定好:?lang= 优先,其次全站共用的记忆,再看浏览器 */
+(function(){var q=new URLSearchParams(location.search).get('lang'),s=null;try{s=localStorage.getItem('bci-ddl-lang')}catch(e){}
+var l=q==='zh'||q==='en'?q:s==='zh'||s==='en'?s:(navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'en';
+document.documentElement.setAttribute('data-lang',l);document.documentElement.lang=l==='en'?'en':'zh-CN'})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>脑电伪迹模拟器 · EEG Artifacts</title>
+<title>脑电伪迹模拟器</title>
 <meta name="description" content="8 个电极实时合成背景脑电与十二种常见伪迹,对比原始、0.5–50 Hz、5–50 Hz 三种滤波下的波形、频谱与频段功率。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -32,6 +36,15 @@ a{color:inherit;text-decoration:none}
 .nav-row1{display:flex;gap:.55rem;align-items:center}
 .brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;font-weight:500;white-space:nowrap}
 .brand em{font-style:normal;color:var(--orange)}
+html[data-lang="zh"] .en{display:none!important}
+html[data-lang="en"] .zh{display:none!important}
+/* 折叠块:分组细节默认收起,标题即目录 */
+details.more{margin-top:1.4rem;border-top:1px dashed var(--line-soft)}
+details.more>summary{display:flex;align-items:center;gap:.5rem;cursor:pointer;list-style:none;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);padding:.9rem 0 .5rem;transition:color .15s}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:'+';font-size:.85rem;line-height:1;letter-spacing:0}
+details.more[open]>summary::before{content:'−'}
+details.more>summary:hover{color:var(--c)}
 .beta{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);border:1px solid rgba(216,90,48,.45);padding:.1rem .38rem;border-radius:2px;white-space:nowrap;margin-right:.35rem;flex:0 0 auto}
 .tool{font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;color:var(--ink-dim);background:none;border:1px solid var(--hair);padding:.32rem .62rem;cursor:pointer;white-space:nowrap;transition:all .15s}
 .tool:hover{border-color:var(--ink-muted);color:var(--ink)}
@@ -178,14 +191,14 @@ footer{padding:3rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.2rem}
 
 <nav class="nav"><div class="nav-in">
   <div class="nav-row1">
-    <a class="brand" href="../" title="回到首页">🧠 BCI<em>·</em>Deadlines</a>
-    <nav class="modetabs" id="tabs" aria-label="分页"><a class="mtab" href="#sim" data-tab="sim"><span class="no">01</span>模拟器</a><a class="mtab" href="#clean" data-tab="clean"><span class="no">02</span>去伪迹</a><a class="mtab" href="#real" data-tab="real"><span class="no">03</span>实图分析</a><a class="mtab" href="#more" data-tab="more"><span class="no">04</span>其他</a></nav>
+    <a class="brand" href="../" title="Home">🧠 BCI<em>·</em>Deadlines</a>
+    <nav class="modetabs" id="tabs" aria-label="Pages"><a class="mtab" href="#sim" data-tab="sim"><span class="no">01</span><span class="zh">模拟器</span><span class="en">Simulator</span></a><a class="mtab" href="#clean" data-tab="clean"><span class="no">02</span><span class="zh">去伪迹</span><span class="en">Removal</span></a><a class="mtab" href="#real" data-tab="real"><span class="no">03</span><span class="zh">实图分析</span><span class="en">Real data</span></a><a class="mtab" href="#more" data-tab="more"><span class="no">04</span><span class="zh">其他</span><span class="en">More</span></a></nav>
     <span class="spacer"></span>
-    <button class="tool" id="pauseBtn">暂停</button>
-    <a class="tool" href="../deadlines.html">← 截稿日历</a>
+    <button class="tool" id="pauseBtn"><span class="zh">暂停</span><span class="en">Pause</span></button>
+    <button class="tool" id="langBtn" type="button">EN</button>
     <a class="tool gh" href="https://github.com/LarryYiGuo/BCI_Conference_Deadlines/tree/main/EEG_Artifact_Simulator" target="_blank" rel="noopener">GitHub</a>
   </div>
-  <div class="nav-row2" id="chips"><span class="beta" title="这个工具还在测试，内容和数字可能会改">Beta · 测试中</span><span class="lbl">目录</span></div>
+  <div class="nav-row2" id="chips"><span class="beta"><span class="zh">Beta · 测试中</span><span class="en">Beta</span></span><span class="lbl"><span class="zh">目录</span><span class="en">Contents</span></span></div>
 </div></nav>
 
 <div class="wrap" id="top">
@@ -193,121 +206,126 @@ footer{padding:3rem 0 4rem;border-top:1px solid var(--hair);margin-top:3.2rem}
   <div class="page" data-page="sim">
   <header class="hero">
     <div class="kicker">01 / 04 · Artifact Simulator</div>
-    <h1>脑电<em>伪迹</em>模拟器</h1>
+    <h1><span class="zh">脑电<em>伪迹</em>模拟器</span><span class="en">EEG <em>artifact</em> simulator</span></h1>
     <div class="lede">
-      <p>头皮上录到的最大信号，常常不是来自大脑。眨一下眼，额部电压能到背景脑电的五倍；咬一下牙，颞部的高频功率能涨几十倍。</p>
-      <p>这个模拟器用 8 个电极、每秒 250 个采样点，实时合成背景脑电和十二种常见的伪迹与状态。你可以触发伪迹，再在三种滤波设置之间切换，看它们在波形、频谱和频段功率上分别是什么样子。</p>
+      <p><span class="zh">头皮上录到的最大信号，常常不是来自大脑。眨一下眼，额部电压能到背景脑电的五倍。</span><span class="en">The biggest signals on the scalp often do not come from the brain. One blink can push the frontal voltage to five times the background EEG.</span></p>
+      <p><span class="zh">这里用 8 个电极实时合成脑电和 12 种伪迹。点按钮触发伪迹，再切换滤波，看它在波形、频谱和频段功率上是什么样。</span><span class="en">This page synthesises EEG and 12 artifacts live on 8 electrodes. Trigger an artifact, switch the filter, and see how it shows up in the waveform, the spectrum and the band power.</span></p>
     </div>
     <div class="stats">
-      <div class="stat"><span class="n">8</span><div class="l">电极</div></div>
-      <div class="stat"><span class="n">250</span><div class="l">采样率 Hz</div></div>
-      <div class="stat"><span class="n">12</span><div class="l">伪迹与状态</div></div>
-      <div class="stat"><span class="n">3</span><div class="l">滤波设置</div></div>
+      <div class="stat"><span class="n">8</span><div class="l"><span class="zh">电极</span><span class="en">electrodes</span></div></div>
+      <div class="stat"><span class="n">250</span><div class="l"><span class="zh">采样率 Hz</span><span class="en">sample rate Hz</span></div></div>
+      <div class="stat"><span class="n">12</span><div class="l"><span class="zh">伪迹与状态</span><span class="en">artifacts &amp; states</span></div></div>
+      <div class="stat"><span class="n">3</span><div class="l"><span class="zh">滤波设置</span><span class="en">filter settings</span></div></div>
     </div>
   </header>
-  <section class="area" id="sim" style="--c:#D85A30" data-chip="模拟器" data-icon="wave">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">模拟器</span></div>
-    <div class="gh-desc">触发类伪迹点一下出现一次；持续类点一下打开，再点一下关闭。每次操作都会在波形上画一条带名字的竖线，受影响的通道会加底色。通道名变红，表示最近 1 秒的原始信号异常大。</div>
-    <div class="ctl"><span class="k">滤波</span>
-      <span class="seg" id="modeSeg"><button data-m="0">原始</button><button data-m="1" class="on">0.5–50 Hz</button><button data-m="2">5–50 Hz · OpenBCI 默认</button></span>
-      <span class="k" style="min-width:auto;margin-left:.8rem">纵轴</span>
+  <section class="area" id="sim" style="--c:#D85A30" data-chip-zh="模拟器" data-chip-en="Simulator" data-icon="wave">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">模拟器</span><span class="en">Simulator</span></span></div>
+    <div class="gh-desc"><span class="zh">触发类点一下出现一次；持续类点一下开、再点一下关。每次操作都会画一条竖线，受影响的通道加底色。</span><span class="en">One-off artifacts appear once per click; ongoing ones toggle on and off. Each action draws a labelled line, and the affected channels are shaded.</span></div>
+    <div class="ctl"><span class="k"><span class="zh">滤波</span><span class="en">Filter</span></span>
+      <span class="seg" id="modeSeg"><button data-m="0"><span class="zh">原始</span><span class="en">Raw</span></button><button data-m="1" class="on">0.5–50 Hz</button><button data-m="2"><span class="zh">5–50 Hz · OpenBCI 默认</span><span class="en">5–50 Hz · OpenBCI default</span></button></span>
+      <span class="k" style="min-width:auto;margin-left:.8rem"><span class="zh">纵轴</span><span class="en">Scale</span></span>
       <select class="tool" id="sc"><option value="50">±50 µV</option><option value="100" selected>±100 µV</option><option value="200">±200 µV</option></select>
-      <a class="go-sec" href="#filt">三种设置有什么区别</a>
+      <a class="go-sec" href="#filt"><span class="zh">三种设置有什么区别</span><span class="en">How the three differ</span></a>
     </div>
-    <div class="ctl"><span class="k">触发一次</span>
-      <button class="tool" data-t="blink">眨眼</button><button class="tool" data-t="left">向左看</button><button class="tool" data-t="right">向右看</button><button class="tool" data-t="pop">C4 电极跳变</button><button class="tool" data-t="move">头动</button><button class="tool" data-t="ref">参考跳变</button><button class="tool" data-t="square">C4/T8 方波</button>
+    <div class="ctl"><span class="k"><span class="zh">触发一次</span><span class="en">One-off</span></span>
+      <button class="tool" data-t="blink"><span class="zh">眨眼</span><span class="en">Blink</span></button><button class="tool" data-t="left"><span class="zh">向左看</span><span class="en">Look left</span></button><button class="tool" data-t="right"><span class="zh">向右看</span><span class="en">Look right</span></button><button class="tool" data-t="pop"><span class="zh">C4 电极跳变</span><span class="en">C4 electrode pop</span></button><button class="tool" data-t="move"><span class="zh">头动</span><span class="en">Head movement</span></button><button class="tool" data-t="ref"><span class="zh">参考跳变</span><span class="en">Reference jump</span></button><button class="tool" data-t="square"><span class="zh">C4/T8 方波</span><span class="en">C4/T8 square wave</span></button>
     </div>
-    <div class="ctl"><span class="k">持续开关</span>
-      <button class="tool" data-g="emg">咬牙</button><button class="tool" data-g="ecg">心电</button><button class="tool" data-g="sweat">出汗漂移</button><button class="tool" data-g="off">T8 脱落</button><button class="tool" data-g="closed">闭眼</button>
+    <div class="ctl"><span class="k"><span class="zh">持续开关</span><span class="en">On / off</span></span>
+      <button class="tool" data-g="emg"><span class="zh">咬牙</span><span class="en">Jaw clench</span></button><button class="tool" data-g="ecg"><span class="zh">心电</span><span class="en">ECG</span></button><button class="tool" data-g="sweat"><span class="zh">出汗漂移</span><span class="en">Sweat drift</span></button><button class="tool" data-g="off"><span class="zh">T8 脱落</span><span class="en">T8 detached</span></button><button class="tool" data-g="closed"><span class="zh">闭眼</span><span class="en">Eyes closed</span></button>
     </div>
-    <div class="hint-line" id="hint">点上面任意一个按钮，这里会告诉你该看哪几个通道。</div>
+    <div class="hint-line" id="hint"></div>
 
-    <div class="panel-cap">时间序列 · 最近 5 秒 <span class="hint" id="scCap">纵轴每道 ±100 µV</span></div>
+    <div class="panel-cap"><span class="zh">时间序列 · 最近 5 秒</span><span class="en">Time series · last 5 s</span> <span class="hint" id="scCap"></span><span class="hint"><span class="zh">通道名变红＝信号异常大</span><span class="en">red name = abnormally large</span></span></div>
     <canvas id="ts" height="320"></canvas>
 
     <div class="sim2">
       <div>
-        <div class="panel-cap">电极位置 <span class="hint">点击高亮</span></div>
-        <svg id="head" viewBox="0 0 150 165" width="170" height="187" role="img" aria-label="8 个电极在头皮上的位置"></svg>
+        <div class="panel-cap"><span class="zh">电极位置</span><span class="en">Electrodes</span> <span class="hint"><span class="zh">点击高亮</span><span class="en">click to highlight</span></span></div>
+        <svg id="head" viewBox="0 0 150 165" width="170" height="187" role="img" aria-label="8 electrodes · 8 个电极"></svg>
       </div>
       <div>
-        <div class="panel-cap">频谱 · 全部电极 <span class="hint">最近约 1 秒，对数纵轴</span></div>
+        <div class="panel-cap"><span class="zh">频谱 · 全部电极</span><span class="en">Spectrum · all electrodes</span> <span class="hint"><span class="zh">最近约 1 秒，对数纵轴</span><span class="en">last ~1 s, log scale</span></span></div>
         <canvas id="ff" height="220"></canvas>
       </div>
     </div>
 
-    <div class="panel-cap">频段功率 · 全部电极 <span class="hint">µV²，颜色越深功率越大</span></div>
+    <div class="panel-cap"><span class="zh">频段功率 · 全部电极</span><span class="en">Band power · all electrodes</span> <span class="hint"><span class="zh">µV²，颜色越深功率越大</span><span class="en">µV², darker = more power</span></span></div>
     <canvas id="hm" height="170"></canvas>
   </section>
 
-  <section class="area" id="order" style="--c:#2563EB" data-chip="建议顺序" data-icon="doc">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">建议的操作顺序</span><span class="cnt">6</span></div>
-    <div class="gh-desc">每一步只改一个设置，看清楚一种现象再做下一步。</div>
+  <section class="area" id="order" style="--c:#2563EB" data-chip-zh="建议顺序" data-chip-en="Suggested order" data-icon="doc">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">建议的操作顺序</span><span class="en">Suggested order</span></span><span class="cnt">6</span></div>
+    <div class="gh-desc"><span class="zh">每一步只改一个设置，看清一种现象再做下一步。</span><span class="en">Change one setting at a time; see one effect clearly before the next.</span></div>
     <div id="orderList"></div>
   </section>
   </div>
   <div class="page" data-page="clean" hidden>
-  <header class="phead"><div class="kicker">02 / 04 · Artifact Removal</div><h1>怎么去掉<em>伪迹</em></h1></header>
-  <section class="area" id="list" style="--c:#C0473F" data-chip="伪迹清单" data-icon="warn">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">伪迹清单</span><span class="cnt" id="artCnt"></span></div>
-    <div class="gh-desc">伪迹能不能靠滤波去掉，只取决于一件事：它的频率和脑电有没有重叠。只有工频和很慢的漂移不重叠，其余的都只能靠 ICA 或者直接剔除。</div>
+  <header class="phead"><div class="kicker">02 / 04 · Artifact Removal</div><h1><span class="zh">怎么去掉<em>伪迹</em></span><span class="en">Removing <em>artifacts</em></span></h1></header>
+  <section class="area" id="list" style="--c:#C0473F" data-chip-zh="伪迹清单" data-chip-en="Artifact list" data-icon="warn">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">伪迹清单</span><span class="en">Artifact list</span></span><span class="cnt" id="artCnt"></span></div>
+    <div class="gh-desc"><span class="zh">伪迹能不能靠滤波去掉，只看一件事：它的频率和脑电重不重叠。只有工频和很慢的漂移不重叠，其余的要靠 ICA 或直接剔除。</span><span class="en">Whether filtering can remove an artifact depends on one thing: does its frequency overlap with EEG? Only mains noise and very slow drift do not; everything else needs ICA or rejection.</span></div>
     <div id="artList"></div>
   </section>
 
-  <section class="area" id="filt" style="--c:#0E7490" data-chip="滤波设置" data-icon="layers">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">三种滤波设置</span><span class="cnt">3</span></div>
-    <div class="gh-desc">三种设置都是因果滤波，只用到过去的数据，和在线系统实际能做到的一样。离线分析时 MNE 默认用零相位滤波，会用到未来的数据，所以两者看到的伪迹形状不完全相同。</div>
+  <section class="area" id="filt" style="--c:#0E7490" data-chip-zh="滤波设置" data-chip-en="Filters" data-icon="layers">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">三种滤波设置</span><span class="en">Three filter settings</span></span><span class="cnt">3</span></div>
+    <div class="gh-desc"><span class="zh">三种都是因果滤波，只用过去的数据，和在线系统一样。离线分析时 MNE 默认用零相位滤波，所以看到的伪迹形状会略有不同。</span><span class="en">All three are causal filters that use only past data, as an online system must. Offline, MNE filters with zero phase by default, so artifact shapes look slightly different.</span></div>
     <div id="filtList"></div>
   </section>
 
-  <section class="area" id="eyeflow" style="--c:#B45309" data-chip="眼动处理" data-icon="flow">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">眼动伪迹怎么处理</span></div>
-    <div class="gh-desc">先看实验对眼睛有什么要求。要求盯住注视点时，眼动是要去掉的噪声；要求自由看、去找东西时，眼动是任务的一部分，要建模而不是删掉；在线闭环还多一条限制，只能用已经录到的数据处理。</div>
+  <section class="area" id="eyeflow" style="--c:#B45309" data-chip-zh="眼动处理" data-chip-en="Eye artifacts" data-icon="flow">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">眼动伪迹怎么处理</span><span class="en">Handling eye artifacts</span></span></div>
+    <div class="gh-desc"><span class="zh">先看实验对眼睛的要求。盯住注视点时，眼动是噪声，要去掉；自由看时，眼动是任务的一部分，要建模；在线闭环还只能用已经录到的数据。</span><span class="en">Start from what the experiment asks of the eyes. With fixation, eye movements are noise to remove; with free viewing they are part of the task and must be modelled; an online closed loop can only use data already recorded.</span></div>
     <div id="eyeList"></div>
   </section>
   </div>
   <div class="page" data-page="real" hidden>
-  <header class="phead"><div class="kicker">03 / 04 · Real Recordings</div><h1>真实记录<em>分析</em></h1></header>
-  <section class="area" id="real" style="--c:#9A3412" data-chip="真实记录" data-icon="eye">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">真实记录对照</span><span class="cnt">4</span></div>
-    <div class="gh-desc">四张 DB Wireless EEG（32 导）的预览截图，按「去伪迹」页的伪迹清单逐个标出来。鼠标移到下面任意一条，图上对应的框会高亮，点一下可以固定；点图上的框，也会跳到对应的那一条。这些判断是读截图得出的，没有用原始数据核实。</div>
-    <div class="legend"><span style="--c:#C0473F">伪迹</span><span style="--c:#2563EB">可能是伪迹</span><span style="--c:#1D9E75">真脑电</span></div>
+  <header class="phead"><div class="kicker">03 / 04 · Real Recordings</div><h1><span class="zh">真实记录<em>分析</em></span><span class="en">Real <em>recordings</em></span></h1></header>
+  <section class="area" id="real" style="--c:#9A3412" data-chip-zh="真实记录" data-chip-en="Real data" data-icon="eye">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">真实记录对照</span><span class="en">Real recordings</span></span><span class="cnt">4</span></div>
+    <div class="gh-desc"><span class="zh">四张 32 导截图，按伪迹清单逐个标出。鼠标移到下面一条，图上的框会高亮；点框也会跳到那一条。标注是读截图得来的，没用原始数据核实。</span><span class="en">Four 32-channel screenshots, annotated against the artifact list. Hover over an entry below to highlight its box; click a box to jump to its entry. The annotations come from reading screenshots, not the raw data.</span></div>
+    <div class="legend"><span style="--c:#C0473F"><span class="zh">伪迹</span><span class="en">artifact</span></span><span style="--c:#2563EB"><span class="zh">可能是伪迹</span><span class="en">possible artifact</span></span><span style="--c:#1D9E75"><span class="zh">真脑电</span><span class="en">brain signal</span></span></div>
     <div id="realList"></div>
   </section>
   </div>
   <div class="page" data-page="more" hidden>
-  <header class="phead"><div class="kicker">04 / 04 · Notes &amp; Sources</div><h1>设计依据与<em>来源</em></h1></header>
-  <section class="area" id="elec" style="--c:#0F766E" data-chip="为什么是这 8 个电极" data-icon="brain">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">为什么是这 8 个电极</span><span class="cnt">8</span></div>
-    <div class="gh-desc">8 是 OpenBCI Cyton 这类入门设备的通道数，加 Daisy 扩展板可以到 16。每个电极都放在某一种信号或伪迹最强的位置，让每种现象都有一个主场。这套布局是为演示伪迹选的：真做运动想象实验，会把电极集中在 C3、Cz、C4 周围；做视觉语义解码，会集中在枕叶和顶叶。</div>
+  <header class="phead"><div class="kicker">04 / 04 · Notes &amp; Sources</div><h1><span class="zh">设计依据与<em>来源</em></span><span class="en">Design notes and <em>sources</em></span></h1></header>
+  <section class="area" id="elec" style="--c:#0F766E" data-chip-zh="为什么是这 8 个电极" data-chip-en="Why these 8" data-icon="brain">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">为什么是这 8 个电极</span><span class="en">Why these 8 electrodes</span></span><span class="cnt">8</span></div>
+    <div class="gh-desc"><span class="zh">8 是 OpenBCI Cyton 这类入门设备的通道数。每个电极放在某一种信号或伪迹最强的位置。这套布局是为演示伪迹选的：做运动想象会集中在 C3、Cz、C4，做视觉解码会集中在枕叶和顶叶。</span><span class="en">Eight is the channel count of entry-level boards such as the OpenBCI Cyton. Each electrode sits where one signal or artifact is strongest. The layout is chosen to show artifacts: motor imagery would cluster around C3, Cz and C4, visual decoding over occipital and parietal sites.</span></div>
     <div id="elecList"></div>
   </section>
 
-  <section class="area" id="amp" style="--c:#7C3AED" data-chip="幅度校准" data-icon="trend">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">幅度校准</span></div>
-    <div class="gh-desc">背景脑电用 1/f 频谱的粉红噪声合成，alpha 会一阵强一阵弱。各项幅度按文献范围校准，下面是用同一份代码在命令行里实测的数字。</div>
+  <section class="area" id="amp" style="--c:#7C3AED" data-chip-zh="幅度校准" data-chip-en="Amplitudes" data-icon="trend">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">幅度校准</span><span class="en">Amplitude calibration</span></span></div>
+    <div class="gh-desc"><span class="zh">背景脑电用 1/f 频谱的粉红噪声合成。各项幅度按文献范围校准，下面是用同一份代码实测的数字。</span><span class="en">Background EEG is pink noise with a 1/f spectrum. Amplitudes follow published ranges; below are numbers measured with this same code.</span></div>
     <div id="ampList"></div>
   </section>
 
-  <section class="area" id="src" style="--c:#78716C" data-chip="来源" data-icon="book">
-    <div class="group-head"><span class="ic"></span><span class="gh-t">来源</span></div>
+  <section class="area" id="src" style="--c:#78716C" data-chip-zh="来源" data-chip-en="Sources" data-icon="book">
+    <div class="group-head"><span class="ic"></span><span class="gh-t"><span class="zh">来源</span><span class="en">Sources</span></span></div>
     <div id="srcList"></div>
   </section>
   </div>
   </main>
 
   <footer><div class="fnote">
-    模拟器部分是模拟信号，不来自真人。背景与伪迹幅度按文献范围校准，数字都是用这份代码在命令行里实测的；心电有意放大，真实的要小得多。<br>
-    「实图分析」页用的是 DB Wireless EEG 的预览截图（图片在同目录 img/ 下），标注是读图判断；图 4 原截图没有通道名，电极名是按其他三张的 32 导顺序和行距推出来的。<br>
-    滤波器是按 OpenBCI 默认参数写的 4 阶 Butterworth 近似，不是 BrainFlow 原版代码。<br>
-    去掉伪迹之后怎样一步步做到分类，见<a href="../EEG_Processing_Pipeline/">处理管线</a>。
+    <span class="zh">模拟器里是合成信号，不来自真人。幅度按文献范围校准，数字是用这份代码实测的；心电有意放大。</span><span class="en">The simulator’s signals are synthetic, not from a real person. Amplitudes follow published ranges and were measured with this code; ECG is deliberately exaggerated.</span><br>
+    <span class="zh">「实图分析」用的是 DB Wireless EEG 的预览截图（在 img/ 下），标注是读图判断；图 4 的电极名是按其他三张推出来的。</span><span class="en">The real-data tab uses DB Wireless EEG preview screenshots (in img/); annotations are read from the images, and Fig. 4’s channel names are inferred from the other three.</span><br>
+    <span class="zh">滤波器按 OpenBCI 默认参数写成 4 阶 Butterworth 近似，不是 BrainFlow 原版代码。</span><span class="en">Filters approximate OpenBCI’s defaults as 4th-order Butterworth; this is not BrainFlow’s own code.</span><br>
+    <span class="zh">去掉伪迹之后怎样一步步做到分类，见<a href="../EEG_Processing_Pipeline/">处理管线</a>。</span><span class="en">From clean EEG to a classifier, step by step: see the <a href="../EEG_Processing_Pipeline/">processing pipeline</a>.</span>
   </div></footer>
 </div>
-<button class="totop" id="totop" aria-label="回到顶部">↑</button>
+<button class="totop" id="totop" aria-label="Back to top · 回到顶部">↑</button>
 
 <script>
 (function(){
 'use strict';
+/* ── 语言:T2 给 HTML(CSS 按 data-lang 只显示一种),L 给画布与属性 ── */
+let LANG=document.documentElement.dataset.lang==='en'?'en':'zh';
+const L=(z,e)=>LANG==='en'?e:z;
+const T2=(z,e)=>`<span class="zh">${z}</span><span class="en">${e}</span>`;
+const TT=a=>Array.isArray(a)?T2(a[0],a[1]):a;
 /* ── 图标 ── */
 const ICON={
  wave:'<path d="M3 10h2v4H3zM7 6h2v12H7zM11 2h2v20h-2zM15 6h2v12h-2zM19 10h2v4h-2z"/>',
@@ -372,16 +390,18 @@ function spec(b){const o=[];for(let k=0;k<=62;k++){let re=0,im=0;for(let n=0;n<N
 const BD=[[1,4,'δ 1–4'],[4,8,'θ 4–8'],[8,13,'α 8–13'],[13,30,'β 13–30'],[30,55,'γ 30–55']];
 const bandsOf=sp=>BD.map(([a,b])=>{let p=0;sp.forEach((v,k)=>{const f=k*FS/NF;if(f>=a&&f<b)p+=v*v/2});return p});
 /* ── 事件标记与提示 ── */
-const NAME={blink:'眨眼',left:'向左看',right:'向右看',pop:'C4 跳变',move:'头动',ref:'参考跳变',square:'C4/T8 方波',emg:'咬牙',ecg:'心电',sweat:'出汗漂移',off:'T8 脱落',closed:'闭眼'};
+const NAME={blink:['眨眼','Blink'],left:['向左看','Look left'],right:['向右看','Look right'],pop:['C4 跳变','C4 pop'],move:['头动','Head move'],ref:['参考跳变','Ref jump'],square:['C4/T8 方波','C4/T8 square'],emg:['咬牙','Jaw clench'],ecg:['心电','ECG'],sweat:['出汗漂移','Sweat drift'],off:['T8 脱落','T8 off'],closed:['闭眼','Eyes closed']};
 const FOCUS={blink:[0,1,2],left:[1,2],right:[1,2],pop:[4],move:[0,1,2,3,4,5,6,7],ref:[0,1,2,3,4,5,6,7],square:[4,6],emg:[5,6],ecg:[5,6],sweat:[0,1,2],off:[6],closed:[7]};
-const LOOK={blink:'Fp1 最大，F7、F8 次之，越往后越小',left:'F7 和 F8 一上一下，方向相反',right:'F7 和 F8 一上一下，方向和向左看时相反',pop:'C4 突然跳起，再慢慢回落',move:'所有通道同时出现大幅摆动',ref:'8 个通道同时、同向、一样大地往下跳，再慢慢回来；O1 和 Fp1 一样大，所以不是眨眼。参考电极是所有通道共用的，它一动，每个通道都跟着动',square:'C4 和 T8 同时出现一模一样的方波：垂直上升、平顶约 80 ms、垂直落下。生理信号不会有平顶和垂直的边。这里放大到 60 µV 才看得清，实录里约 20 µV',emg:'T7、T8 变得毛糙；热力格里 β、γ 两行最明显',ecg:'T7、T8 上大约每秒一次的尖峰。这里有意放大了，真实的心电伪迹小得多',sweat:'Fp1、F7、F8 几秒一个周期的大幅慢波',off:'原始模式下 T8 的通道名变红；切到滤波模式，看它怎么被伪装成正常通道',closed:'O1 的 α 慢慢升高，热力格里 O1 的 α 那一格变深'};
+const LOOK={blink:['Fp1 最大，F7、F8 次之，越往后越小','largest at Fp1, then F7 and F8, fading towards the back'],left:['F7 和 F8 一上一下，方向相反','F7 and F8 step in opposite directions'],right:['F7 和 F8 一上一下，方向和向左看时相反','F7 and F8 step in opposite directions, reversed from looking left'],pop:['C4 突然跳起，再慢慢回落','C4 jumps suddenly, then slowly recovers'],move:['所有通道同时大幅摆动','every channel swings widely at once'],ref:['8 个通道同时、同向、一样大地往下跳。O1 和 Fp1 一样大，所以不是眨眼：参考电极是所有通道共用的','all 8 channels drop together, in the same direction and by the same amount. O1 matches Fp1, so it is not a blink: every channel shares the reference'],square:['C4 和 T8 同时出现一模一样的方波：垂直上升、平顶约 80 ms、垂直落下。这里放大到 60 µV，实录里约 20 µV','C4 and T8 show identical square waves: vertical rise, flat top of about 80 ms, vertical fall. Enlarged to 60 µV here; about 20 µV in recordings'],emg:['T7、T8 变毛糙；热力格里 β、γ 两行最明显','T7 and T8 turn rough; clearest in the beta and gamma rows of the heat map'],ecg:['T7、T8 上大约每秒一次的尖峰。这里有意放大了','spikes about once a second on T7 and T8. Exaggerated on purpose'],sweat:['Fp1、F7、F8 几秒一个周期的大幅慢波','large slow waves every few seconds at Fp1, F7 and F8'],off:['原始模式下 T8 的名字变红；切到滤波，看它怎么被伪装成正常通道','in raw mode T8’s name turns red; switch to a filter and watch it pass for normal'],closed:['O1 的 α 慢慢升高，热力格里 O1 的 α 那一格变深','alpha at O1 slowly rises; O1’s alpha cell in the heat map darkens']};
 const HIDDEN={2:['blink','move','sweat'],1:['sweat']};
 const MK=[];let lastEv=null;
-function hint(){const el=document.getElementById('hint');if(!lastEv){el.textContent='点上面任意一个按钮，这里会告诉你该看哪几个通道。';return}
- let t=`<b>${NAME[lastEv]}</b>：${LOOK[lastEv]}。`;
- if((HIDDEN[mode]||[]).includes(lastEv))t+=mode===2?' 当前 5–50 Hz 会把它滤掉，切到 0.5–50 Hz 或原始才看得清。':' 0.5–50 Hz 会把它滤掉，切到原始才看得见。';
- el.innerHTML=t}
-function mark(type,label){MK.push({s:S.s,type,label});lastEv=type;hint()}
+function hint(){const el=document.getElementById('hint');
+ if(!lastEv){el.innerHTML=T2('点上面任意一个按钮，这里会告诉你该看哪几个通道。','Press any button above and this line tells you which channels to watch.');return}
+ const [nz,ne]=NAME[lastEv],[lz,le]=LOOK[lastEv],hid=(HIDDEN[mode]||[]).includes(lastEv);
+ el.innerHTML=T2(`<b>${nz}</b>：${lz}。`+(hid?(mode===2?'当前 5–50 Hz 会把它滤掉，切到 0.5–50 Hz 或原始才看得清。':'0.5–50 Hz 会把它滤掉，切到原始才看得见。'):''),
+  `<b>${ne}</b>: ${le}.`+(hid?(mode===2?' The 5–50 Hz filter removes it; switch to 0.5–50 Hz or raw to see it.':' The 0.5–50 Hz filter removes it; switch to raw to see it.'):''))}
+function mark(type,st){MK.push({s:S.s,type,st});lastEv=type;hint()}
+const mkLabel=m=>L(...NAME[m.type])+(m.st===undefined?'':m.st?L(' 开',' on'):L(' 关',' off'));
 const rgba=(h,a)=>`rgba(${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)},${a})`;
 function focusRows(){const on=new Set();MK.forEach(m=>{if(['blink','left','right','pop','move','ref','square'].includes(m.type)&&S.s-m.s<FS*2.5)FOCUS[m.type].forEach(i=>on.add(i))});
  ['emg','ecg','sweat','off','closed'].forEach(k=>{if(S[k])FOCUS[k].forEach(i=>on.add(i))});return on}
@@ -392,7 +412,7 @@ let CUR='sim',mode=1,SC=100,sel=-1,paused=false,bs=null,fr=0,last=performance.no
 function prep(cv,h){const Wd=cv.clientWidth;cv.width=Wd*devicePixelRatio;cv.height=h*devicePixelRatio;const x=cv.getContext('2d');x.scale(devicePixelRatio,devicePixelRatio);return[x,Wd]}
 function rms(i){const b=S.buf[0][i];let s=0;for(let k=1;k<=FS;k++){const v=b[(S.w-k+N)%N];s+=v*v}return Math.sqrt(s/FS)}
 function drawHead(){const bad=CH.map((_,i)=>rms(i)>120);let h=`<circle cx="75" cy="88" r="68" fill="none" stroke="${LINE}" stroke-width="1"/><path d="M68 21 L75 10 L82 21" fill="none" stroke="${LINE}" stroke-width="1"/><path d="M7 80 Q2 88 7 96 M143 80 Q148 88 143 96" fill="none" stroke="${LINE}" stroke-width="1"/>`;
- h+=REF.map(([x,y,n])=>`<g><circle cx="${x}" cy="${y}" r="3" fill="${LINE}"/><title>${n}(未选用)</title></g>`).join('');
+ h+=REF.map(([x,y,n])=>`<g><circle cx="${x}" cy="${y}" r="3" fill="${LINE}"/><title>${n}${L('(未选用)',' (not used)')}</title></g>`).join('');
  h+=CH.map((c,i)=>{const [x,y]=POS[i],on=sel===i;return `<g data-i="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="${on?13:11}" fill="${COL[i]}" stroke="${bad[i]?RED:on?INK:'none'}" stroke-width="2" opacity="${sel<0||on?1:.45}"/><text x="${x}" y="${y+3.5}" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono,monospace" fill="#fff">${c}</text></g>`}).join('');
  const el=document.getElementById('head');el.innerHTML=h;
  el.querySelectorAll('g[data-i]').forEach(e=>e.onclick=()=>{const i=+e.dataset.i;sel=sel===i?-1:i;drawHead()})}
@@ -400,7 +420,7 @@ function drawTS(){const H=320,[x,Wd]=prep(document.getElementById('ts'),H),pl=52
  const fo=focusRows();fo.forEach(i=>{x.fillStyle=rgba(COL[i],.09);x.fillRect(pl,4+rh*i,Wd-pl,rh)});
  while(MK.length&&S.s-MK[0].s>=N)MK.shift();
  x.setLineDash([3,3]);x.strokeStyle=MUTED;x.lineWidth=1;x.fillStyle=DIM;x.textAlign='left';
- MK.forEach(m=>{const px=pl+(N-1-(S.s-m.s))/(N-1)*(Wd-pl);x.beginPath();x.moveTo(px,14);x.lineTo(px,H-16);x.stroke();x.fillText(m.label,Math.min(px+4,Wd-60),12)});
+ MK.forEach(m=>{const px=pl+(N-1-(S.s-m.s))/(N-1)*(Wd-pl);x.beginPath();x.moveTo(px,14);x.lineTo(px,H-16);x.stroke();x.fillText(mkLabel(m),Math.min(px+4,Wd-60),12)});
  x.setLineDash([]);
  CH.forEach((c,i)=>{const y0=4+rh*i+rh/2,bad=rms(i)>120;x.fillStyle=COL[i];x.beginPath();x.arc(5,y0,4,0,6.3);x.fill();
   x.textAlign='left';x.fillStyle=bad?RED:DIM;x.fillText(c+(bad?' !':''),14,y0+4);
@@ -426,122 +446,125 @@ function drawHM(){const H=170,[x,Wd]=prep(document.getElementById('hm'),H),pl=76
    x.fillStyle=a>.5?'#fafaf8':INK;x.fillText(v<10?v.toFixed(1):Math.round(v),pl+cw*i+cw/2,top+ch*j+ch/2+4)})})}
 
 /* ── 控件 ── */
-document.getElementById('sc').onchange=e=>{SC=+e.target.value;document.getElementById('scCap').textContent='纵轴每道 ±'+SC+' µV'};
+const scCap=()=>document.getElementById('scCap').innerHTML=T2('纵轴每道 ±'+SC+' µV','±'+SC+' µV per trace');
+document.getElementById('sc').onchange=e=>{SC=+e.target.value;scCap()};scCap();
 document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>{mode=+b.dataset.m;bs=null;document.querySelectorAll('#modeSeg button').forEach(o=>o.classList.toggle('on',o===b));hint()});
-document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{trig(b.dataset.t);mark(b.dataset.t,NAME[b.dataset.t])});
-document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const k=b.dataset.g;S[k]=!S[k];b.classList.toggle('on',S[k]);mark(k,NAME[k]+(S[k]?' 开':' 关'));if(!S[k]){lastEv=null;hint()}});
-const pb=document.getElementById('pauseBtn');pb.onclick=()=>{paused=!paused;pb.textContent=paused?'继续':'暂停';pb.classList.toggle('on',paused);last=performance.now()};
-for(let k=0;k<N*2;k++)step();drawHead();
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{trig(b.dataset.t);mark(b.dataset.t)});
+document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const k=b.dataset.g;S[k]=!S[k];b.classList.toggle('on',S[k]);mark(k,S[k]);if(!S[k]){lastEv=null;hint()}});
+const pb=document.getElementById('pauseBtn');pb.onclick=()=>{paused=!paused;pb.innerHTML=paused?T2('继续','Resume'):T2('暂停','Pause');pb.classList.toggle('on',paused);last=performance.now()};
+for(let k=0;k<N*2;k++)step();drawHead();hint();
 function loop(now){if(!paused&&CUR==='sim'){acc+=Math.min(.1,(now-last)/1000)*FS;while(acc>=1){step();acc--}drawTS();if(fr%6===0){drawSpec();drawHM()}if(fr%30===0)drawHead();fr++}last=now;requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
 
 /* ── 正文列表 ── */
 const row=(c,tag,big,bigCls,k,name,badges,desc)=>`<div class="ent" style="--c:${c}"><div class="ent-left"><div class="ent-tag"><span class="dot"></span>${tag}</div><div class="ent-n"><span class="v ${bigCls||''}">${big}</span>${k?`<span class="k">${k}</span>`:''}</div></div><div class="ent-right"><div class="ent-head"><span class="ent-nm">${name}</span>${badges||''}</div><div class="ent-desc">${desc}</div></div></div>`;
 const CIRC='①②③④⑤⑥⑦⑧⑨';
-const goLinks=ks=>ks.map(k=>{const [f,n]=k.split('-');return `<a class="go" data-go="${k}">图 ${f} ${CIRC[n-1]}</a>`}).join('');
+const goLinks=ks=>ks.map(k=>{const [f,n]=k.split('-');return `<a class="go" data-go="${k}">${T2(`图 ${f} ${CIRC[n-1]}`,`Fig. ${f} ${CIRC[n-1]}`)}</a>`}).join('');
 const ORDER=[
- ['点「眨眼」，然后切换滤波','默认的 0.5–50 Hz 下，Fp1 最大，越往后越小，O1 几乎没有；眨眼后面还跟着一个反向下冲，那是高通滤波造成的。切到原始，下冲消失。切到 5–50 Hz，眨眼几乎看不见了。它还在数据里，只是被 5 Hz 高通挡在了屏幕外。OpenBCI 默认就是 5–50 Hz，所以屏幕上干净，不等于数据干净。'],
- ['点「向左看」和「向右看」','F7 和 F8 一上一下，方向相反。水平眼动最典型的特征就是这对反向的台阶。'],
- ['打开「咬牙」，看热力格','T7、T8 两列的 β 和 γ 明显变深，三种滤波下都一样；O1 那一列几乎不变。肌电是宽频的，滤波去不掉。'],
- ['打开「T8 脱落」，再切换滤波','原始模式下 T8 的通道名变红。切到滤波模式，50 Hz 被陷波滤掉，T8 看起来还行，只是比别的通道毛糙。坏通道被滤波伪装成了好通道，这是最危险的情况。'],
- ['点「参考跳变」，再点「眨眼」对比','两个都是额部很大的偏转，区别在离眼睛最远的 O1：眨眼从 Fp1 往后越来越小，O1 几乎没有；参考跳变 8 个通道一样大。真实记录里的例子：'+goLinks(['2-1','3-3','4-2'])],
- ['打开「闭眼」','O1 的 α 慢慢升高，热力格里只有 O1 的 α 那一格变深。这是真实的脑信号，可以和上面几种伪迹对照着看。']];
-const kbs=a=>a.map(e=>`<span class="kb">${e}</span>`).join('');
+ [['点「眨眼」，再切换滤波','Press Blink, then switch filters'],['在 0.5–50 Hz 下，Fp1 最大，越往后越小，后面还跟着一个反向下冲，那是高通造成的。切到原始，下冲消失。切到 5–50 Hz，眨眼几乎看不见了，但它还在数据里。OpenBCI 默认就是 5–50 Hz：屏幕干净，不等于数据干净。','At 0.5–50 Hz, Fp1 is largest and the blink fades towards the back, followed by a reverse dip caused by the high-pass. Switch to raw and the dip goes. Switch to 5–50 Hz and the blink almost disappears, yet it is still in the data. 5–50 Hz is the OpenBCI default: a clean screen is not clean data.']],
+ [['点「向左看」和「向右看」','Press Look left and Look right'],['F7 和 F8 一上一下，方向相反。这对反向的台阶就是水平眼动的标志。','F7 and F8 step in opposite directions. That pair of opposite steps is the signature of a horizontal eye movement.']],
+ [['打开「咬牙」，看热力格','Turn on Jaw clench and watch the heat map'],['T7、T8 的 β 和 γ 明显变深，三种滤波下都一样；O1 几乎不变。肌电是宽频的，滤波去不掉。','T7 and T8 darken in beta and gamma under all three filters, while O1 barely changes. Muscle noise is broadband, so filtering cannot remove it.']],
+ [['打开「T8 脱落」，再切换滤波','Turn on T8 detached, then switch filters'],['原始模式下 T8 的名字变红。切到滤波，50 Hz 被滤掉，T8 看起来只是毛糙一点。坏通道被滤波伪装成了好通道，这是最危险的情况。','In raw mode T8’s name turns red. With a filter on, the 50 Hz is gone and T8 just looks a little rough. Filtering has disguised a bad channel as a good one, the most dangerous case.']],
+ [['点「参考跳变」，再点「眨眼」对比','Press Reference jump, then Blink, and compare'],['两个都是额部的大偏转。区别在离眼睛最远的 O1：眨眼在 O1 几乎没有，参考跳变 8 个通道一样大。真实记录里的例子：'+goLinks(['2-1','3-3','4-2']),'Both are large frontal deflections. The difference is at O1, farthest from the eyes: a blink barely reaches O1, while a reference jump is the same size on all 8 channels. Real examples: '+goLinks(['2-1','3-3','4-2'])]],
+ [['打开「闭眼」','Turn on Eyes closed'],['O1 的 α 慢慢升高，热力格里只有 O1 的 α 那一格变深。这是真的脑信号，可以和上面几种伪迹对照。','Alpha at O1 slowly rises; in the heat map only O1’s alpha cell darkens. This is a real brain signal, to compare with the artifacts above.']]];
+const kbs=a=>a.map(e=>`<span class="kb">${TT(e)}</span>`).join('');
 const ART=[
- ['工频 50 Hz',true,['全部'],'波形变成粗粗的一条带子；频谱在 50 Hz 有一个尖峰。','陷波滤波；检查接地。'],
- ['出汗漂移',true,['全部','额部最大'],'几秒一个周期的大幅慢波，基线整体上下漂。','0.5 Hz 左右的高通就能去掉大部分；保持环境凉爽。'],
- ['眨眼',false,['Fp1','F7','F8'],'约 0.3 秒、上百 µV 的正向鼓包，离眼睛越近越大。','ICA 去除。它的能量在 1–3 Hz，和脑电的 δ、θ 重叠；高通只会把它滤成怪形状。',['1-1','1-2','3-2','3-5','4-1']],
- ['眼动',false,['F7','F8'],'左右看时 F7 和 F8 出现方向相反的台阶。','ICA 去除。',['1-1','1-4','4-4']],
- ['咬牙（肌电）',false,['T7','T8'],'毛糙的高频爆发，β 和 γ 功率暴涨。','剔除这段数据；提醒被试放松下颌。肌电和运动想象用的 β 频段重叠，是分类器最容易学错的来源之一。',['1-5','2-3','3-1','3-4','4-3','4-5']],
- ['心电',false,['颞部较明显'],'大约每秒一次的小尖峰，靠规律性才认得出来。','ICA 或模板相减。'],
- ['电极跳变',false,['C4'],'突然跳起，再慢慢回落。','剔除这段或插值该通道。跳变的边沿很陡，含高频成分，5–50 Hz 滤波后仍然很大。',['3-6']],
- ['参考或接地电极跳变',false,['全部通道'],'所有通道同时、同向、几乎一样大地跳一下，额区和枕区一样大。眨眼不会这样：它离眼睛越远越小。','检查参考和接地电极的接触与导线，剔除这段。它不属于任何一个通道，ICA 很难把它单独分出来。共平均参考会把它减掉，但问题还在。',['2-1','3-3','4-2']],
- ['相邻电极方波',false,['模拟 C4、T8','实录 P4、PO6'],'垂直上升、平顶约 80 ms、垂直落下，两个相邻电极的形状完全一样。生理信号不会有平顶和垂直的边。','查这两个电极的阻抗，擦掉多余的导电膏（可能是桥接），重新戴好；已录的数据剔除或插值。',['1-6','2-2']],
- ['头动',false,['全部'],'一两秒的大幅不规则摆动，所有通道同时出现。','剔除。'],
- ['电极脱落',false,['T8'],'工频和噪声都特别大，原始信号远超正常范围。','重新接好电极，或标为坏通道后插值。滤波只会把问题藏起来。']];
-document.getElementById('orderList').innerHTML=ORDER.map((o,i)=>row('#2563EB','STEP',String(i+1).padStart(2,'0'),'','',o[0],'',o[1])).join('');
+ {nm:['工频 50 Hz','50 Hz mains'],ok:true,at:[['全部','all']],look:['波形变成粗粗的一条带子，频谱在 50 Hz 有尖峰。','The trace turns into a thick band; the spectrum spikes at 50 Hz.'],fix:['陷波滤波；检查接地。','Notch filter; check the ground.']},
+ {nm:['出汗漂移','Sweat drift'],ok:true,at:[['全部','all'],['额部最大','largest frontally']],look:['几秒一个周期的大幅慢波，基线整体上下漂。','Large slow waves every few seconds; the whole baseline drifts.'],fix:['0.5 Hz 左右的高通能去掉大部分；保持环境凉爽。','A high-pass around 0.5 Hz removes most of it; keep the room cool.']},
+ {nm:['眨眼','Blink'],ok:false,at:['Fp1','F7','F8'],look:['约 0.3 秒、上百 µV 的正向鼓包，离眼睛越近越大。','A positive bump of about 0.3 s and over 100 µV, larger closer to the eyes.'],fix:['用 ICA 去除。它的能量在 1–3 Hz，和 δ、θ 重叠；高通只会把它滤成怪形状。','Remove with ICA. Its energy sits at 1–3 Hz, overlapping delta and theta; a high-pass only distorts it.'],ex:['1-1','1-2','3-2','3-5','4-1']},
+ {nm:['眼动','Eye movement'],ok:false,at:['F7','F8'],look:['左右看时，F7 和 F8 出现方向相反的台阶。','Looking sideways gives opposite steps at F7 and F8.'],fix:['用 ICA 去除。','Remove with ICA.'],ex:['1-1','1-4','4-4']},
+ {nm:['咬牙（肌电）','Jaw clench (muscle)'],ok:false,at:['T7','T8'],look:['毛糙的高频爆发，β 和 γ 功率暴涨。','Rough high-frequency bursts; beta and gamma power shoot up.'],fix:['剔除这段；提醒被试放松下颌。肌电和运动想象用的 β 频段重叠，是分类器最容易学错的来源之一。','Reject the segment; ask the participant to relax the jaw. Muscle noise overlaps the beta band used for motor imagery, and classifiers easily learn it by mistake.'],ex:['1-5','2-3','3-1','3-4','4-3','4-5']},
+ {nm:['心电','ECG'],ok:false,at:[['颞部较明显','clearer at the temples']],look:['大约每秒一次的小尖峰，靠规律才认得出。','Small spikes about once a second, recognisable only by their rhythm.'],fix:['ICA 或模板相减。','ICA or template subtraction.']},
+ {nm:['电极跳变','Electrode pop'],ok:false,at:['C4'],look:['突然跳起，再慢慢回落。','A sudden jump, then a slow return.'],fix:['剔除这段，或插值该通道。它的边沿很陡，5–50 Hz 滤波后仍然很大。','Reject the segment or interpolate the channel. Its edge is steep, so it stays large even after 5–50 Hz filtering.'],ex:['3-6']},
+ {nm:['参考或接地电极跳变','Reference or ground jump'],ok:false,at:[['全部通道','all channels']],look:['所有通道同时、同向、几乎一样大地跳一下，额区和枕区一样大。眨眼不会这样。','Every channel jumps at once, in the same direction and by about the same amount, frontal as much as occipital. A blink never does that.'],fix:['检查参考和接地电极的接触与导线，剔除这段。ICA 很难把它单独分出来。','Check the reference and ground contacts and leads, and reject the segment. ICA struggles to isolate it.'],ex:['2-1','3-3','4-2']},
+ {nm:['相邻电极方波','Square wave on neighbouring electrodes'],ok:false,at:[['模拟 C4、T8','simulated C4, T8'],['实录 P4、PO6','recorded P4, PO6']],look:['垂直上升、平顶约 80 ms、垂直落下，两个相邻电极一模一样。生理信号不会有平顶和垂直的边。','A vertical rise, a flat top of about 80 ms and a vertical fall, identical on two neighbouring electrodes. No physiological signal has flat tops and vertical edges.'],fix:['查这两个电极的阻抗，擦掉多余的导电膏（可能是桥接），重新戴好；已录的数据剔除或插值。','Check both electrodes’ impedance, wipe off excess gel (they may be bridged) and refit; reject or interpolate what was recorded.'],ex:['1-6','2-2']},
+ {nm:['头动','Head movement'],ok:false,at:[['全部','all']],look:['一两秒的大幅不规则摆动，所有通道同时出现。','A second or two of large irregular swings on every channel at once.'],fix:['剔除。','Reject.']},
+ {nm:['电极脱落','Detached electrode'],ok:false,at:['T8'],look:['工频和噪声特别大，原始信号远超正常范围。','Huge mains and noise; the raw signal is far outside the normal range.'],fix:['重新接好，或标为坏通道后插值。滤波只会把问题藏起来。','Reconnect it, or mark it bad and interpolate. Filtering only hides the problem.']}];
+document.getElementById('orderList').innerHTML=ORDER.map((o,i)=>row('#2563EB',T2('步骤','STEP'),String(i+1).padStart(2,'0'),'','',TT(o[0]),'',TT(o[1]))).join('');
 document.getElementById('artCnt').textContent=ART.length;
-document.getElementById('artList').innerHTML=ART.map(a=>row(a[1]?'#1D9E75':'#C0473F','滤波',a[1]?'能去掉':'去不掉','sm','',a[0],`<span class="kb ${a[1]?'ok':'no'}">${a[1]?'可滤':'不可滤'}</span>`+kbs(a[2]),`<p><span class="k">样子</span>${a[3]}</p><p><span class="k">处理</span>${a[4]}</p>`+(a[5]?`<p><span class="k">实例</span>${goLinks(a[5])}</p>`:''))).join('');
+document.getElementById('artList').innerHTML=ART.map(a=>row(a.ok?'#1D9E75':'#C0473F',T2('滤波','Filter'),a.ok?T2('能去掉','Yes'):T2('去不掉','No'),'sm','',TT(a.nm),kbs(a.at),
+ `<p><span class="k">${T2('样子','Looks like')}</span>${TT(a.look)}</p><p><span class="k">${T2('处理','Fix')}</span>${TT(a.fix)}</p>`+(a.ex?`<p><span class="k">${T2('实例','Examples')}</span>${goLinks(a.ex)}</p>`:''))).join('');
 
 /* ── 真实记录：截图 + 可交互标注框 ── */
 const RR='#C0473F',RB='#2563EB',RG='#1D9E75';
 const X1=t=>37+205.1*t,X2=t=>128+176.8*t,X3=t=>80+190.5*t,X4=t=>5+210.6*t;
 /* 坐标都按原截图像素写；dx/dy 是底图相对原截图的裁切或加边 */
 const FIGS=[
- {id:1,src:'img/fig1.webp',w:2000,h:1154,dx:0,dy:0,title:'眨眼、眼动与 P4/PO6 方波',
-  meta:'没有 µV 标尺 · 2.9 s 的竖线是扫描光标，线左边是最新数据，线两侧接不上不是伪迹',
+ {id:1,src:'img/fig1.webp',w:2000,h:1154,dx:0,dy:0,title:['眨眼、眼动与 P4/PO6 方波','Blinks, eye movements and P4/PO6 square waves'],
+  meta:['没有 µV 标尺 · 2.9 s 的竖线是扫描光标，线左边是最新数据，两侧接不上不是伪迹','No µV scale · the line at 2.9 s is the sweep cursor; data left of it are newest, and the break there is not an artifact'],
   it:[
-  {n:1,c:RR,r:[[X1(1.9),24,X1(2.45),640]],when:'约 2.0–2.3 s',ch:['FP1','FPZ','FP2','F7','T7','T8'],name:'眨眼 + 水平眼动',d:'额极一个正向大鼓包，往后越来越小；同时 F7、T7 大幅向上，T8 向下。左正右负，像是一边眨眼一边向左看。'},
-  {n:2,c:RR,r:[[X1(5.4),24,X1(6.12),210]],when:'约 5.5–6.0 s',ch:['FP1','FPZ','FP2','F7','F3'],name:'垂直眼动后接眨眼',d:'额极先慢慢下沉约 0.4 s（向下看，额部为负），再在 6.0 s 猛地冲出屏幕上沿（眨眼）。FC、C 区有一个缩小的鼓包。'},
-  {n:3,c:RG,dash:1,r:[[X1(6.12),1020,X1(6.4),1140]],when:'约 6.2 s',ch:['O1','OZ','O2'],name:'枕区尖波，可能是脑电',d:'紧跟在 ② 后面，可能是眼睛重新睁开后的视觉反应。不太确定。'},
-  {n:4,c:RB,dash:1,r:[4.42,5.55,8.85].map(t=>[X1(t)-12,268,X1(t)+32,622]),when:'约 4.5 / 5.6 / 8.9 s',ch:['F8','FC6','T8'],name:'可能是水平眼动',d:'右侧额颞几道短暂下挫。'},
-  {n:5,c:RR,r:[[X1(9.0),90,1996,312]],when:'9.0–9.6 s，以及全程',ch:['FP2','F8','额颞区'],name:'额肌、颞肌的肌电',d:'9.0–9.6 s FP2、F8 有一阵更密的爆发。FP1/FPZ/FP2/F7/F8/T7/T8 全程都有高频毛刺，也是肌电。'},
-  {n:6,c:RR,r:[0.29,1.97,3.08,4.38,5.78,7.28,8.78].map(t=>[X1(t)-14,840,X1(t)+38,1030]),when:'0.3 / 2.0 / 3.1 / 4.4 / 5.8 / 7.3 / 8.8 s',ch:['P4','PO6','CP2'],name:'方波：电极接触或电气问题',d:'垂直上升、平顶、垂直落下，P4 和 PO6 形状完全一样，CP2 有缩小版。间隔不规则，不是心跳。好几个方波和眨眼、眼动同时出现，可能是表情牵动了帽子（推测）；两个电极之间也可能有导电膏或汗液桥接。'}]},
- {id:2,src:'img/fig2.webp',w:1826,h:992,dx:84,dy:218,title:'全通道尖峰与强肌电',
-  meta:'右下角标尺 80 µV · 3.4 s 的竖线是扫描光标 · 原截图只保留了脑电面板',
+  {n:1,c:RR,r:[[X1(1.9),24,X1(2.45),640]],when:['约 2.0–2.3 s','about 2.0–2.3 s'],ch:['FP1','FPZ','FP2','F7','T7','T8'],name:['眨眼 + 水平眼动','Blink + horizontal eye movement'],d:['额极一个正向大鼓包，往后越来越小；同时 F7、T7 向上，T8 向下。像是一边眨眼一边向左看。','A large positive bump at the frontal pole, shrinking towards the back; meanwhile F7 and T7 rise and T8 falls, as if blinking while looking left.']},
+  {n:2,c:RR,r:[[X1(5.4),24,X1(6.12),210]],when:['约 5.5–6.0 s','about 5.5–6.0 s'],ch:['FP1','FPZ','FP2','F7','F3'],name:['垂直眼动后接眨眼','Vertical eye movement, then a blink'],d:['额极先慢慢下沉约 0.4 s（向下看），再在 6.0 s 猛地冲出屏幕上沿（眨眼）。','The frontal pole sinks slowly for about 0.4 s (looking down), then shoots off the top of the screen at 6.0 s (a blink).']},
+  {n:3,c:RG,dash:1,r:[[X1(6.12),1020,X1(6.4),1140]],when:['约 6.2 s','about 6.2 s'],ch:['O1','OZ','O2'],name:['枕区尖波，可能是脑电','Occipital sharp wave, possibly brain'],d:['紧跟在 ② 后面，可能是重新睁眼后的视觉反应。不太确定。','Right after ②; possibly a visual response as the eyes reopen. Not certain.']},
+  {n:4,c:RB,dash:1,r:[4.42,5.55,8.85].map(t=>[X1(t)-12,268,X1(t)+32,622]),when:['约 4.5 / 5.6 / 8.9 s','about 4.5 / 5.6 / 8.9 s'],ch:['F8','FC6','T8'],name:['可能是水平眼动','Possibly horizontal eye movements'],d:['右侧额颞几道短暂下挫。','Brief dips on the right fronto-temporal channels.']},
+  {n:5,c:RR,r:[[X1(9.0),90,1996,312]],when:['9.0–9.6 s，以及全程','9.0–9.6 s, and throughout'],ch:['FP2','F8',['额颞区','fronto-temporal']],name:['额肌、颞肌的肌电','Frontal and temporal muscle'],d:['9.0–9.6 s FP2、F8 有一阵更密的爆发。额颞几道全程都有高频毛刺，也是肌电。','A denser burst on FP2 and F8 at 9.0–9.6 s. The high-frequency fuzz on the fronto-temporal channels throughout is muscle too.']},
+  {n:6,c:RR,r:[0.29,1.97,3.08,4.38,5.78,7.28,8.78].map(t=>[X1(t)-14,840,X1(t)+38,1030]),when:['0.3 / 2.0 / 3.1 / 4.4 / 5.8 / 7.3 / 8.8 s','0.3 / 2.0 / 3.1 / 4.4 / 5.8 / 7.3 / 8.8 s'],ch:['P4','PO6','CP2'],name:['方波：电极接触或电气问题','Square waves: contact or electrical fault'],d:['垂直上升、平顶、垂直落下，P4 和 PO6 一模一样，CP2 有缩小版。间隔不规则，不是心跳。可能是表情牵动了帽子，也可能两个电极之间有导电膏或汗液桥接。','Vertical rise, flat top, vertical fall, identical on P4 and PO6, with a smaller copy on CP2. The spacing is irregular, so not the heartbeat. Facial movement may be tugging the cap, or gel or sweat may bridge the two electrodes.']}]},
+ {id:2,src:'img/fig2.webp',w:1826,h:992,dx:84,dy:218,title:['全通道尖峰与强肌电','An all-channel spike and strong muscle noise'],
+  meta:['右下角标尺 80 µV · 3.4 s 的竖线是扫描光标','Scale bar 80 µV, bottom right · the line at 3.4 s is the sweep cursor'],
   it:[
-  {n:1,c:RR,r:[[X2(8.45),222,X2(9.25),1182]],when:'8.9 s',ch:['全部 32 道'],name:'参考或接地电极',d:'所有通道同时、同向、几乎一样大（约 40–60 µV），O1/O2 和 FP1 一样大，所以不是眨眼。所有通道唯一共用的是参考和接地电极。形状是两边都是指数曲线的尖顶：可能是软件对屏幕数据做了双向滤波，也可能事件本身是慢慢积累的（静电、碰到导线、身体动了一下）。这也说明界面没有做共平均参考。'},
-  {n:2,c:RR,r:[0.74,5.05,7.95].map(t=>[X2(t)-12,895,X2(t)+30,1082]),when:'0.8 / 5.05 / 7.95 s',ch:['P4','PO6'],name:'方波：电极接触或电气问题',d:'平顶约 80 ms，高约 20 µV，和图 1 ⑥ 是同一个问题。'},
-  {n:3,c:RR,r:[[122,224,738,762]],when:'0–3.4 s',ch:['FP1','FPZ','FP2','F7','F3','FC5','FC6','T7','T8','C4'],name:'强肌电 + 慢波',d:'额区幅度大、杂乱，颞区也很毛糙（皱眉、咬牙、说话），中间夹着几个大范围慢波（眼动或头动）。这段在光标左边，是最新写进来的数据。'},
-  {n:4,c:RR,dash:1,r:[[752,224,X2(8.4),322]],when:'3.4–8.5 s',ch:['FP1','FPZ','FP2'],name:'轻度额肌紧张',d:'额极一直有细密的高频毛刺，也可能是额部电极阻抗偏高。'},
-  {n:5,c:RG,r:[[752,1088,X2(4.3),1182]],when:'约 3.5–4 s',ch:['O1','OZ','O2'],name:'alpha，真脑电',d:'规则的约 10 Hz 节律。'}]},
- {id:3,src:'img/fig3.webp',w:1974,h:1064,dx:26,dy:0,title:'颞区肌电、全通道陡坑与 CZ 跳变',
-  meta:'右下角标尺 80 µV · 9.5 s 的竖线是扫描光标 · 细红框和手写的 1–4 是原截图上就有的，①–④ 和它们一一对应，⑤–⑦ 是另外找到的',
+  {n:1,c:RR,r:[[X2(8.45),222,X2(9.25),1182]],when:['8.9 s','8.9 s'],ch:[['全部 32 道','all 32']],name:['参考或接地电极','Reference or ground electrode'],d:['所有通道同时、同向、几乎一样大（约 40–60 µV），O1/O2 和 FP1 一样大，所以不是眨眼。所有通道唯一共用的就是参考和接地电极。','Every channel at once, in the same direction and about the same size (40–60 µV); O1/O2 match FP1, so it is not a blink. The only thing all channels share is the reference and ground.']},
+  {n:2,c:RR,r:[0.74,5.05,7.95].map(t=>[X2(t)-12,895,X2(t)+30,1082]),when:['0.8 / 5.05 / 7.95 s','0.8 / 5.05 / 7.95 s'],ch:['P4','PO6'],name:['方波：电极接触或电气问题','Square waves: contact or electrical fault'],d:['平顶约 80 ms，高约 20 µV，和图 1 ⑥ 是同一个问题。','A flat top of about 80 ms, about 20 µV high: the same fault as Fig. 1 ⑥.']},
+  {n:3,c:RR,r:[[122,224,738,762]],when:['0–3.4 s','0–3.4 s'],ch:['FP1','FPZ','FP2','F7','F3','FC5','FC6','T7','T8','C4'],name:['强肌电 + 慢波','Strong muscle noise + slow waves'],d:['额区幅度大、杂乱，颞区也很毛糙（皱眉、咬牙、说话），中间夹着几个大范围慢波（眼动或头动）。','Large, messy frontal activity and rough temporal channels (frowning, clenching, talking), with a few broad slow waves (eye or head movement).']},
+  {n:4,c:RR,dash:1,r:[[752,224,X2(8.4),322]],when:['3.4–8.5 s','3.4–8.5 s'],ch:['FP1','FPZ','FP2'],name:['轻度额肌紧张','Mild frontal muscle tension'],d:['额极一直有细密的高频毛刺，也可能是额部电极阻抗偏高。','Fine high-frequency fuzz on the frontal pole throughout; could also be high frontal impedance.']},
+  {n:5,c:RG,r:[[752,1088,X2(4.3),1182]],when:['约 3.5–4 s','about 3.5–4 s'],ch:['O1','OZ','O2'],name:['alpha，真脑电','Alpha, brain signal'],d:['规则的约 10 Hz 节律。','A regular rhythm at about 10 Hz.']}]},
+ {id:3,src:'img/fig3.webp',w:1974,h:1064,dx:26,dy:0,title:['颞区肌电、全通道陡坑与 CZ 跳变','Temporal muscle, an all-channel dip and a CZ pop'],
+  meta:['右下角标尺 80 µV · 9.5 s 的竖线是扫描光标 · 细红框和手写的 1–4 是原图就有的，①–④ 与之对应，⑤–⑦ 是另外找到的','Scale bar 80 µV · the line at 9.5 s is the sweep cursor · the thin red boxes and handwritten 1–4 are on the original; ①–④ match them, ⑤–⑦ are extra'],
   it:[
-  {n:1,c:RR,r:[[X3(0.35),382,X3(4.6),446],[82,536,1984,602]],when:'0.3–4.6 s，以及全程',ch:['FC6','T7','T8','CP5'],name:'颞区肌电',d:'FC6、T7 两道持续毛糙，高频叠在约 1 Hz 的慢摆上，同一框里的 FC2、C3 是干净的；T8、CP5 全程也一样。最可能是颞肌一直绷着，也可能是电极接触差。让被试张开嘴、放松下颌，毛刺变少就是肌电。'},
-  {n:2,c:RR,r:[[X3(4.72),18,X3(5.2),192]],when:'约 4.9 s',ch:['FP1','FPZ','FP2','F7'],name:'小眨眼',d:'约 0.3 s 的正向鼓包，到 F3 已经小很多，约 30–40 µV。可能是半眨眼，或者向上看了一下。'},
-  {n:3,c:RR,r:[[X3(5.72),14,X3(6.1),1052]],when:'约 5.9 s',ch:['全部 32 道'],name:'参考或接地电极',d:'所有通道同时向下一个陡坑再回来，额区和枕区一样大。和图 2 ① 是同一类，方向相反、更窄。'},
-  {n:4,c:RR,r:[[X3(9.15),86,1916,472]],when:'约 9.3–9.5 s',ch:['FP2','F7','F8','FC5','FC6','T7'],name:'短暂肌电爆发',d:'光标前几道额颞通道同时出现一小阵密集高频（咬一下或眯眼）。FP2/F7 上那个向下的尖刺可能是一次眼跳。竖线本身是光标。'},
-  {n:5,c:RR,r:[[X3(8.3),14,X3(8.75),252]],when:'约 8.4 s',ch:['FP1','FPZ','FP2','F7'],name:'眨眼',d:'额极大幅正向尖峰，往后逐渐变小，随后跟一个反向下冲。比 ② 大得多。'},
-  {n:6,c:RR,r:[[X3(7.42),466,X3(7.78),508]],when:'约 7.5 s',ch:['CZ'],name:'单通道电极跳变',d:'只有 CZ 突然跳起、再慢慢回落，形状和模拟器里的「C4 电极跳变」一样。'},
-  {n:7,c:RG,dash:1,r:[[X3(8.3),828,X3(8.85),1052]],when:'约 8.3–8.8 s',ch:['P8','PO5','POZ','PO6','O1','OZ','O2'],name:'可能是 alpha',d:'顶枕区一阵规则振荡，紧跟在 ⑤ 眨眼之后。不太确定。'}]},
- {id:4,src:'img/fig4.webp',w:2064,h:1164,dx:-64,dy:0,title:'眨眼后的全通道断崖',
-  meta:'没有 µV 标尺 · 原截图没有通道名，左侧电极名是按其他三张的 32 导顺序和行距推出来的 · 9.4 s 的竖线是扫描光标；7.1 s 那条不是',
+  {n:1,c:RR,r:[[X3(0.35),382,X3(4.6),446],[82,536,1984,602]],when:['0.3–4.6 s，以及全程','0.3–4.6 s, and throughout'],ch:['FC6','T7','T8','CP5'],name:['颞区肌电','Temporal muscle'],d:['FC6、T7 持续毛糙，同一框里的 FC2、C3 是干净的；T8、CP5 全程也这样。最可能是颞肌一直绷着。让被试张开嘴、放松下颌，毛刺变少就是肌电。','FC6 and T7 stay rough while FC2 and C3 in the same box are clean; T8 and CP5 are rough throughout too. Most likely a tense temporalis. Ask the participant to open the mouth and relax the jaw; if the fuzz drops, it is muscle.']},
+  {n:2,c:RR,r:[[X3(4.72),18,X3(5.2),192]],when:['约 4.9 s','about 4.9 s'],ch:['FP1','FPZ','FP2','F7'],name:['小眨眼','Small blink'],d:['约 0.3 s 的正向鼓包，到 F3 已经小很多，约 30–40 µV。可能是半眨眼，或向上看了一下。','A positive bump of about 0.3 s, much smaller by F3, around 30–40 µV. A half blink, or a glance upwards.']},
+  {n:3,c:RR,r:[[X3(5.72),14,X3(6.1),1052]],when:['约 5.9 s','about 5.9 s'],ch:[['全部 32 道','all 32']],name:['参考或接地电极','Reference or ground electrode'],d:['所有通道同时向下一个陡坑再回来，额区和枕区一样大。和图 2 ① 是同一类，方向相反、更窄。','Every channel dips sharply and recovers, frontal as much as occipital. The same kind as Fig. 2 ①, but inverted and narrower.']},
+  {n:4,c:RR,r:[[X3(9.15),86,1916,472]],when:['约 9.3–9.5 s','about 9.3–9.5 s'],ch:['FP2','F7','F8','FC5','FC6','T7'],name:['短暂肌电爆发','Brief muscle burst'],d:['光标前几道额颞通道同时出现一小阵密集高频（咬一下或眯眼）。','A short dense burst on several fronto-temporal channels just before the cursor (a bite or a squint).']},
+  {n:5,c:RR,r:[[X3(8.3),14,X3(8.75),252]],when:['约 8.4 s','about 8.4 s'],ch:['FP1','FPZ','FP2','F7'],name:['眨眼','Blink'],d:['额极大幅正向尖峰，往后逐渐变小，随后跟一个反向下冲。比 ② 大得多。','A large positive frontal spike, shrinking towards the back and followed by a reverse dip. Much larger than ②.']},
+  {n:6,c:RR,r:[[X3(7.42),466,X3(7.78),508]],when:['约 7.5 s','about 7.5 s'],ch:['CZ'],name:['单通道电极跳变','Single-channel pop'],d:['只有 CZ 突然跳起、再慢慢回落，和模拟器里的「C4 电极跳变」一样。','Only CZ jumps and slowly recovers, just like the simulator’s C4 electrode pop.']},
+  {n:7,c:RG,dash:1,r:[[X3(8.3),828,X3(8.85),1052]],when:['约 8.3–8.8 s','about 8.3–8.8 s'],ch:['P8','PO5','POZ','PO6','O1','OZ','O2'],name:['可能是 alpha','Possibly alpha'],d:['顶枕区一阵规则振荡，紧跟在 ⑤ 眨眼之后。不太确定。','A burst of regular oscillation over parieto-occipital sites right after the ⑤ blink. Not certain.']}]},
+ {id:4,src:'img/fig4.webp',w:2064,h:1164,dx:-64,dy:0,title:['眨眼后的全通道断崖','An all-channel cliff after a blink'],
+  meta:['没有 µV 标尺 · 原图没有通道名，左侧电极名是按其他三张推出来的 · 9.4 s 的竖线是扫描光标，7.1 s 那条不是','No µV scale · the original has no channel names; those on the left are inferred from the other three · the line at 9.4 s is the sweep cursor; the one at 7.1 s is not'],
   it:[
-  {n:1,c:RR,r:[[X4(2.12)-42,4,X4(2.12)+42,252],[X4(5.13)-42,4,X4(5.13)+42,252],[1436,4,1490,252]],when:'约 2.1 / 5.1 / 7.0 s',ch:['FP1','FPZ','FP2','F7'],name:'眨眼',d:'最上面几道正向鼓包，往下越来越小。'},
-  {n:2,c:RR,r:[[1494,4,X4(7.75),1160]],when:'约 7.1 s',ch:['全部 32 道'],name:'全通道共有的突变',d:'所有通道同时往下跳，再用约 0.5 s 指数回升，是一个突变经过高通滤波后的样子：要么是参考或接地电极跳变，要么是数据中断后滤波器重新起步。7.0 s 刚眨完眼它就出现，可能是眨眼或头动牵动了参考电极。7.1 s 那条竖线可能是软件打的标记或数据断点，要看原始数据或软件日志确认。'},
-  {n:3,c:RR,dash:1,r:[[X4(9.1),30,1980,1145]],when:'约 9.2–9.4 s',ch:['几乎全部'],name:'肌电爆发',d:'几乎所有通道同时出现密集高频（咬牙、吞咽一类）。'},
-  {n:4,c:RB,dash:1,r:[[52,70,104,480],[200,110,410,500]],when:'约 0.35 s、1.0–1.9 s',ch:['FP2','F7','F8','FC5','T7'],name:'可能是眼动或眼跳',d:'额颞几道出现陡跳、慢鼓包和尖刺，不确定。'},
-  {n:5,c:RR,dash:1,r:[[8,276,X4(9.08),322],[8,406,X4(9.08),452]],when:'全程',ch:['F8','FC5','FC6','T7'],name:'颞区肌电或接触差',d:'两道虚线整段都毛糙，和图 2、图 3 一样。'},
-  {n:6,c:RG,dash:1,r:[[X4(2.3),985,X4(6.8),1148]],when:'2.3–6.8 s 等',ch:['POZ','PO6','O1','OZ','O2'],name:'可能是 alpha',d:'顶枕区一直有约 10 Hz 的节律，是真脑电。'}]}];
+  {n:1,c:RR,r:[[X4(2.12)-42,4,X4(2.12)+42,252],[X4(5.13)-42,4,X4(5.13)+42,252],[1436,4,1490,252]],when:['约 2.1 / 5.1 / 7.0 s','about 2.1 / 5.1 / 7.0 s'],ch:['FP1','FPZ','FP2','F7'],name:['眨眼','Blinks'],d:['最上面几道正向鼓包，往下越来越小。','Positive bumps on the top few channels, shrinking downwards.']},
+  {n:2,c:RR,r:[[1494,4,X4(7.75),1160]],when:['约 7.1 s','about 7.1 s'],ch:[['全部 32 道','all 32']],name:['全通道共有的突变','A jump shared by all channels'],d:['所有通道同时往下跳，再用约 0.5 s 指数回升，是突变经过高通后的样子：参考或接地跳变，或者数据中断后滤波器重新起步。刚眨完眼就出现，可能是眨眼或头动牵动了参考电极。','Every channel drops at once and recovers exponentially over about 0.5 s, which is how a step looks after a high-pass: a reference or ground jump, or the filter restarting after a data gap. It follows a blink, so a blink or head movement may have tugged the reference.']},
+  {n:3,c:RR,dash:1,r:[[X4(9.1),30,1980,1145]],when:['约 9.2–9.4 s','about 9.2–9.4 s'],ch:[['几乎全部','nearly all']],name:['肌电爆发','Muscle burst'],d:['几乎所有通道同时出现密集高频（咬牙、吞咽一类）。','Dense high-frequency activity on nearly every channel (a clench or a swallow).']},
+  {n:4,c:RB,dash:1,r:[[52,70,104,480],[200,110,410,500]],when:['约 0.35 s、1.0–1.9 s','about 0.35 s and 1.0–1.9 s'],ch:['FP2','F7','F8','FC5','T7'],name:['可能是眼动或眼跳','Possibly eye movements or saccades'],d:['额颞几道出现陡跳、慢鼓包和尖刺，不确定。','Steep jumps, slow bumps and spikes on fronto-temporal channels. Not certain.']},
+  {n:5,c:RR,dash:1,r:[[8,276,X4(9.08),322],[8,406,X4(9.08),452]],when:['全程','throughout'],ch:['F8','FC5','FC6','T7'],name:['颞区肌电或接触差','Temporal muscle or poor contact'],d:['两道虚线整段都毛糙，和图 2、图 3 一样。','The two dashed rows are rough the whole way, as in Figs. 2 and 3.']},
+  {n:6,c:RG,dash:1,r:[[X4(2.3),985,X4(6.8),1148]],when:['2.3–6.8 s 等','2.3–6.8 s and elsewhere'],ch:['POZ','PO6','O1','OZ','O2'],name:['可能是 alpha','Possibly alpha'],d:['顶枕区一直有约 10 Hz 的节律，是真脑电。','A steady ~10 Hz rhythm over parieto-occipital sites: brain activity.']}]}];
 function figSVG(F){const tr=([x0,y0,x1,y1])=>[x0-F.dx,y0-F.dy,x1-F.dx,y1-F.dy];
  return `<svg viewBox="0 0 ${F.w} ${F.h}" preserveAspectRatio="none" aria-hidden="true">`+F.it.map(o=>{const rs=o.r.map(tr),[tx,ty]=[Math.min(F.w-26,Math.max(26,rs[0][0])),Math.min(F.h-26,Math.max(26,rs[0][1]))];
   return `<g class="bx" data-k="${F.id}-${o.n}" style="color:${o.c}">`+rs.map(([a,b,c,d])=>`<rect x="${a}" y="${b}" width="${c-a}" height="${d-b}"${o.dash?' stroke-dasharray="14 8"':''}/>`).join('')+`<circle cx="${tx}" cy="${ty}" r="24"/><text x="${tx}" y="${ty}">${o.n}</text></g>`}).join('')+'</svg>'}
-const SUM=`<div class="ent" style="--c:#9A3412"><div class="ent-left"><div class="ent-tag"><span class="dot"></span>合起来看</div><div class="ent-n"><span class="v sm">3 件事</span></div></div><div class="ent-right"><div class="ent-head"><span class="ent-nm">采集时先解决这三件，事后 ICA 处理不好</span></div><div class="ent-desc"><p><b>全通道同时跳变</b>：先检查参考和接地电极的接触与导线。${goLinks(['2-1','3-3','4-2'])}</p><p><b>P4/PO6 方波</b>：查阻抗和导电膏桥接。${goLinks(['1-6','2-2'])}</p><p><b>颞区持续肌电</b>：让被试放松下颌。${goLinks(['3-1','4-5','2-3'])}</p></div></div></div>`;
-document.getElementById('realList').innerHTML=FIGS.map(F=>`<div class="sub-head" id="rfig-${F.id}" data-chip="图 ${F.id}">图 ${F.id} · ${F.title}</div><div class="fig" data-f="${F.id}"><img src="${F.src}" width="${F.w}" height="${F.h}" loading="lazy" alt="图 ${F.id}：${F.title}">${figSVG(F)}</div><div class="fcap">${F.meta}</div>`+
- F.it.map(o=>`<div class="rf" tabindex="0" data-k="${F.id}-${o.n}" id="rf-${F.id}-${o.n}" style="--c:${o.c}">`+row(o.c,o.when,CIRC[o.n-1],'','',o.name,kbs(o.ch),o.d)+'</div>').join('')).join('')+'<div class="sub-head" id="rfig-sum" data-chip="合起来看">四张图合起来看</div>'+SUM;
+const SUM=`<div class="ent" style="--c:#9A3412"><div class="ent-left"><div class="ent-tag"><span class="dot"></span>${T2('合起来看','Overall')}</div><div class="ent-n"><span class="v sm">${T2('3 件事','3 things')}</span></div></div><div class="ent-right"><div class="ent-head"><span class="ent-nm">${T2('采集时先解决这三件，事后 ICA 处理不好','Fix these three while recording; ICA cannot fix them afterwards')}</span></div><div class="ent-desc"><p>${T2('<b>全通道同时跳变</b>：先查参考和接地电极的接触与导线。','<b>All-channel jumps</b>: check the reference and ground contacts and leads first.')}${goLinks(['2-1','3-3','4-2'])}</p><p>${T2('<b>P4/PO6 方波</b>：查阻抗和导电膏桥接。','<b>P4/PO6 square waves</b>: check impedance and gel bridging.')}${goLinks(['1-6','2-2'])}</p><p>${T2('<b>颞区持续肌电</b>：让被试放松下颌。','<b>Sustained temporal muscle</b>: ask the participant to relax the jaw.')}${goLinks(['3-1','4-5','2-3'])}</p></div></div></div>`;
+document.getElementById('realList').innerHTML=FIGS.map(F=>`<div class="sub-head" id="rfig-${F.id}" data-chip-zh="图 ${F.id}" data-chip-en="Fig. ${F.id}">${T2(`图 ${F.id} · ${F.title[0]}`,`Fig. ${F.id} · ${F.title[1]}`)}</div><div class="fig" data-f="${F.id}"><img src="${F.src}" width="${F.w}" height="${F.h}" loading="lazy" alt="">${figSVG(F)}</div><div class="fcap">${TT(F.meta)}</div>`+
+ F.it.map(o=>`<div class="rf" tabindex="0" data-k="${F.id}-${o.n}" id="rf-${F.id}-${o.n}" style="--c:${o.c}">`+row(o.c,TT(o.when),CIRC[o.n-1],'','',TT(o.name),kbs(o.ch),TT(o.d))+'</div>').join('')).join('')+'<div class="sub-head" id="rfig-sum" data-chip-zh="合起来看" data-chip-en="Overall">'+T2('四张图合起来看','All four together')+'</div>'+SUM;
 /* ── 眼动处理：三种通用情形 ── */
 const EYE=[
- {h:'先分清三种情形',rows:[
-  {t:'情形',b:'A',n:'固定注视 · 快速呈现',k:['固定注视','离线'],d:'被试盯住注视点不动，刺激在中央一张接一张快速闪过（比如 RSVP）。眼动是噪声，主要是眨眼和微眼跳。思路：<b>能防就防，防不住就去掉，最后证明解码没靠它。</b>'},
-  {t:'情形',b:'B',n:'自由看 · 视觉搜索',k:['自由看','离线','眼动仪'],d:'被试在画面里自由地找东西，每一次注视都是一个事件，眼动就是任务本身。思路：<b>用眼动仪找出每一次眼跳和注视，去掉眼动伪迹，再把相邻注视叠在一起的响应拆开。</b>'},
-  {t:'情形',b:'C',n:'在线闭环',k:['自由看','在线','眼动仪'],d:'解码结果实时驱动外部设备，眼睛还可能跟着设备走。思路：<b>在校准阶段离线算好去眼动的空间滤波器，在线只做一次矩阵乘法</b>；如果用错误相关电位（ErrP）做反馈，分类器要专门防眼动混淆。'}]},
- {h:'三种情形共用 · 开录前先做好的三件事',rows:[
-  {t:'STEP',b:'01',n:'先修硬件',k:['参考/接地','桥接','肌电'],d:'全通道跳变、相邻电极方波、颞区持续肌电都不是 ICA 擅长处理的，要在采集时解决，否则会占掉本来就不多的成分。'+goLinks(['2-1','2-2','3-1'])},
-  {t:'STEP',b:'02',n:'录 2 分钟眼动校准段',k:['每个 session 开头'],d:'按屏幕提示做：眨眼 10 次；向左、右、上、下各看 10 次，幅度和刺激差不多；跟踪一个慢慢移动的点 20 秒；盯住中心 30 秒。这段用来认 ICA 里的眼动成分；在线闭环还要用它提前算好在线用的滤波器。'},
-  {t:'STEP',b:'03',n:'眼动仪和脑电对齐',k:['共同触发','EYE-EEG'],d:'自由看和在线闭环必须有眼动仪。同一个触发信号同时打进脑电和眼动仪，离线按共同的触发点对齐（EEGLAB 的 EYE-EEG 插件就是做这个的）。设备如果没有专门的 EOG 通道，眼动仪就是最可靠的眼动参照，所以固定注视的实验也建议开着，用来监控注视。'}]},
- {h:'情形 A · 固定注视',rows:[
-  {t:'STEP',b:'01',n:'设计上把眨眼挪出刺激流',k:['设计'],d:'一个快速呈现序列通常有好几秒，被试会憋着不眨眼，等序列结束一起眨。序列之后的空屏和判断阶段就是天然的眨眼窗口：判断后再留 1–2 秒，并明确告诉被试「这时候可以眨眼」。每张图的呈现时间如果比眼跳潜伏期（约 200 ms）还短，大眼跳就来不及发生。'},
-  {t:'STEP',b:'02',n:'离线 ICA 去眨眼和眼动',k:['ICA','ICLabel','1 Hz 训练'],d:'在连续数据的 1 Hz 高通副本上训练 ICA，用 ICLabel 打分、再用校准段核对，一般去 2–3 个成分（眨眼、水平、垂直眼动），然后把权重套回 0.1 Hz 高通的数据。ICA 做的事：把所有电极的信号拆成互相独立的来源，去掉眼动那几路，再装回电极上，不删任何时间段。'},
-  {t:'STEP',b:'03',n:'剩下的按 epoch 剔除，不按序列剔除',k:['剔除'],d:'快速呈现时相邻刺激的 epoch 互相重叠（epoch 比刺激间隔长）。一次眨眼约 0.3–0.4 秒，只会落进其中几个 epoch，只剔这几个就行，不用把整个序列都扔掉。开着眼动仪的话，再剔掉注视明显偏离中心的 epoch（阈值按刺激大小定，比如 2°）。'},
-  {t:'STEP',b:'04',n:'留意微眼跳',k:['高频特征','gamma'],d:'盯着注视点时，眼睛每秒仍会有 1–2 次很小的眼跳：刺激出现后先被抑制，约 200–300 ms 后反弹。每次眼跳开头有一个几十毫秒的眼外肌尖峰（眼跳尖峰电位），在头皮上看起来像一阵宽频的 gamma 爆发（Yuval-Greenberg 2008）。解码如果用了高频特征，要特别小心。'}]},
- {h:'情形 B · 自由看',rows:[
-  {t:'STEP',b:'01',n:'以注视为事件切 epoch',k:['FRP','眼动仪'],d:'用眼动仪检测每一次眼跳和注视，以注视开始为 0 点切 epoch，得到注视相关电位（FRP）。注视后约 100 ms 枕区有一个正波（lambda 波），相当于这一次注视的「P1」。'},
-  {t:'STEP',b:'02',n:'按 OPTICAT 的方式训练 ICA',k:['ICA','OPTICAT'],d:'自由看时，常规 ICA 设置不仅会留下残余伪迹，还会扭曲没有眼动时的脑电（Dimigen 2020）。改进做法：训练数据用比常规更高的高通，再把每次眼跳开始前后几十毫秒的片段大量重复加进训练集，让 ICA 把眼跳尖峰电位单独分成一个成分。具体参数按论文里的比较结果选。'},
-  {t:'STEP',b:'03',n:'用眼动仪挑眼动成分',k:['方差比'],d:'每个成分算一个比值：眼跳期间的方差 ÷ 注视期间的方差。比值明显大于 1（常用阈值 1.1）就判为眼动成分（Plöchl 2012）。这比只看地形图可靠，也能自动化。'},
-  {t:'STEP',b:'04',n:'把重叠的响应拆开',k:['反卷积','unfold'],d:'一次注视大约 200–300 ms，下一次注视的响应会叠在这一次上，和快速呈现的重叠是同一个问题。而且看目标时注视往往更久、眼跳幅度也不同，直接平均会把这些差异当成「目标效应」。用线性反卷积（unfold 工具箱，Ehinger &amp; Dimigen 2019）同时建模相邻注视的重叠，并把眼跳幅度作为协变量。'}]},
- {h:'情形 C · 在线闭环',rows:[
-  {t:'STEP',b:'01',n:'离线算好，在线套用',k:['因果','校准段'],d:'在线时没有「未来的数据」，也不可能每个 trial 重跑 ICA。做法：用校准阶段的数据加开录前的眼动校准段训练 ICA、选好眼动成分，合成一个固定的去眼动矩阵（A × 去掉眼动成分 × W）。在线时每来一个采样点乘一次这个矩阵，只用到当前数据，延迟可以忽略。'},
-  {t:'STEP',b:'02',n:'按注视切窗解码',k:['注视锁定'],d:'和情形 B 一样，眼动仪实时给出注视时刻，按注视切窗送进解码器。眨眼时眼动仪会丢数据，这段直接标记为无效，不送进解码器。'},
-  {t:'STEP',b:'03',n:'设备动起来时，眼睛会跟着走',k:['平滑追踪'],d:'如果闭环的输出是会动的设备（比如机械臂），用户的眼睛会跟着它走（平滑追踪加眼跳），这些眼动和设备动作严格时间锁定。这一段的脑电不要拿来做解码；用校准段里「跟踪移动的点」那部分，确认去眼动矩阵对追踪眼动也有效。'},
-  {t:'STEP',b:'04',n:'ErrP 要防眼动混淆',k:['ErrP','FCz'],d:'ErrP 在额中央区（FCz 一带），离眼睛不远。用户一看到设备出错，眼睛常会立刻跳回自己想要的目标，甚至吃惊地眨一下眼。错误和正确 trial 的眼动不一样，分类器学到的可能是眼动而不是 ErrP。检查：只用眼动仪信号能不能分出错误和正确 trial；如果能，就要证明 ErrP 分类器在去眼动后、或在眼动匹配的 trial 上仍然有效。'},
-  {t:'STEP',b:'05',n:'在线兜底：信号不可信就不出结果',k:['幅度阈值','ASR'],d:'去眼动矩阵处理不了的大事件（全通道跳变、头动），在线用幅度阈值直接判为无效，这一段不出解码结果，等下一段干净的数据。ASR（伪迹子空间重建）这类在线方法也能修补短时大伪迹，但它同时会改动脑电，用的话要报告参数。'}]},
- {h:'三种情形都要做的对照：证明解码没靠眼动',rows:[
-  {t:'对照',b:'01',n:'只用额极和眼周通道解码',k:['FP1','FPZ','FP2','F7','F8'],d:'只用这几个通道去解码类别。如果也能解出来，说明有眼动信息混进来。'},
-  {t:'对照',b:'02',n:'只用眼动仪信号解码',k:['注视位置','眼跳方向和幅度'],d:'用眼动特征去解码同一个标签。固定注视时它应该接近随机水平。自由看和在线闭环时它肯定高于随机（眼动本来就带信息），这时要同时报告「只用脑电」「只用眼动」「两者合用」三个结果，才能说清脑电贡献了什么。'},
-  {t:'对照',b:'03',n:'看解码的时间进程和脑区',k:['时间分辨解码'],d:'固定注视的快速呈现实验里，视觉类别信息大约 100 ms 就开始出现在枕颞区。如果准确率主要来自 200 ms 以后、权重又集中在额区，要怀疑眼动。'},
-  {t:'对照',b:'04',n:'报告去掉了什么',k:['可复现'],d:'写清楚：去了几个 ICA 成分、依据是什么、每个条件剔除了多少 epoch；并对比去眼动前后的解码准确率。各条件剔除比例差太多，本身就是一种混淆。'}]}];
-document.getElementById('eyeList').innerHTML=EYE.map(gp=>`<div class="sub-head">${gp.h}</div>`+gp.rows.map(r=>row('#B45309',r.t,r.b,r.s||'','',r.n,kbs(r.k||[]),r.d)).join('')).join('');
+ {h:['先分清三种情形','Three situations'],rows:[
+  {t:['情形','Case'],b:'A',n:['固定注视 · 快速呈现','Fixation, rapid presentation'],k:[['固定注视','fixation'],['离线','offline']],d:['被试盯住注视点，刺激在中央快速闪过（如 RSVP）。眼动是噪声，主要是眨眼和微眼跳。思路：<b>能防就防，防不住就去掉，最后证明解码没靠它。</b>','The participant fixates while stimuli flash at the centre (as in RSVP). Eye movements are noise, mostly blinks and microsaccades. Plan: <b>prevent what you can, remove the rest, then show the decoding did not rely on it.</b>']},
+  {t:['情形','Case'],b:'B',n:['自由看 · 视觉搜索','Free viewing, visual search'],k:[['自由看','free viewing'],['离线','offline'],['眼动仪','eye tracker']],d:['被试在画面里自由找东西，每次注视都是一个事件，眼动就是任务。思路：<b>用眼动仪找出每次眼跳和注视，去掉眼动伪迹，再把相邻注视叠在一起的响应拆开。</b>','The participant searches the screen freely; each fixation is an event, and the eye movements are the task. Plan: <b>find every saccade and fixation with an eye tracker, remove the ocular artifacts, then separate the overlapping responses of neighbouring fixations.</b>']},
+  {t:['情形','Case'],b:'C',n:['在线闭环','Online closed loop'],k:[['自由看','free viewing'],['在线','online'],['眼动仪','eye tracker']],d:['解码结果实时驱动外部设备，眼睛还可能跟着设备走。思路：<b>校准阶段离线算好去眼动的空间滤波器，在线只做一次矩阵乘法。</b>','Decoding drives a device in real time, and the eyes may follow the device. Plan: <b>compute an eye-removal spatial filter offline during calibration; online it is one matrix multiplication.</b>']}]},
+ {h:['开录前先做好的三件事','Before recording: three things'],rows:[
+  {t:['步骤','STEP'],b:'01',n:['先修硬件','Fix the hardware first'],k:[['参考/接地','ref / ground'],['桥接','bridging'],['肌电','muscle']],d:['全通道跳变、相邻电极方波、颞区持续肌电，ICA 都不擅长处理，要在采集时解决。'+goLinks(['2-1','2-2','3-1']),'All-channel jumps, square waves on neighbouring electrodes and sustained temporal muscle noise are not ICA’s strength; fix them while recording. '+goLinks(['2-1','2-2','3-1'])]},
+  {t:['步骤','STEP'],b:'02',n:['录 2 分钟眼动校准段','Record 2 minutes of eye calibration'],k:[['每个 session 开头','start of each session']],d:['眨眼 10 次；向左、右、上、下各看 10 次；跟踪一个慢慢移动的点 20 秒；盯住中心 30 秒。这段用来认出 ICA 里的眼动成分；在线闭环还用它提前算滤波器。','Blink 10 times; look left, right, up and down 10 times each; follow a slowly moving dot for 20 s; fixate the centre for 30 s. This identifies the ocular ICA components; an online loop also uses it to precompute its filter.']},
+  {t:['步骤','STEP'],b:'03',n:['眼动仪和脑电对齐','Align the eye tracker with the EEG'],k:[['共同触发','shared trigger'],'EYE-EEG'],d:['同一个触发信号同时打进脑电和眼动仪，离线按它对齐（EEGLAB 的 EYE-EEG 插件）。设备没有专门的 EOG 通道时，眼动仪是最可靠的参照，固定注视的实验也建议开着。','Send the same trigger to the EEG and the eye tracker, and align offline on it (EEGLAB’s EYE-EEG plug-in). Without a dedicated EOG channel the eye tracker is the most reliable reference, so keep it on even for fixation experiments.']}]},
+ {h:['情形 A · 固定注视','Case A · fixation'],rows:[
+  {t:['步骤','STEP'],b:'01',n:['把眨眼挪出刺激流','Move blinks out of the stimulus stream'],k:[['设计','design']],d:['被试会憋着不眨眼，等序列结束一起眨。序列后的空屏就是天然的眨眼窗口：再留 1–2 秒，并明确告诉被试这时可以眨眼。每张图的呈现比眼跳潜伏期（约 200 ms）短，大眼跳就来不及发生。','Participants hold their blinks until a sequence ends. The blank screen afterwards is a natural blink window: leave 1–2 s and tell them they may blink then. If each image is shorter than saccade latency (about 200 ms), large saccades have no time to happen.']},
+  {t:['步骤','STEP'],b:'02',n:['离线 ICA 去眨眼和眼动','Offline ICA for blinks and eye movements'],k:['ICA','ICLabel',['1 Hz 训练','1 Hz training']],d:['在 1 Hz 高通的副本上训练 ICA，用 ICLabel 打分、用校准段核对，一般去 2–3 个成分，再把权重套回 0.1 Hz 高通的数据。ICA 不删任何时间段。','Train ICA on a 1 Hz high-passed copy, score with ICLabel and check against the calibration segment; usually 2–3 components go. Then apply the weights to the 0.1 Hz high-passed data. ICA deletes no time segments.']},
+  {t:['步骤','STEP'],b:'03',n:['剩下的按 epoch 剔除','Reject the rest by epoch'],k:[['剔除','rejection']],d:['一次眨眼约 0.3–0.4 秒，只落进几个相邻的 epoch，只剔这几个，不用扔掉整个序列。开着眼动仪的话，再剔掉注视偏离中心的 epoch（比如超过 2°）。','A blink lasts about 0.3–0.4 s and falls into only a few neighbouring epochs; reject those, not the whole sequence. With an eye tracker on, also reject epochs where gaze left the centre (say, by more than 2°).']},
+  {t:['步骤','STEP'],b:'04',n:['留意微眼跳','Watch for microsaccades'],k:[['高频特征','high-frequency features'],'gamma'],d:['盯着看时，眼睛每秒仍有 1–2 次小眼跳。每次开头有一个几十毫秒的眼外肌尖峰，在头皮上像一阵 gamma 爆发（Yuval-Greenberg 2008）。用高频特征解码要特别小心。','Even while fixating, the eyes make 1–2 small saccades a second. Each starts with a muscle spike of a few tens of milliseconds that looks like a gamma burst on the scalp (Yuval-Greenberg 2008). Take care when decoding from high-frequency features.']}]},
+ {h:['情形 B · 自由看','Case B · free viewing'],rows:[
+  {t:['步骤','STEP'],b:'01',n:['以注视为事件切 epoch','Epoch on fixations'],k:['FRP',['眼动仪','eye tracker']],d:['用眼动仪检测每次注视，以注视开始为 0 点切 epoch，得到注视相关电位（FRP）。注视后约 100 ms 枕区的正波叫 lambda 波。','Detect each fixation with the eye tracker and epoch on its onset, giving fixation-related potentials (FRPs). The positive occipital wave about 100 ms after fixation is the lambda wave.']},
+  {t:['步骤','STEP'],b:'02',n:['按 OPTICAT 训练 ICA','Train ICA the OPTICAT way'],k:['ICA','OPTICAT'],d:['自由看时，常规 ICA 会留下残余伪迹，还会扭曲脑电（Dimigen 2020）。改进做法：训练数据用更高的高通，再把每次眼跳前后的片段重复加进去，让 ICA 单独分出眼跳尖峰。','With free viewing, standard ICA leaves residual artifacts and distorts the EEG (Dimigen 2020). The fix: train on data with a higher high-pass and add the segments around each saccade repeatedly, so ICA isolates the saccadic spike.']},
+  {t:['步骤','STEP'],b:'03',n:['用眼动仪挑眼动成分','Pick ocular components with the eye tracker'],k:[['方差比','variance ratio']],d:['每个成分算一个比值：眼跳期间的方差 ÷ 注视期间的方差。明显大于 1（常用 1.1）就是眼动成分（Plöchl 2012）。','For each component, divide its variance during saccades by its variance during fixations. Clearly above 1 (1.1 is common) means ocular (Plöchl 2012).']},
+  {t:['步骤','STEP'],b:'04',n:['把重叠的响应拆开','Separate overlapping responses'],k:[['反卷积','deconvolution'],'unfold'],d:['下一次注视的响应会叠在这一次上，看目标时注视还更久。直接平均会把这些差异当成「目标效应」。用线性反卷积（unfold 工具箱）同时建模，并把眼跳幅度作为协变量。','The next fixation’s response overlaps this one, and fixations on targets last longer. Plain averaging mistakes these differences for a “target effect”. Model them together with linear deconvolution (the unfold toolbox), with saccade size as a covariate.']}]},
+ {h:['情形 C · 在线闭环','Case C · online closed loop'],rows:[
+  {t:['步骤','STEP'],b:'01',n:['离线算好，在线套用','Compute offline, apply online'],k:[['因果','causal'],['校准段','calibration']],d:['在线没有「未来的数据」，也不能每次重跑 ICA。用校准数据训练 ICA，合成一个固定的去眼动矩阵；在线每个采样点乘一次。','Online there is no future data and no time to rerun ICA. Train ICA on calibration data and build one fixed eye-removal matrix; online, multiply each sample by it.']},
+  {t:['步骤','STEP'],b:'02',n:['按注视切窗解码','Decode in fixation-locked windows'],k:[['注视锁定','fixation-locked']],d:['和情形 B 一样按注视切窗。眨眼时眼动仪会丢数据，这段标为无效。','As in case B, cut windows on fixations. The eye tracker loses data during blinks; mark those windows invalid.']},
+  {t:['步骤','STEP'],b:'03',n:['设备动起来时，眼睛会跟着走','When the device moves, the eyes follow'],k:[['平滑追踪','smooth pursuit']],d:['如果输出是会动的设备（比如机械臂），眼睛会跟着它走，这些眼动和设备动作锁时。这一段不要拿来解码；用校准段的追踪部分，确认去眼动矩阵对它有效。','If the output is a moving device such as a robot arm, the eyes follow it, time-locked to its motion. Do not decode from those segments; use the pursuit part of the calibration to check the eye-removal matrix handles it.']},
+  {t:['步骤','STEP'],b:'04',n:['ErrP 要防眼动混淆','Guard ErrPs against eye movements'],k:['ErrP','FCz'],d:['ErrP 在额中央区，离眼睛不远。用户看到设备出错，常会立刻把眼睛跳回目标，甚至眨眼。检查：只用眼动仪信号能不能分出错误和正确；如果能，要证明 ErrP 分类器在去眼动后仍然有效。','ErrPs sit over the fronto-central scalp, not far from the eyes. When the device errs, users often glance back at the target or blink. Check whether the eye tracker alone separates error from correct trials; if it does, show the ErrP classifier still works after eye removal.']},
+  {t:['步骤','STEP'],b:'05',n:['信号不可信就不出结果','No output when the signal cannot be trusted'],k:[['幅度阈值','amplitude threshold'],'ASR'],d:['去眼动矩阵处理不了的大事件（全通道跳变、头动），用幅度阈值直接判无效，等下一段干净数据。ASR 也能修补短时大伪迹，但会改动脑电，用了要报告参数。','Big events the matrix cannot handle (all-channel jumps, head movement) are marked invalid by an amplitude threshold; wait for the next clean segment. ASR can patch short large artifacts, but it also changes the EEG, so report its settings.']}]},
+ {h:['证明解码没靠眼动','Show the decoding did not rely on the eyes'],rows:[
+  {t:['对照','CHECK'],b:'01',n:['只用额极和眼周通道解码','Decode from frontal and periocular channels only'],k:['FP1','FPZ','FP2','F7','F8'],d:['如果这几个通道也能解出类别，说明有眼动信息混进来。','If these channels alone can decode the classes, eye information has leaked in.']},
+  {t:['对照','CHECK'],b:'02',n:['只用眼动仪信号解码','Decode from the eye tracker alone'],k:[['注视位置','gaze position'],['眼跳','saccades']],d:['固定注视时它应接近随机。自由看和闭环时它肯定高于随机，这时要同时报告只用脑电、只用眼动、两者合用三个结果。','With fixation it should be near chance. With free viewing or a closed loop it will beat chance, so report EEG only, eyes only and both together.']},
+  {t:['对照','CHECK'],b:'03',n:['看时间进程和脑区','Look at timing and location'],k:[['时间分辨解码','time-resolved decoding']],d:['视觉类别信息约 100 ms 就出现在枕颞区。如果准确率主要来自 200 ms 以后、权重集中在额区，要怀疑眼动。','Visual category information appears over occipito-temporal scalp by about 100 ms. If accuracy comes mainly after 200 ms with weights over frontal sites, suspect the eyes.']},
+  {t:['对照','CHECK'],b:'04',n:['报告去掉了什么','Report what was removed'],k:[['可复现','reproducibility']],d:['写清楚去了几个 ICA 成分、依据是什么、每个条件剔除了多少 epoch，并对比去眼动前后的准确率。','State how many ICA components were removed and why, how many epochs each condition lost, and the accuracy before and after eye removal.']}]}];
+document.getElementById('eyeList').innerHTML=EYE.map((gp,gi)=>{const rows=gp.rows.map(r=>row('#B45309',TT(r.t),r.b,r.s||'','',TT(r.n),kbs(r.k||[]),TT(r.d))).join('');
+ return gi===0?`<div class="sub-head">${TT(gp.h)}</div>`+rows:`<details class="more"><summary>${TT(gp.h)}</summary>${rows}</details>`}).join('');
 
 let pin=null;
 function hiK(k){document.querySelectorAll('.bx,.rf').forEach(e=>e.classList.toggle('hi',e.dataset.k===k));
@@ -553,52 +576,52 @@ document.addEventListener('click',e=>{const a=e.target.closest('a.go');if(!a)ret
  const f=pin.split('-')[0],jump=CUR!=='real';if(jump){history.pushState(null,'','#rfig-'+f);showPage('real')}hiK(pin);
  document.querySelector(`.fig[data-f="${f}"]`).scrollIntoView({behavior:jump?'auto':'smooth',block:'center'})});
 const EL=[
- ['额极，左眼正上方','离眼睛最近，<b>眨眼</b>和上下眼动在这里最大。'],
- ['左额外侧，靠近左外眼角','和 F8 一起看<b>水平眼动</b>：左右看时两者方向相反。也能看到额部肌电。'],
- ['右额外侧，靠近右外眼角','水平眼动的另一半。'],
- ['左中央区，右手运动皮层','<b>运动想象</b>的 mu/beta 变化在这里。想象右手时，功率下降出现在对侧的 C3。'],
- ['右中央区，左手运动皮层','和 C3 对称。演示里的电极跳变和方波也放在这里。'],
- ['左颞部，下面是颞肌','咬牙时颞肌收缩，<b>肌电</b>最大。心电伪迹也常在颞部更明显。'],
- ['右颞部','肌电的另一侧；演示里的电极脱落放在这里，方波也会同时出现在 T8。'],
- ['左枕部，视觉皮层','闭眼时 <b>alpha</b> 最强，视觉诱发响应也在这一带。']];
-document.getElementById('elecList').innerHTML=EL.map((e,i)=>row(COL[i],'10–20',CH[i],'','',e[0],'',e[1])).join('');
+ [['额极，左眼正上方','Frontal pole, above the left eye'],['离眼睛最近，<b>眨眼</b>和上下眼动在这里最大。','Closest to the eyes; <b>blinks</b> and vertical eye movements are largest here.']],
+ [['左额外侧，靠近左外眼角','Left lateral frontal, near the outer corner of the left eye'],['和 F8 一起看<b>水平眼动</b>：左右看时两者方向相反。','Read with F8 for <b>horizontal eye movements</b>: looking sideways moves them in opposite directions.']],
+ [['右额外侧，靠近右外眼角','Right lateral frontal, near the outer corner of the right eye'],['水平眼动的另一半。','The other half of horizontal eye movements.']],
+ [['左中央区，右手运动皮层','Left central, right-hand motor cortex'],['<b>运动想象</b>看这里：想象右手时，C3 的 mu/beta 功率下降。','Watch here for <b>motor imagery</b>: imagining the right hand lowers mu/beta power at C3.']],
+ [['右中央区，左手运动皮层','Right central, left-hand motor cortex'],['和 C3 对称。演示里的电极跳变和方波也放在这里。','The mirror of C3. The simulated electrode pop and square wave are here too.']],
+ [['左颞部，下面是颞肌','Left temporal, over the temporalis muscle'],['咬牙时<b>肌电</b>最大，心电也常在颞部更明显。','<b>Muscle noise</b> peaks here when clenching; ECG is often clearer at the temples too.']],
+ [['右颞部','Right temporal'],['肌电的另一侧；演示里的电极脱落和方波也在这里。','The other side for muscle; the simulated detached electrode and square wave are here.']],
+ [['左枕部，视觉皮层','Left occipital, visual cortex'],['闭眼时 <b>alpha</b> 最强，视觉诱发响应也在这一带。','<b>Alpha</b> is strongest here with eyes closed, as are visual evoked responses.']]];
+document.getElementById('elecList').innerHTML=EL.map((e,i)=>row(COL[i],'10–20',CH[i],'','',TT(e[0]),'',TT(e[1]))).join('');
 const AMP=[
- ['背景脑电','48','µV 峰峰','睁眼、无伪迹时，每个通道 1 秒窗口峰峰值的中位数（0.5–50 Hz），多数落在 41–63 µV。文献给出的头皮脑电典型幅度是 10–100 µV，正常成人多在 10–50 µV，这里取中段。'],
- ['O1 闭眼','77','µV 峰峰','alpha 功率约为睁眼时的 5 倍（20 次平均）。alpha 是正常脑电里最大的节律。'],
- ['Fp1 眨眼','236','µV 峰峰','约为背景的 5 倍（0.5–50 Hz）。文献给出的额部眨眼伪迹幅度约 100–200 µV。'],
- ['T7 咬牙','×63','γ 功率','咬牙时 T7 的 γ 功率（5–50 Hz 下，10 次平均）约为咬牙前的 63 倍，β 约 15 倍。'],
- ['T7 心电','158','µV 峰峰','2 秒窗口峰峰值，没有心电时是 53。这是有意放大的：真实的心电伪迹小得多，要靠每秒一次的规律才认得出。']];
-document.getElementById('ampList').innerHTML=AMP.map(a=>row('#7C3AED','实测',a[1],'sm',a[2],a[0],'',a[3])).join('');
+ [['背景脑电','Background EEG'],'48',['µV 峰峰','µV p-p'],['睁眼、无伪迹时，1 秒窗口峰峰值的中位数，多数在 41–63 µV。文献里的典型范围是 10–100 µV。','Median 1-s peak-to-peak with eyes open and no artifacts; most values fall in 41–63 µV. The usual published range is 10–100 µV.']],
+ [['O1 闭眼','O1, eyes closed'],'77',['µV 峰峰','µV p-p'],['alpha 功率约为睁眼时的 5 倍（20 次平均）。','Alpha power is about 5× that with eyes open (mean of 20 runs).']],
+ [['Fp1 眨眼','Fp1 blink'],'236',['µV 峰峰','µV p-p'],['约为背景的 5 倍。文献里额部眨眼约 100–200 µV。','About 5× the background. Published frontal blinks are about 100–200 µV.']],
+ [['T7 咬牙','T7 jaw clench'],'×63',['γ 功率','γ power'],['咬牙时 γ 功率约为咬牙前的 63 倍，β 约 15 倍（10 次平均）。','Gamma power is about 63× and beta about 15× the pre-clench level (mean of 10 runs).']],
+ [['T7 心电','T7 ECG'],'158',['µV 峰峰','µV p-p'],['2 秒窗口峰峰值，没有心电时是 53。这是有意放大的，真实心电伪迹小得多。','2-s peak-to-peak; 53 without ECG. Deliberately exaggerated; real ECG artifacts are much smaller.']]];
+document.getElementById('ampList').innerHTML=AMP.map(a=>row('#7C3AED',T2('实测','Measured'),a[1],'sm',TT(a[2]),TT(a[0]),'',TT(a[3]))).join('');
 const FILT=[
- ['原始','—','不做任何滤波。工频、漂移、眨眼全部原样显示。'],
- ['0.5–50 Hz','0.5','50 Hz 陷波加 0.5–50 Hz 带通。去掉了漂移和工频，眨眼和眼动基本保留，但会出现反向下冲。离线分析常用的高通就在 0.1–1 Hz 这一段。'],
- ['5–50 Hz','5','OpenBCI 界面的默认值（这里的默认是 0.5–50 Hz）：带通 5–50 Hz、4 阶 Butterworth、只正向滤一次；工频陷波默认 50 和 60 Hz 同时开（这里只做 50 Hz）。低于 5 Hz 的内容几乎全被压掉，包括眨眼和 δ 频段。']];
-document.getElementById('filtList').innerHTML=FILT.map(f=>row('#0E7490','高通',f[1],'',f[1]==='—'?'':'Hz',f[0],'',f[2])).join('');
+ [['原始','Raw'],'—',['不做滤波，工频、漂移、眨眼都原样显示。','No filtering; mains, drift and blinks all show as they are.']],
+ [['0.5–50 Hz','0.5–50 Hz'],'0.5',['50 Hz 陷波加 0.5–50 Hz 带通。漂移和工频没了，眨眼和眼动基本保留，但后面会跟一个反向下冲。离线分析常用的高通就在 0.1–1 Hz。','A 50 Hz notch plus a 0.5–50 Hz band-pass. Drift and mains are gone; blinks and eye movements mostly remain, followed by a reverse dip. Offline analyses usually high-pass at 0.1–1 Hz.']],
+ [['5–50 Hz','5–50 Hz'],'5',['OpenBCI 界面的默认值：带通 5–50 Hz，4 阶 Butterworth，只正向滤一次。低于 5 Hz 的内容几乎全没了，包括眨眼和 δ。','The OpenBCI GUI default: a 5–50 Hz band-pass, 4th-order Butterworth, one forward pass. Almost everything below 5 Hz is gone, blinks and delta included.']]];
+document.getElementById('filtList').innerHTML=FILT.map(f=>row('#0E7490',T2('高通','High-pass'),f[1],'',f[1]==='—'?'':'Hz',TT(f[0]),'',TT(f[2]))).join('');
 const SRC=[
  ['https://www.learningeeg.com/terminology-and-waveforms','Physiology & Terminology','Learning EEG'],
  ['https://www.tmsi.artinis.com/blog/common-physiological-artifacts-in-eeg-signals','Common physiological EEG artifacts','TMSi'],
  ['https://www.bitbrain.com/blog/eeg-artifacts','EEG Artifacts: Types, Detection, and Removal','Bitbrain'],
- ['https://docs.openbci.com/Software/OpenBCISoftware/GUIWidgets/','GUI Widget Guide','OpenBCI 文档'],
- ['https://github.com/OpenBCI/OpenBCI_GUI/blob/master/OpenBCI_GUI/FilterSettings.pde','FilterSettings.pde：默认滤波参数','OpenBCI 源码'],
- ['https://github.com/OpenBCI/OpenBCI_GUI/blob/master/OpenBCI_GUI/DataProcessing.pde','DataProcessing.pde：FFT 与频段划分','OpenBCI 源码'],
- ['https://github.com/brainflow-dev/brainflow/blob/master/src/data_handler/data_handler.cpp','data_handler.cpp：因果与零相位滤波','BrainFlow 源码'],
+ ['https://docs.openbci.com/Software/OpenBCISoftware/GUIWidgets/','GUI Widget Guide',['OpenBCI 文档','OpenBCI docs']],
+ ['https://github.com/OpenBCI/OpenBCI_GUI/blob/master/OpenBCI_GUI/FilterSettings.pde',['FilterSettings.pde：默认滤波参数','FilterSettings.pde: default filter settings'],['OpenBCI 源码','OpenBCI source']],
+ ['https://github.com/OpenBCI/OpenBCI_GUI/blob/master/OpenBCI_GUI/DataProcessing.pde',['DataProcessing.pde：FFT 与频段划分','DataProcessing.pde: FFT and frequency bands'],['OpenBCI 源码','OpenBCI source']],
+ ['https://github.com/brainflow-dev/brainflow/blob/master/src/data_handler/data_handler.cpp',['data_handler.cpp：因果与零相位滤波','data_handler.cpp: causal and zero-phase filtering'],['BrainFlow 源码','BrainFlow source']],
  ['https://doi.org/10.1016/j.neuroimage.2019.116117','Optimizing the ICA-based removal of ocular EEG artifacts from free viewing experiments（OPTICAT）','Dimigen 2020 · NeuroImage'],
  ['https://doi.org/10.3389/fnhum.2012.00278','Combining EEG and eye tracking: identification, characterization, and correction of eye movement artifacts','Plöchl 2012 · Front Hum Neurosci'],
  ['https://doi.org/10.7717/peerj.7838','Unfold: an integrated toolbox for overlap correction, non-linear modeling, and regression-based EEG analysis','Ehinger & Dimigen 2019 · PeerJ'],
  ['https://doi.org/10.1037/a0023885','Coregistration of eye movements and EEG in natural reading: analyses and review','Dimigen 2011 · J Exp Psychol Gen'],
  ['https://doi.org/10.1016/j.neuron.2008.03.027','Transient induced gamma-band response in EEG as a manifestation of miniature saccades','Yuval-Greenberg 2008 · Neuron'],
  ['https://doi.org/10.1016/j.neuroimage.2019.05.026','ICLabel: An automated electroencephalographic independent component classifier','Pion-Tonachini 2019 · NeuroImage']];
-document.getElementById('srcList').innerHTML=SRC.map(s=>`<a class="dl" href="${s[0]}" target="_blank" rel="noopener"><span class="dn">${s[1]}</span><span class="dk">${s[2]}</span></a>`).join('');
+document.getElementById('srcList').innerHTML=SRC.map(s=>`<a class="dl" href="${s[0]}" target="_blank" rel="noopener"><span class="dn">${TT(s[1])}</span><span class="dk">${TT(s[2])}</span></a>`).join('');
 
 /* ── 分页路由 + 当页目录 + 滚动侦测 ── */
 const PAGES=[...document.querySelectorAll('.page')],chips=document.getElementById('chips'),pbtn=document.getElementById('pauseBtn');
 document.querySelectorAll('section.area').forEach(s=>s.querySelector('.group-head .ic').innerHTML=svg(s.dataset.icon));
 let targets=[];
 function buildChips(pg){chips.querySelectorAll('.fbtn').forEach(e=>e.remove());
- const subs=[...pg.querySelectorAll('.sub-head[data-chip]')];
+ const subs=[...pg.querySelectorAll('.sub-head[data-chip-zh]')];
  targets=(subs.length?subs:[...pg.querySelectorAll('section.area')]).map(el=>{const s=el.closest('section.area');
   const a=document.createElement('a');a.className='fbtn';a.href='#'+el.id;a.style.setProperty('--c',s.style.getPropertyValue('--c'));
-  a.innerHTML=`<span class="fic">${svg(s.dataset.icon)}</span>${el.dataset.chip}`;chips.appendChild(a);return{el,a}})}
+  a.innerHTML=`<span class="fic">${svg(s.dataset.icon)}</span>`+T2(el.dataset.chipZh,el.dataset.chipEn);chips.appendChild(a);return{el,a}})}
 function showPage(k){const pg=PAGES.find(p=>p.dataset.page===k)||PAGES[0];CUR=pg.dataset.page;
  PAGES.forEach(p=>p.hidden=p!==pg);
  document.querySelectorAll('#tabs .mtab').forEach(t=>t.classList.toggle('on',t.dataset.tab===CUR));
@@ -612,6 +635,14 @@ let tick=false;function onScroll(){if(tick)return;tick=true;requestAnimationFram
  targets.forEach(t=>{if(t.el.getBoundingClientRect().top+scrollY<=y)cur=t});targets.forEach(t=>t.a.classList.toggle('cur',t===cur));
  document.getElementById('totop').classList.toggle('on',scrollY>640);tick=false})}
 addEventListener('scroll',onScroll,{passive:true});route(false);
+/* ── 语言切换:HTML 靠 CSS 显隐;画布、图片说明、标签页标题按当前语言重取 ── */
+const lb=document.getElementById('langBtn');
+function setLang(l,save){LANG=l;document.documentElement.dataset.lang=l;document.documentElement.lang=l==='en'?'en':'zh-CN';
+ document.title=l==='en'?'EEG Artifact Simulator':'脑电伪迹模拟器';lb.textContent=l==='en'?'中文':'EN';
+ document.querySelectorAll('.fig').forEach(f=>{const F=FIGS.find(x=>String(x.id)===f.dataset.f);f.querySelector('img').alt=L(`图 ${F.id}：${F.title[0]}`,`Fig. ${F.id}: ${F.title[1]}`)});
+ if(save){try{localStorage.setItem('bci-ddl-lang',l)}catch(e){}const u=new URL(location.href);if(l==='en')u.searchParams.set('lang','en');else u.searchParams.delete('lang');history.replaceState(null,'',u)}
+ drawHead()}
+setLang(LANG,false);lb.onclick=()=>setLang(LANG==='en'?'zh':'en',true);
 /* 带锚点冷启动:字体和图片到齐后版面会变,再对准一次(用户已经滚过就不动) */
 addEventListener('load',()=>{const id=location.hash.slice(1);if(id&&!PAGES.some(p=>p.dataset.page===id)&&scrollY<40)route(false)});
 document.getElementById('totop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
