@@ -107,8 +107,8 @@
   year: 2027
   full_name: International Conference on Artificial Intelligence and Statistics
   link: 'https://virtual.aistats.org/Conferences/2027'
-  deadline: '2026-10-06 23:59'
-  abstract_deadline: '2026-09-29 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: UTC-12
   date: May 3, 2027
@@ -122,7 +122,7 @@
   h5: 101
   ccfddl: aistats
   track:
-  estimated: false
+  estimated: true
   note: 按 2026 届规律推测
   note_en: Estimated from the 2026 cycle
 
@@ -130,13 +130,13 @@
   title: IJCAI
   year: 2027
   full_name: International Joint Conference on Artificial Intelligence
-  link: 'https://www.ijcai.org/'
-  deadline: '2027-01-18 23:59'
-  abstract_deadline: '2027-01-11 23:59'
+  link: 'https://2027.ijcai.org/'
+  deadline: '2027-01-11 23:59'
+  abstract_deadline: '2027-01-04 23:59'
   tz: '-12:00'
   tz_label: AoE
-  date: Aug 2027
-  place: TBD
+  date: August 7-13, 2027
+  place: Kyoto, Japan
   format: 'https://www.ijcai.org/authors_kit'
   format_type: IJCAI Author's Kit (LaTeX/Word 模板)
   format_type_en: IJCAI Author's Kit
@@ -145,8 +145,8 @@
   core: A*
   h5: 136
   ccfddl: ijcai
-  track:
-  estimated: true
+  track: 'Separate satellite event: August 15-17, 2027, Hengqin, China'
+  estimated: false
   note: IJCAI-ECAI 2026 (Bremen) 截稿已过;按往年 1 月中旬规律推测
   note_en: IJCAI-ECAI 2026 (Bremen) deadline passed; estimated from the usual mid-January pattern
 
@@ -277,7 +277,7 @@
   year: 2027
   full_name: SIAM International Conference on Data Mining
   link: 'https://www.siam.org/conferences-events/'
-  deadline: '2026-10-10 23:59'
+  deadline: 'TBD'
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
@@ -396,13 +396,13 @@
   title: ICDM
   year: 2027
   full_name: IEEE International Conference on Data Mining
-  link: 'https://www.cs.uic.edu/~icdm/'
-  deadline: TBD
+  link: 'https://icdm2027-website.onrender.com/'
+  deadline: 2027-06-06 23:59
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: '2027'
-  place: TBD
+  date: 'November 15-18, 2027'
+  place: Brisbane, Australia
   format: 'https://www.ieee.org/conferences/publishing/templates.html'
   format_type: IEEE 会议模板
   format_type_en: IEEE conf template
@@ -411,8 +411,8 @@
   core: A*
   h5: 49
   ccfddl: icdm
-  track:
-  estimated: true
+  track: Full papers; dates are tentative and subject to change
+  estimated: false
   note: ICDM 2026 (Shenyang, Nov 12–15) 截稿 6/6 刚过;2027 届预计 2027 年 6 月初截稿
   note_en: ICDM 2026 (Shenyang, Nov 12–15) deadline just passed (Jun 6); 2027 deadline expected ~early June 2027
 
@@ -545,11 +545,11 @@
   year: 2027
   full_name: IEEE International Conference on Image Processing
   link: 'https://2027.ieeeicip.org/'
-  deadline: '2027-04-15 23:59'
+  deadline: '2027-03-31 23:59'
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: Nov 29 – Dec 3, 2027
+  date: November 29-December 3, 2027
   place: Singapore
   format: 'https://2027.ieeeicip.org/paper-submission-instructions/'
   format_type: IEEE 会议模板 / Author Kit
@@ -560,7 +560,7 @@
   h5: 55
   ccfddl: icip
   track:
-  estimated: true
+  estimated: false
   note: ICIP 2026 (Tampere) 截稿已过;2027 已确认新加坡,按往届提前约 7 个月规律推测
   note_en: ICIP 2026 (Tampere) deadline passed; Singapore confirmed for 2027, estimated from the usual ~7-months-ahead pattern
 
