@@ -252,9 +252,9 @@
   title: WWW
   year: 2027
   full_name: The ACM Web Conference
-  link: 'https://acmweb2027.org/'
-  deadline: '2026-10-18 23:59'
-  abstract_deadline: '2026-10-11 23:59'
+  link: 'https://www2027.thewebconf.org/'
+  deadline: '2026-10-25 23:59'
+  abstract_deadline: '2026-10-18 23:59'
   tz: '-12:00'
   tz_label: AoE
   date: 'May 10 - 14, 2027'
