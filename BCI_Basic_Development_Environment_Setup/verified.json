@@ -1,29 +1,26 @@
 {
   "last_run": {
-    "date": "2026-10-19",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/39241317137",
-    "passed": true,
+    "date": "2026-10-26",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/40314099966",
+    "passed": false,
     "os": {
       "Linux": {
         "passed": true,
         "device": "cpu",
         "python": "3.11.17",
-        "elapsed": 2.2,
+        "elapsed": 3.9,
         "failed": []
       },
       "macOS": {
         "passed": true,
         "device": "mps",
         "python": "3.11.17",
-        "elapsed": 35.8,
+        "elapsed": 46.8,
         "failed": []
       },
       "Windows": {
-        "passed": true,
-        "device": "cpu",
-        "python": "3.11.17",
-        "elapsed": 10.1,
-        "failed": []
+        "passed": false,
+        "missing": true
       }
     }
   },
@@ -59,6 +56,22 @@
     }
   },
   "history": [
+    {
+      "date": "2026-10-26",
+      "passed": false,
+      "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/40314099966",
+      "os": {
+        "Linux": true,
+        "macOS": true,
+        "Windows": false
+      },
+      "key": {
+        "mne": "1.13.2",
+        "braindecode": "1.8.1",
+        "moabb": "1.7.2",
+        "torch": "2.13.0"
+      }
+    },
     {
       "date": "2026-10-19",
       "passed": true,
