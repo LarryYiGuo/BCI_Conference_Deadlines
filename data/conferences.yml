@@ -253,8 +253,8 @@
   year: 2027
   full_name: The ACM Web Conference
   link: 'https://www2027.thewebconf.org/'
-  deadline: '2026-10-25 23:59'
-  abstract_deadline: '2026-10-18 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
   date: 'May 10 - 14, 2027'
@@ -268,7 +268,7 @@
   h5: 120
   ccfddl: www
   track:
-  estimated: false
+  estimated: true
   note: 举办地 Dublin 已官宣;截稿按 WWW 2026 规律推测
   note_en: Dublin officially announced; deadline estimated from the WWW 2026 pattern
 
@@ -640,13 +640,13 @@
   title: ICME
   year: 2027
   full_name: IEEE International Conference on Multimedia and Expo
-  link: 'https://2026.ieeeicme.org/'
-  deadline: TBD
+  link: 'https://2027.ieeeicme.org/'
+  deadline: 2026-12-30 23:59
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
-  date: Jul 2027
-  place: TBD
+  date: July 13-17, 2027
+  place: Xiamen, China
   format: 'https://2026.ieeeicme.org/author-information-and-submission-instructions/'
   format_type: IEEE 会议模板
   format_type_en: IEEE conf template
@@ -656,7 +656,7 @@
   h5: 50
   ccfddl: icme
   track:
-  estimated: true
+  estimated: false
   note: ICME 2026 (Bangkok, Jul 5–9) 截稿已过;2027 届预计 2026 年 12 月截稿
   note_en: ICME 2026 (Bangkok, Jul 5–9) deadline passed; 2027 deadline expected ~December 2026
 
