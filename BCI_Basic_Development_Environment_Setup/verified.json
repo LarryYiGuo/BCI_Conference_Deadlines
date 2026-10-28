@@ -1,32 +1,35 @@
 {
   "last_run": {
-    "date": "2026-10-26",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/40314099966",
-    "passed": false,
+    "date": "2026-10-28",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/40746345269",
+    "passed": true,
     "os": {
       "Linux": {
         "passed": true,
         "device": "cpu",
-        "python": "3.11.17",
-        "elapsed": 3.9,
+        "python": "3.11.18",
+        "elapsed": 2.8,
         "failed": []
       },
       "macOS": {
         "passed": true,
         "device": "mps",
-        "python": "3.11.17",
-        "elapsed": 46.8,
+        "python": "3.11.18",
+        "elapsed": 27.4,
         "failed": []
       },
       "Windows": {
-        "passed": false,
-        "missing": true
+        "passed": true,
+        "device": "cpu",
+        "python": "3.11.18",
+        "elapsed": 7.1,
+        "failed": []
       }
     }
   },
   "verified": {
-    "date": "2026-10-19",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/39241317137",
+    "date": "2026-10-28",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/40746345269",
     "platforms": [
       "Linux",
       "Windows",
@@ -46,9 +49,9 @@
       "mne": "1.13.2",
       "moabb": "1.7.2",
       "numpy": "2.4.6",
-      "pandas": "3.0.6",
+      "pandas": "3.1.0",
       "pyriemann": "0.12",
-      "python": "3.11.17",
+      "python": "3.11.18",
       "scikit-learn": "1.9.1",
       "scipy": "1.17.1",
       "torch": "2.13.0",
@@ -56,6 +59,22 @@
     }
   },
   "history": [
+    {
+      "date": "2026-10-28",
+      "passed": true,
+      "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/40746345269",
+      "os": {
+        "Linux": true,
+        "macOS": true,
+        "Windows": true
+      },
+      "key": {
+        "mne": "1.13.2",
+        "braindecode": "1.8.1",
+        "moabb": "1.7.2",
+        "torch": "2.13.0"
+      }
+    },
     {
       "date": "2026-10-26",
       "passed": false,
