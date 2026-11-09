@@ -1,35 +1,35 @@
 {
   "last_run": {
-    "date": "2026-11-02",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/41455050517",
+    "date": "2026-11-09",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/42631338856",
     "passed": true,
     "os": {
       "Linux": {
         "passed": true,
         "device": "cpu",
         "python": "3.11.18",
-        "elapsed": 3.7,
+        "elapsed": 3.3,
         "failed": []
       },
       "macOS": {
         "passed": true,
         "device": "mps",
         "python": "3.11.18",
-        "elapsed": 44.5,
+        "elapsed": 31.5,
         "failed": []
       },
       "Windows": {
         "passed": true,
         "device": "cpu",
         "python": "3.11.18",
-        "elapsed": 10.1,
+        "elapsed": 14.2,
         "failed": []
       }
     }
   },
   "verified": {
-    "date": "2026-11-02",
-    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/41455050517",
+    "date": "2026-11-09",
+    "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/42631338856",
     "platforms": [
       "Linux",
       "Windows",
@@ -41,24 +41,40 @@
       "macOS": "mps"
     },
     "versions": {
-      "braindecode": "1.8.1",
+      "braindecode": "2.0.0",
       "h5py": "3.16.0",
       "ipykernel": "7.4.0",
-      "jupyterlab": "4.6.5",
+      "jupyterlab": "4.6.6",
       "matplotlib": "3.11.2",
       "mne": "1.13.2",
       "moabb": "1.7.2",
       "numpy": "2.4.6",
-      "pandas": "3.1.0",
+      "pandas": "3.1.1",
       "pyriemann": "0.12",
       "python": "3.11.18",
       "scikit-learn": "1.9.1",
       "scipy": "1.17.1",
-      "torch": "2.13.0",
+      "torch": "2.14.1",
       "torchaudio": "2.11.1"
     }
   },
   "history": [
+    {
+      "date": "2026-11-09",
+      "passed": true,
+      "run_url": "https://github.com/LarryYiGuo/BCI_Conference_Deadlines/actions/runs/42631338856",
+      "os": {
+        "Linux": true,
+        "macOS": true,
+        "Windows": true
+      },
+      "key": {
+        "mne": "1.13.2",
+        "braindecode": "2.0.0",
+        "moabb": "1.7.2",
+        "torch": "2.14.1"
+      }
+    },
     {
       "date": "2026-11-02",
       "passed": true,
