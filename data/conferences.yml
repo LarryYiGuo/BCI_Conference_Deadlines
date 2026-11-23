@@ -301,7 +301,7 @@
   year: 2027
   full_name: Pacific-Asia Conference on Knowledge Discovery and Data Mining
   link: 'https://www.pakdd2027.org/'
-  deadline: '2026-11-20 23:59'
+  deadline: '2026-12-04 23:59'
   abstract_deadline:
   tz: '-12:00'
   tz_label: AoE
@@ -497,8 +497,8 @@
   year: 2027
   full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
   link: 'https://cvpr.thecvf.com/Conferences/2027'
-  deadline: '2026-11-16 23:59'
-  abstract_deadline: '2026-11-10 23:59'
+  deadline: 'TBD'
+  abstract_deadline:
   tz: '-12:00'
   tz_label: UTC-12
   date: June 20-24, 2027
@@ -512,7 +512,7 @@
   h5: 450
   ccfddl: cvpr
   track:
-  estimated: false
+  estimated: true
   note: 地点 Seattle 已由 CVF 确认;截稿按 2026 届规律推测
   note_en: Seattle confirmed by CVF; deadline estimated from the 2026 cycle
 
